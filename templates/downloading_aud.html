@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel=stylesheet href="{{url_for('static', filename='styles/styles_select.css')}}">
+    </head>
+    <body style="text-align: center;">
+        <div>
+            <h1 style="font-size: 100px;">Preparing...</h1>
+            <p style="font-family: monospace;font-size: 20px;">Please Wait</p>
+            <br>
+            <img src="{{url_for('static', filename='img/loading.gif')}}">
+            <meta http-equiv="refresh" content="2;url={{url_for('export_aud')}}">
+        </div>
+    </body>
+</html>

@@ -1,0 +1,4 @@
+.venv/
+os
+web/
+__pycache__/

@@ -1,0 +1,18 @@
+body {text-align: center;
+font-size: 50px;
+}
+
+.para {text-align: center;
+font-size: 25px;
+}
+
+.searchbar {font-family: "Roboto";
+font-size: 30px;
+text-align: center;
+width: 1000px;
+}
+
+.bttons {height:30px;
+width: 200px;
+font-size: 20px;
+}

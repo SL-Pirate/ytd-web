@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{url_for('static', filename='styles/styles_index.css')}}">
+        <h1><title>YTD-Web</title></h1>
+    </head>
+    <body>
+        <div>
+            <h3>Welcome to YTD-Web</h3>
+            <h5>The YouTube video downloader</h5>
+            <p class=para>The place exactly where you need to be.</p>
+        </div>
+        <br>
+        <div>
+            <form action="/main" method="POST">
+                <input class=searchbar placeholder="Enter YouTube link" name="link">
+            <br>
+            <input class=bttons type="submit" value="Search">
+            </form>
+        </div>
+    </body>
+</html>

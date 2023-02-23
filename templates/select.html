@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>{{vid_tit}}</title>
+        <link rel="stylesheet" href="{{url_for('static', filename='styles/styles_select.css')}}">
+    </head>
+    <body>
+        <br>
+        <div>
+        <h2 style="text-align: center;">{{vid_tit}}</h2>
+        <img src="{{vid_img}}">
+        <div>
+            <ul>
+                {%for n in buttons:%}
+                    <li><a href="{{url_for('download_vid', reso=n)}}"><button>{{n}}</button></a></li>
+                    <br>
+                {%endfor%}
+            </ul>
+        </div>
+        <div>
+            <ul>
+                {%for m in buttons_aud:%}
+                    <li><a href="{{url_for('download_aud', qual=m)}}"><button>{{m}}</button></a></li>
+                    <br>
+                {%endfor%}
+            </ul>
+        </div>
+    </body>
+</html>
