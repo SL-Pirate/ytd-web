@@ -8,10 +8,9 @@ import threading
 
 app = Flask(__name__)
 
-# sets the number of videos downloaded as of now
-# this number will be reset when reached to the limit and if the file already exists under that id it will be removed
-num_vids = 0
 
+
+#### CONFIG VARIABLES ####
 # Maximum number of videos that can exists.
 # This number should be adjusted according to the requirement and capabilities (mostly Disk space capacity) of the host machiene
 max_vids = 1
@@ -19,6 +18,11 @@ max_vids = 1
 # Time duration a particular downloadable video file is kept on the host system (in minuites).
 # This value should be set depending on the usage and the disk space capabilities.
 keep_time = 1
+############################
+
+
+
+num_vids = 0
 
 def getName():
     global num_vids, max_vids
