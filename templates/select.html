@@ -10,21 +10,27 @@
         <div>
         <h2 style="text-align: center;">{{vid_tit}}</h2>
         <img src="{{vid_img}}">
-        <div>
-            <ul>
-                {%for n in buttons:%}
-                    <li><a href="{{url_for('download_vid', reso=n)}}"><button>{{n}}</button></a></li>
-                    <br>
-                {%endfor%}
-            </ul>
-        </div>
-        <div>
-            <ul>
-                {%for m in buttons_aud:%}
-                    <li><a href="{{url_for('download_aud', qual=m)}}"><button>{{m}}</button></a></li>
-                    <br>
-                {%endfor%}
-            </ul>
+        <div class="down">
+            <div>
+                <h3>Download Video: </h3>
+                <p>Select Quality</p>
+                <ul>
+                    {%for n in buttons:%}
+                        <li><a href="{{url_for('download_vid', reso=n)}}"><button>{{n}}</button></a></li>
+                        <br>
+                    {%endfor%}
+                </ul>
+            </div>
+            <div>
+                <h3>Download Autio:</h3>
+                <p>Select Quality</p>
+                <ul>
+                    {%for m in buttons_aud:%}
+                        <li><a href="{{url_for('download_aud', qual=m)}}"><button>{{m}}</button></a></li>
+                        <br>
+                    {%endfor%}
+                </ul>
+            </div>
         </div>
     </body>
 </html>
