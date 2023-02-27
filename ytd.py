@@ -1,5 +1,6 @@
 from flask import Flask, redirect, render_template, url_for, request, session, send_file, after_this_request
 from pytube import YouTube as yt
+from pytube.exceptions import RegexMatchError
 from subprocess import run as cmd
 from os import mkdir
 import os
@@ -196,7 +197,7 @@ def select():
     if "yt_link" in session:
         try:
             return render_template("select.html", vid_tit=downloader()[0], vid_img=downloader()[1], buttons=downloader()[2], buttons_aud=downloader()[3])
-        except:
+        except RegexMatchError:
             return redirect("/Error")
     else:
         return redirect("/main")
