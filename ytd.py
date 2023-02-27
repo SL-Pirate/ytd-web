@@ -18,8 +18,9 @@ max_vids = 1
 # Time duration a particular downloadable video file is kept on the host system (in minuites).
 # This value should be set depending on the usage and the disk space capabilities.
 keep_time = 1
-############################
 
+
+############################
 
 
 num_vids = 0
@@ -164,6 +165,9 @@ def file_get_aud():
     except FileNotFoundError as e:
         return render_template("went_wrong.html", exception=e)
 
+
+# _____________________HOME PAGE___________________________
+
 @app.route("/", methods=['POST', 'GET'])
 @app.route("/main", methods=['POST', 'GET'])
 @app.route("/home", methods=['POST', 'GET'])
@@ -190,7 +194,10 @@ def test():
 @app.route("/select")
 def select():
     if "yt_link" in session:
-        return render_template("select.html", vid_tit=downloader()[0], vid_img=downloader()[1], buttons=downloader()[2], buttons_aud=downloader()[3])
+        try:
+            return render_template("select.html", vid_tit=downloader()[0], vid_img=downloader()[1], buttons=downloader()[2], buttons_aud=downloader()[3])
+        except:
+            return redirect("/Error")
     else:
         return redirect("/main")
 
