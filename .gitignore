@@ -1,4 +1,11 @@
+# cache folders
 .venv/
 os
 web/
 __pycache__/
+
+# cache files
+threading
+
+# tmp
+note.md

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from flask import Flask, redirect, render_template, url_for, request, session, send_file, after_this_request
 from pytube import YouTube as yt
 from pytube.exceptions import RegexMatchError
@@ -9,6 +11,7 @@ import threading
 
 app = Flask(__name__)
 
+cmd("which python", shell=True)
 
 
 #### CONFIG VARIABLES ####
