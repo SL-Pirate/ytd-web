@@ -190,10 +190,9 @@ def home():
 def not_found():
     return render_template("error.html")
 
-@app.route("/test")
-def test():
-    reso = request.args.get("reso")
-    return f"test pass. this works. {reso}"
+@app.route("/Error2")
+def went_wrong():
+    return render_template("error2.html")
 
 @app.route("/select")
 def select():
@@ -202,6 +201,8 @@ def select():
             return render_template("select.html", vid_tit=downloader()[0], vid_img=downloader()[1], buttons=downloader()[2], buttons_aud=downloader()[3])
         except RegexMatchError:
             return redirect("/Error")
+        except TypeError:
+            return redirect("/Error2")
     else:
         return redirect("/main")
 
