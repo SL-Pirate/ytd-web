@@ -5,6 +5,10 @@
     </head>
     <body>
         <p>Something went wrong. Please check the URL and try again in a moment</p>
+        <p>This is what went wrong:</p>
+        <ul><li>
+            <p style="color: red;">{{error_code}}</p>
+        </li></ul>
         <br>
         <a href="{{url_for('home')}}">home</a>
     </body>

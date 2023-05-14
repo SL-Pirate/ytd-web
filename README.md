@@ -9,7 +9,15 @@
 ### dependancies 
 - flask
 - pytube
+- requests
 - ffmpeg
+
+#### install dependancies using pip
+`pip install flask pytube requests`
+
+#### installing ffmpeg
+ - Installation process of ffmpeg may vary depending on your operating system
+ - for more information visit [downloads page of ffmpeg's official site](https://ffmpeg.org/download.html)
 
 ### Setup instructions on a development server
 ```bash
