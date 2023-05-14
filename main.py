@@ -23,6 +23,8 @@ keep_time = config["DEFAULT"]['keep_time']
 config.read('secrets.key')
 googleApiKey = config['googleApiKey']['key']
 
+app.secret_key = config["session"]['key']
+
 num_vids = 0
 
 def getName():
@@ -44,15 +46,6 @@ def cleanFunc(item):
 def clean(item):
     clean_thread = threading.Thread(target=cleanFunc, args=(item, ))
     clean_thread.start()
-
-# # Formatting video file titles to remove invalid characters for ffmpeg
-# def getFormattedTitle(unformatted_title) :
-#         tit = unformatted_title
-#         tit = tit.replace(".", "")
-#         tit = tit.replace(":", "")
-#         tit = tit.replace("|", "")
-        
-#         return f"{tit}.mp4"
 
 def downloader():
     link = session['yt_link']
@@ -251,5 +244,4 @@ def select():
         return redirect("/main")
 
 if __name__ == "__main__":
-    app.secret_key = 'DqdZrlQE+hyrg?SSEn@N0jPb8/>&`7'
     app.run(debug=False)
