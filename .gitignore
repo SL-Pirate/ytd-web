@@ -9,3 +9,6 @@ threading
 
 # tmp
 note.md
+
+# api keys
+secrets.key

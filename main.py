@@ -10,22 +10,18 @@ from time import sleep
 import threading
 import requests
 from search_result import SearchResult
+from configparser import ConfigParser
 
 app = Flask(__name__)
 
-#### CONFIG VARIABLES ####
-# Maximum number of videos that can exists.
-# This number should be adjusted according to the requirement and capabilities (mostly Disk space capacity) of the host machiene
-max_vids = 1
+config = ConfigParser()
+config.read('server.cfg')
+max_vids = config['DEFAULT']['max_vids']
+keep_time = config["DEFAULT"]['keep_time']
 
-# Time duration a particular downloadable video file is kept on the host system (in minuites).
-# This value should be set depending on the usage and the disk space capabilities.
-keep_time = 1
-
-# your google API key for accessing youtube data api
-googleApiKey = "AIzaSyAFWTN9fJYm6AkwqR4YBkUgVmPv5ye9-P8"
-############################
-
+# google API key for accessing youtube data api
+config.read('secrets.key')
+googleApiKey = config['googleApiKey']['key']
 
 num_vids = 0
 
@@ -173,7 +169,7 @@ def file_get_aud():
 
 @app.route("/browse")
 def browse():
-    # try:
+    try:
         # Getting user's region code
         region_code = "US" # defaulting to US
         user_ip = request.remote_addr
@@ -187,7 +183,6 @@ def browse():
         response = requests.get(request_url)
         if response:
             result = response.json()
-            # print(result)
 
             # decoding the json
             search_results = result['items']
@@ -204,13 +199,9 @@ def browse():
             print(search_result_objs)
             return render_template("browse.html", search_term=session['search_term'], results=search_result_objs)
         else:
-            # return redirect("/Error")
-            pass
-    # except Exception as e:
-    #     try:
-    #         return redirect(url_for("/Error2", error_code=e))
-    #     except Exception:
-    #         return redirect("/Error")
+            return redirect("/Error")
+    except Exception:
+        return redirect("/Error")
 
 # _____________________HOME PAGE___________________________
 

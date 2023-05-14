@@ -13,6 +13,17 @@
 - requests
 - ffmpeg
 
+### Setup instructions on a development server
+#### Clone the project to local server
+```bash
+git clone https://github.com/SL-Pirate/ytd-web.git
+cd ytd-web
+```
+#### Configurarion
+- Open `server.cfg` and edit
+  - max_vids
+  - keep_time
+- rename `secrets.key.example` to `secrets.key` and add your Google Api key which has YouTube data api enabled
 #### install dependancies using pip
 `pip install flask pytube requests`
 
@@ -20,17 +31,9 @@
  - Installation process of ffmpeg may vary depending on your operating system
  - for more information visit [downloads page of ffmpeg's official site](https://ffmpeg.org/download.html)
 
-### Setup instructions on a development server
+#### Start the server with
 ```bash
-git clone https://github.com/SL-Pirate/ytd-web.git
-cd ytd-web
-`pip install flask pytube requests`
 python ./main.py
 ```
 
-- open up a browser and go to 192.168.8.150:5000
-
-### Configurarion
-- Open ```main.py``` and edit
-  - max_vids
-  - keep_time
+- site will be loaded on localhost:5000
