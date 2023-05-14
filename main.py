@@ -8,11 +8,10 @@ from os import mkdir
 import os
 from time import sleep
 import threading
+import requests
+from search_result import SearchResult
 
 app = Flask(__name__)
-
-cmd("which python", shell=True)
-
 
 #### CONFIG VARIABLES ####
 # Maximum number of videos that can exists.
@@ -23,7 +22,8 @@ max_vids = 1
 # This value should be set depending on the usage and the disk space capabilities.
 keep_time = 1
 
-
+# your google API key for accessing youtube data api
+googleApiKey = "AIzaSyAFWTN9fJYm6AkwqR4YBkUgVmPv5ye9-P8"
 ############################
 
 
@@ -168,7 +168,49 @@ def file_get_aud():
         return send_file(audio_file, as_attachment=True)
     except FileNotFoundError as e:
         return render_template("went_wrong.html", exception=e)
+    
+# _____________________Search Video Page____________________
 
+@app.route("/browse")
+def browse():
+    # try:
+        # Getting user's region code
+        region_code = "US" # defaulting to US
+        user_ip = request.remote_addr
+        try:
+            location_response = requests.get(f"https://ipinfo.io/{user_ip}/json")
+            if location_response:
+                region_code = location_response.json()['country']
+        except Exception:
+            pass
+        request_url = f"https://youtube.googleapis.com/youtube/v3/search?part=id%2Csnippet&maxResults=5&q={session['search_term']}&regionCode={region_code}&type=video&key={googleApiKey}"
+        response = requests.get(request_url)
+        if response:
+            result = response.json()
+            # print(result)
+
+            # decoding the json
+            search_results = result['items']
+            search_result_objs = list()
+            for search_result in search_results:
+                search_result_objs.append(SearchResult(
+                    search_result['id']['videoId'], 
+                    search_result['snippet']['title'], 
+                    # description=search_result['snippet']['description'], 
+                    thumbnail_link=search_result['snippet']['thumbnails']['high']['url'],
+                    channel_name=search_result['snippet']['channelTitle']
+                ))
+
+            print(search_result_objs)
+            return render_template("browse.html", search_term=session['search_term'], results=search_result_objs)
+        else:
+            # return redirect("/Error")
+            pass
+    # except Exception as e:
+    #     try:
+    #         return redirect(url_for("/Error2", error_code=e))
+    #     except Exception:
+    #         return redirect("/Error")
 
 # _____________________HOME PAGE___________________________
 
@@ -183,6 +225,15 @@ def home():
         else:
             session['yt_link'] = yt_link
             return redirect("/select")
+    elif request.method == "GET":
+        try:
+            yt_link = request.args.get('link')
+            if yt_link == None or yt_link == "":
+                return render_template("index.html")
+            session['yt_link'] = yt_link
+            return redirect("/select")
+        except ValueError:
+            return render_template("index.html")
     else:
         return render_template("index.html")
 
@@ -191,8 +242,8 @@ def not_found():
     return render_template("error.html")
 
 @app.route("/Error2")
-def went_wrong():
-    return render_template("error2.html")
+def went_wrong(error_code):
+    return render_template("error2.html", error_code=error_code)
 
 @app.route("/select")
 def select():
@@ -200,12 +251,14 @@ def select():
         try:
             return render_template("select.html", vid_tit=downloader()[0], vid_img=downloader()[1], buttons=downloader()[2], buttons_aud=downloader()[3])
         except RegexMatchError:
-            return redirect("/Error")
-        except TypeError:
-            return redirect("/Error2")
+            session['search_term'] = session['yt_link']
+            return redirect("/browse")
+        except Exception as e:
+            # return redirect("/Error2", error_code=e)
+            pass
     else:
         return redirect("/main")
 
 if __name__ == "__main__":
     app.secret_key = 'DqdZrlQE+hyrg?SSEn@N0jPb8/>&`7'
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=False)
