@@ -50,6 +50,9 @@ def clean(item):
 def downloader():
     link = session['yt_link']
     yt_vid = yt(link)
+    # if yt_vid.age_restricted:
+    #     print("age restrictedZ")
+    #     raise Exception("video is age restricted")
     tit = yt_vid.title
     img = yt_vid.thumbnail_url
     vid_stream = yt_vid.streams.filter(mime_type="video/mp4")
@@ -187,8 +190,8 @@ def browse():
             return render_template("browse.html", search_term=session['search_term'], results=search_result_objs)
         else:
             return redirect("/Error")
-    except Exception:
-        return redirect("/Error")
+    except Exception as e:
+        return render_template("went_wrong.html", exception=e)
 
 # _____________________HOME PAGE___________________________
 
@@ -219,10 +222,6 @@ def home():
 def not_found():
     return render_template("error.html")
 
-@app.route("/Error2")
-def went_wrong(error_code):
-    return render_template("error2.html", error_code=error_code)
-
 @app.route("/select")
 def select():
     if "yt_link" in session:
@@ -233,7 +232,7 @@ def select():
             session['search_term'] = session['yt_link']
             return redirect("/browse")
         except Exception as e:
-            return redirect("/Error")
+            return render_template("went_wrong.html", exception=e)
             
     else:
         return redirect("/main")
