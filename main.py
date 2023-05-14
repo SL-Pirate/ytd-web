@@ -16,8 +16,8 @@ app = Flask(__name__)
 
 config = ConfigParser()
 config.read('server.cfg')
-max_vids = config['DEFAULT']['max_vids']
-keep_time = config["DEFAULT"]['keep_time']
+max_vids = int(config['DEFAULT']['max_vids'])
+keep_time = int(config["DEFAULT"]['keep_time'])
 
 # google API key for accessing youtube data api
 config.read('secrets.key')
