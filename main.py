@@ -50,36 +50,26 @@ def clean(item):
 def downloader():
     link = session['yt_link']
     yt_vid = yt(link)
-    t=5
-    while t > 0:
-        try:
-            tit = yt_vid.title
-            img = yt_vid.thumbnail_url
-            vid_stream = yt_vid.streams.filter(mime_type="video/mp4")
-            aud_stream = yt_vid.streams.filter(type="audio")
+    tit = yt_vid.title
+    img = yt_vid.thumbnail_url
+    vid_stream = yt_vid.streams.filter(mime_type="video/mp4")
+    aud_stream = yt_vid.streams.filter(type="audio")
 
-            button_set = {}
-            button_set = set()
-            for stream in vid_stream:
-               button_set.add(str(stream.resolution))
-            buttons = list(button_set)
-            buttons.sort()
+    button_set = {}
+    button_set = set()
+    for stream in vid_stream:
+        button_set.add(str(stream.resolution))
+    buttons = list(button_set)
+    buttons.sort()
 
-            button_set_audio = {}
-            button_set_audio = set()
-            for stream in aud_stream:
-               button_set_audio.add(str(stream.abr))
-            buttons_audio = list(button_set_audio)
-            buttons_audio.sort()
+    button_set_audio = {}
+    button_set_audio = set()
+    for stream in aud_stream:
+        button_set_audio.add(str(stream.abr))
+    buttons_audio = list(button_set_audio)
+    buttons_audio.sort()
 
-            break
-        except:
-            t -= 1
-            if t==0:
-                return redirect ("/Error")
-            else:
-                continue
-    return tit, img, buttons, buttons_audio, yt_vid
+    return tit, img, buttons, buttons_audio, link
 
 @app.route("/video")
 def download_vid():
@@ -94,7 +84,7 @@ def download_aud():
 @app.route("/download")
 def export():
     reso = session['reso']
-    yt_vid = downloader()[4]
+    yt_vid = yt(session['video'][4])
     vid_file = yt_vid.streams.filter(res=str(reso)).first()
     aud_file = yt_vid.streams.filter(only_audio=True).first()
     name = getName()
@@ -113,9 +103,9 @@ def export():
         #convert(stream)
         ffmpeg_command = 'ffmpeg -i "'+str(in_vid)+'/'+str(stream)+'" -i "'+str(in_aud)+'/'+str(stream)+'" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -y "'+str(out)+'/'+str(stream)+'"'
         cmd(str(ffmpeg_command) ,shell=True)
-        os.rename(out + '/' + stream, out + '/' + downloader()[0] + ".mp4")
-        clean(out + '/' + downloader()[0] + ".mp4")
-        return render_template("get_file.html")
+        os.rename(out + '/' + stream, out + '/' + session['video'][0] + ".mp4")
+        clean(out + '/' + session['video'][0] + ".mp4")
+        return render_template("get_file.html", file_link="file_get", keep_time=keep_time)
     except FileNotFoundError as e:
         return render_template("went_wrong.html", exception=e)
         
@@ -123,7 +113,7 @@ def export():
 @app.route("/download_aud")
 def export_aud():
     qual = session['qual']
-    yt_vid = downloader()[4]
+    yt_vid = yt(session['video'][4])
     aud_file = yt_vid.streams.filter(abr=str(qual)).first()
     loc = "./web/yt_temp/aud"
     out_file = aud_file.download(loc)
@@ -138,24 +128,28 @@ def export_aud():
         except Exception as e:
             return render_template("went_wrong.html", exception=e)
     clean(new_file)
-    return render_template("get_file_aud.html")
+    return render_template("get_file.html", file_link="file_get_aud", keep_time=keep_time)
 
 @app.route("/get")
 def file_get():
-    tit = downloader()[0]
+    tit = session['video'][0]
     try:
         down_file = f"web/yt_temp/final/{tit}.mp4"
         return send_file(down_file, as_attachment=True)
+    except FileNotFoundError as e:
+        return render_template("link_expired.html")
     except Exception as e:
         return render_template("went_wrong.html", exception=e)
 
 @app.route("/get_aud")
 def file_get_aud():
-    tit = downloader()[0]
+    tit = session['video'][0]
     try:
         audio_file = f'web/yt_temp/aud/{tit}.mp3'
         return send_file(audio_file, as_attachment=True)
     except FileNotFoundError as e:
+        return render_template("link_expired.html")
+    except Exception as e:
         return render_template("went_wrong.html", exception=e)
     
 # _____________________Search Video Page____________________
@@ -233,15 +227,16 @@ def went_wrong(error_code):
 def select():
     if "yt_link" in session:
         try:
-            return render_template("select.html", vid_tit=downloader()[0], vid_img=downloader()[1], buttons=downloader()[2], buttons_aud=downloader()[3])
+            session['video'] = downloader()
+            return render_template("select.html", vid_tit=session['video'][0], vid_img=session['video'][1], buttons=session['video'][2], buttons_aud=session['video'][3])
         except RegexMatchError:
             session['search_term'] = session['yt_link']
             return redirect("/browse")
         except Exception as e:
-            # return redirect("/Error2", error_code=e)
-            pass
+            return redirect("/Error")
+            
     else:
         return redirect("/main")
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)

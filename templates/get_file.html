@@ -9,10 +9,10 @@
             height: 30px;
             margin: 100px;
             }
-            p {font-size: 50px;}
         </style>
-        <p>Your download is ready. Click "Download" to proceed</p>
-        <a href="{{url_for('file_get')}}"><button>Download</button></a>
+        <p style="font-size: 50px">Your download is ready. Click "Download" to proceed</p>
+        <p>This download link will expire withing {{keep_time}} minuites</p>
+        <a href="{{url_for(file_link)}}"><button>Download</button></a>
         <br>
         <a href="{{url_for('home')}}">home</a>
     </body>
