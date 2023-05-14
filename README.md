@@ -24,12 +24,13 @@
 ```bash
 git clone https://github.com/SL-Pirate/ytd-web.git
 cd ytd-web
-python ./ytd.py
+`pip install flask pytube requests`
+python ./main.py
 ```
 
 - open up a browser and go to 192.168.8.150:5000
 
 ### Configurarion
-- Open ```ytd.py``` and edit
+- Open ```main.py``` and edit
   - max_vids
   - keep_time
