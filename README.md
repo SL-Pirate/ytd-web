@@ -4,6 +4,7 @@
 
 ## Screenshots
 ![homepage](https://raw.githubusercontent.com/SL-Pirate/ytd-web/main/screenshots/ss1.png)
+![video search page](https://raw.githubusercontent.com/SL-Pirate/ytd-web/main/screenshots/ss5.png)
 ![video description page](https://raw.githubusercontent.com/SL-Pirate/ytd-web/main/screenshots/ss2.png)
 
 ### dependancies 

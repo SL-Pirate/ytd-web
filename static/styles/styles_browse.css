@@ -1,0 +1,36 @@
+.items {
+    border-style: solid;
+    /* display: flex; */
+    justify-content: center;
+    margin: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* li {
+    display: inline;
+} */
+
+/* ol {
+    list-style: none;
+} */
+
+img {
+    height: auto;
+    width: auto;
+    max-width: 500px;
+    max-height: 500px;
+    align-self: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+h1, h2, h3{
+    text-align: center;
+}

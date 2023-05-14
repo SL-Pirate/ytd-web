@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{search_term}}</title>
+        <link rel="stylesheet" href="{{url_for('static', filename='styles/styles_browse.css')}}">
+    </head>
+    <body>
+        <h1>Search results for {{search_term}}</h1>
+        <ol>
+            {%for video in results:%}
+                    <li>
+                        <a href="{{url_for('home', link=video.getLink())}}">
+                            <div class="items">
+                                <h2>{{video.title}}</h2>
+                                <img src="{{video.thumbnail_link}}">
+                                <h3>{{video.channel_name}}</h3>
+                                <p>{{video.description}}</p>
+                            </div>
+                        </a>
+                    </li>
+                <br>
+            {%endfor%}
+        </ol>
+    </body>
+</html>
