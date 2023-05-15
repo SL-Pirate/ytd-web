@@ -237,5 +237,67 @@ def select():
     else:
         return redirect("/main")
 
+# _____________________ API _________________________
+api_key = "some gibberish here"
+@app.route("/get_video", methods=['POST'])
+def getVideo():
+    '''
+        request 
+        {
+            "key": "api key",
+            "video_link": "video link",
+            "resolution": "resolution"
+        }
+
+        response 
+        {
+            "status": status_code,
+            "title": "video title",
+            "resolution": "video resolution",
+            "format": "video format"
+            "download_link": "download_link"
+        }
+    '''
+    if not request.args.keys() & {'key', 'video_link', 'resolution'}:
+        return {'status': 416, 'request': request.args}, 416
+    
+    if request.args.get('key') == api_key:
+        try:
+            reso = request.args.get("resolution")
+            yt_vid = yt(request.args.get("video_link"))
+            vid_file = yt_vid.streams.filter(res=str(reso)).first()
+            aud_file = yt_vid.streams.filter(only_audio=True).first()
+            name = getName()
+            vid_file.download("./web/yt_temp/vid", name)
+            aud_file.download("./web/yt_temp/aud", name)
+            in_vid = "./web/yt_temp/vid"
+            in_aud = "./web/yt_temp/aud"
+            out = "./web/yt_temp/final"
+            try:
+                mkdir(out)
+            except FileExistsError:
+                pass
+
+            try:               
+                stream = name
+                #convert(stream)
+                ffmpeg_command = 'ffmpeg -i "'+str(in_vid)+'/'+str(stream)+'" -i "'+str(in_aud)+'/'+str(stream)+'" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -y "'+str(out)+'/'+str(stream)+'"'
+                cmd(str(ffmpeg_command) ,shell=True)
+                os.rename(out + '/' + stream, out + '/' +  yt_vid.title + ".mp4")
+                clean(out + '/' + yt_vid.title + ".mp4")
+                # return render_template("get_file.html", file_link="file_get", keep_time=keep_time)
+                return {'status': 200, 'title': yt_vid.title, 'resolution': request.args.get('resolution'), 'format': "mp4", 'download_link': url_for("download_from_link", file_name=f"{yt_vid.title}.mp4")}
+            except FileNotFoundError:
+                return {'status': 404}, 404
+        except RegexMatchError:
+            return {'status': 404, 'description': "video not found"}, 404
+    
+    else:
+        return {'status': 401}, 401
+    
+@app.route("/download/path", methods=['GET', 'POST'])
+def download_from_link():
+    return send_file(f"./web/yt_temp/final/{request.args.get('file_name')}", as_attachment=True)
+
 if __name__ == "__main__":
     app.run(debug=True)
