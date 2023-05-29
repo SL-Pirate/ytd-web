@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import Flask, redirect, render_template, url_for, request, session, send_file, after_this_request
+from flask import Flask, redirect, render_template, url_for, request, session, send_file
 from pytube import YouTube as yt
 from pytube.exceptions import RegexMatchError
 from subprocess import run as cmd
@@ -11,17 +11,21 @@ import threading
 import requests
 from search_result import SearchResult
 from configparser import ConfigParser
+from errors import *
+import traceback
 
 app = Flask(__name__)
 
-config = ConfigParser()
-config.read('server.cfg')
-max_vids = int(config['DEFAULT']['max_vids'])
-keep_time = int(config["DEFAULT"]['keep_time'])
-
 # google API key for accessing youtube data api
+config = ConfigParser()
+
 config.read('secrets.key')
 googleApiKey = config['googleApiKey']['key']
+
+config.read('server.cfg')
+max_vids: int = int(config['DEFAULT']['max_vids'])
+keep_time: int = int(config["DEFAULT"]['keep_time'])
+api_server_root: str = config["DEFAULT"]["api_server_root"]
 
 app.secret_key = config["session"]['key']
 
@@ -74,6 +78,15 @@ def downloader():
 
     return tit, img, buttons, buttons_audio, link
 
+def downloader_via_api(yt_link: str, resolution: str):
+    session["yt_link"] = yt_link
+    session["reso"] = resolution
+    yt_vid = yt(yt_link)
+    tit = yt_vid.title
+    img = yt_vid.thumbnail_url
+
+    return tit, img, None, None, yt_link
+
 @app.route("/video")
 def download_vid():
     session['reso'] = request.args.get("reso")
@@ -86,6 +99,13 @@ def download_aud():
 
 @app.route("/download")
 def export():
+    try:
+        process_video()
+        return render_template("get_file.html", file_link="file_get", keep_time=keep_time)
+    except VideoProcessingFailureException as e:
+        return render_template("went_wrong.html", exception=e)
+
+def process_video() -> None:
     reso = session['reso']
     yt_vid = yt(session['video'][4])
     vid_file = yt_vid.streams.filter(res=str(reso)).first()
@@ -108,19 +128,26 @@ def export():
         cmd(str(ffmpeg_command) ,shell=True)
         os.rename(out + '/' + stream, out + '/' + session['video'][0] + ".mp4")
         clean(out + '/' + session['video'][0] + ".mp4")
-        return render_template("get_file.html", file_link="file_get", keep_time=keep_time)
-    except FileNotFoundError as e:
-        return render_template("went_wrong.html", exception=e)
+        
+    except FileNotFoundError:
+        raise VideoProcessingFailureException()
         
 
 @app.route("/download_aud")
 def export_aud():
+    try:
+        process_video()
+        return render_template("get_file.html", file_link="file_get_aud", keep_time=keep_time)
+    except AudioProcessingFailureException as e:
+        return render_template("went_wrong.html", exception=e)
+
+def process_audio() -> None:
     qual = session['qual']
     yt_vid = yt(session['video'][4])
     aud_file = yt_vid.streams.filter(abr=str(qual)).first()
     loc = "./web/yt_temp/aud"
     out_file = aud_file.download(loc)
-    base, ext = os.path.splitext(out_file)
+    base = os.path.splitext(out_file)
     new_file = base + '.mp3'
     try:
         os.rename(out_file, new_file)
@@ -129,9 +156,9 @@ def export_aud():
             os.remove(new_file)
             os.rename(out_file, new_file)
         except Exception as e:
-            return render_template("went_wrong.html", exception=e)
+            raise AudioProcessingFailureException(str(e))
     clean(new_file)
-    return render_template("get_file.html", file_link="file_get_aud", keep_time=keep_time)
+    
 
 @app.route("/get")
 def file_get():
@@ -186,7 +213,6 @@ def browse():
                     channel_name=search_result['snippet']['channelTitle']
                 ))
 
-            print(search_result_objs)
             return render_template("browse.html", search_term=session['search_term'], results=search_result_objs)
         else:
             return redirect("/Error")
@@ -237,7 +263,7 @@ def select():
     else:
         return redirect("/main")
 
-# _____________________ API _________________________
+# _____________________ API FOR DIREC VIDEO DOWNLOADING WITH LINK _________________________
 api_key = "some gibberish here"
 @app.route("/get_video", methods=['POST'])
 def getVideo():
@@ -258,46 +284,32 @@ def getVideo():
             "download_link": "download_link"
         }
     '''
-    if not request.args.keys() & {'key', 'video_link', 'resolution'}:
-        return {'status': 416, 'request': request.args}, 416
+    for item in ("key", "video_link", "resolution"):
+        if item not in request.args.keys():
+            return {'status': 416, 'request': request.args, "description": f"missing key: {item}"}, 416
     
     if request.args.get('key') == api_key:
         try:
-            reso = request.args.get("resolution")
-            yt_vid = yt(request.args.get("video_link"))
-            vid_file = yt_vid.streams.filter(res=str(reso)).first()
-            aud_file = yt_vid.streams.filter(only_audio=True).first()
-            name = getName()
-            vid_file.download("./web/yt_temp/vid", name)
-            aud_file.download("./web/yt_temp/aud", name)
-            in_vid = "./web/yt_temp/vid"
-            in_aud = "./web/yt_temp/aud"
-            out = "./web/yt_temp/final"
+            dl = downloader_via_api(request.args.get("video_link"), request.args.get("resolution"))
+            session["video"] = dl
             try:
-                mkdir(out)
-            except FileExistsError:
-                pass
-
-            try:               
-                stream = name
-                #convert(stream)
-                ffmpeg_command = 'ffmpeg -i "'+str(in_vid)+'/'+str(stream)+'" -i "'+str(in_aud)+'/'+str(stream)+'" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -y "'+str(out)+'/'+str(stream)+'"'
-                cmd(str(ffmpeg_command) ,shell=True)
-                os.rename(out + '/' + stream, out + '/' +  yt_vid.title + ".mp4")
-                clean(out + '/' + yt_vid.title + ".mp4")
-                # return render_template("get_file.html", file_link="file_get", keep_time=keep_time)
-                return {'status': 200, 'title': yt_vid.title, 'resolution': request.args.get('resolution'), 'format': "mp4", 'download_link': url_for("download_from_link", file_name=f"{yt_vid.title}.mp4")}
-            except FileNotFoundError:
-                return {'status': 404}, 404
+                process_video()
+                return {'status': 200, 'title': dl[0], 'resolution': request.args.get('resolution'), 'format': "mp4", 'download_link': api_server_root + url_for("download_from_link", file_name=f"{dl[0]}.mp4")}
+            except AttributeError:
+                return {'status': 404, 'description': "Resolution " + request.args.get("resolution") + " not found"}
+            except Exception as e:
+                print(traceback.format_exc())
+                return {'status': 500,"description": str(e)}, 500
         except RegexMatchError:
-            return {'status': 404, 'description': "video not found"}, 404
+            return {'status': 404, 'description': "Invalid URL"}, 404
     
     else:
-        return {'status': 401}, 401
+        return {'status': 401,"description": "Invalid API Key"}, 401
     
-@app.route("/download/path", methods=['GET', 'POST'])
+@app.route("/download/path", methods=['GET'])
 def download_from_link():
     return send_file(f"./web/yt_temp/final/{request.args.get('file_name')}", as_attachment=True)
 
+# for testing purposes
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
