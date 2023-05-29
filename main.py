@@ -89,21 +89,30 @@ def downloader_via_api(yt_link: str, resolution: str):
 
 @app.route("/video")
 def download_vid():
-    session['reso'] = request.args.get("reso")
-    return render_template("downloading.html")
+    if ("yt_link" in session.keys()):
+        session['reso'] = request.args.get("reso")
+        return render_template("downloading.html")
+    else:
+        return redirect("/home")
 
 @app.route("/audio")
 def download_aud():
-    session['qual'] = request.args.get("qual")
-    return render_template("downloading_aud.html")
+    if ("yt_link" in session.keys()):
+        session['qual'] = request.args.get("qual")
+        return render_template("downloading_aud.html")
+    else:
+        return redirect("/home")
 
 @app.route("/download")
 def export():
-    try:
-        process_video()
-        return render_template("get_file.html", file_link="file_get", keep_time=keep_time)
-    except VideoProcessingFailureException as e:
-        return render_template("went_wrong.html", exception=e)
+    if ("yt_link" in session.keys()):
+        try:
+            process_video()
+            return render_template("get_file.html", file_link="file_get", keep_time=keep_time)
+        except VideoProcessingFailureException as e:
+            return render_template("went_wrong.html", exception=e)
+    else:
+        return redirect("/home")
 
 def process_video() -> None:
     reso = session['reso']
@@ -135,11 +144,14 @@ def process_video() -> None:
 
 @app.route("/download_aud")
 def export_aud():
-    try:
-        process_video()
-        return render_template("get_file.html", file_link="file_get_aud", keep_time=keep_time)
-    except AudioProcessingFailureException as e:
-        return render_template("went_wrong.html", exception=e)
+    if ("yt_link" in session.keys()):
+        try:
+            process_video()
+            return render_template("get_file.html", file_link="file_get_aud", keep_time=keep_time)
+        except AudioProcessingFailureException as e:
+            return render_template("went_wrong.html", exception=e)
+    else:
+        return redirect("/home")
 
 def process_audio() -> None:
     qual = session['qual']
@@ -158,66 +170,76 @@ def process_audio() -> None:
         except Exception as e:
             raise AudioProcessingFailureException(str(e))
     clean(new_file)
+
     
 
 @app.route("/get")
 def file_get():
-    tit = session['video'][0]
-    try:
-        down_file = f"web/yt_temp/final/{tit}.mp4"
-        return send_file(down_file, as_attachment=True)
-    except FileNotFoundError as e:
-        return render_template("link_expired.html")
-    except Exception as e:
-        return render_template("went_wrong.html", exception=e)
+    if ("yt_link" in session.keys()):
+        tit = session['video'][0]
+        try:
+            down_file = f"web/yt_temp/final/{tit}.mp4"
+            return send_file(down_file, as_attachment=True)
+        except FileNotFoundError as e:
+            return render_template("link_expired.html")
+        except Exception as e:
+            return render_template("went_wrong.html", exception=e)
+    else:
+        return redirect("/home")
 
 @app.route("/get_aud")
 def file_get_aud():
-    tit = session['video'][0]
-    try:
-        audio_file = f'web/yt_temp/aud/{tit}.mp3'
-        return send_file(audio_file, as_attachment=True)
-    except FileNotFoundError as e:
-        return render_template("link_expired.html")
-    except Exception as e:
-        return render_template("went_wrong.html", exception=e)
+    if ("yt_link" in session.keys()):
+        tit = session['video'][0]
+        try:
+            audio_file = f'web/yt_temp/aud/{tit}.mp3'
+            return send_file(audio_file, as_attachment=True)
+        except FileNotFoundError as e:
+            return render_template("link_expired.html")
+        except Exception as e:
+            return render_template("went_wrong.html", exception=e)
+    else:
+        return redirect("/home")
     
 # _____________________Search Video Page____________________
 
 @app.route("/browse")
 def browse():
-    try:
-        # Getting user's region code
-        region_code = "US" # defaulting to US
-        user_ip = request.remote_addr
+    if ("search_term" in session.keys()):
         try:
-            location_response = requests.get(f"https://ipinfo.io/{user_ip}/json")
-            if location_response:
-                region_code = location_response.json()['country']
-        except Exception:
-            pass
-        request_url = f"https://youtube.googleapis.com/youtube/v3/search?part=id%2Csnippet&maxResults=5&q={session['search_term']}&regionCode={region_code}&type=video&key={googleApiKey}"
-        response = requests.get(request_url)
-        if response:
-            result = response.json()
+            # Getting user's region code
+            region_code = "US" # defaulting to US
+            user_ip = request.remote_addr
+            try:
+                location_response = requests.get(f"https://ipinfo.io/{user_ip}/json")
+                if location_response:
+                    region_code = location_response.json()['country']
+            except Exception:
+                pass
+            request_url = f"https://youtube.googleapis.com/youtube/v3/search?part=id%2Csnippet&maxResults=5&q={session['search_term']}&regionCode={region_code}&type=video&key={googleApiKey}"
+            response = requests.get(request_url)
+            if response:
+                result = response.json()
 
-            # decoding the json
-            search_results = result['items']
-            search_result_objs = list()
-            for search_result in search_results:
-                search_result_objs.append(SearchResult(
-                    search_result['id']['videoId'], 
-                    search_result['snippet']['title'], 
-                    # description=search_result['snippet']['description'], 
-                    thumbnail_link=search_result['snippet']['thumbnails']['high']['url'],
-                    channel_name=search_result['snippet']['channelTitle']
-                ))
+                # decoding the json
+                search_results = result['items']
+                search_result_objs = list()
+                for search_result in search_results:
+                    search_result_objs.append(SearchResult(
+                        search_result['id']['videoId'], 
+                        search_result['snippet']['title'], 
+                        # description=search_result['snippet']['description'], 
+                        thumbnail_link=search_result['snippet']['thumbnails']['high']['url'],
+                        channel_name=search_result['snippet']['channelTitle']
+                    ))
 
-            return render_template("browse.html", search_term=session['search_term'], results=search_result_objs)
-        else:
-            return redirect("/Error")
-    except Exception as e:
-        return render_template("went_wrong.html", exception=e)
+                return render_template("browse.html", search_term=session['search_term'], results=search_result_objs)
+            else:
+                return redirect("/Error")
+        except Exception as e:
+            return render_template("went_wrong.html", exception=e)
+    else:
+        return redirect("/home")
 
 # _____________________HOME PAGE___________________________
 
@@ -246,7 +268,10 @@ def home():
 
 @app.route("/Error")
 def not_found():
-    return render_template("error.html")
+    if ("yt_link" in session.keys()):
+        return render_template("error.html")
+    else: 
+        return redirect("/home")
 
 @app.route("/select")
 def select():
