@@ -9,7 +9,7 @@
         <ol>
             {%for video in results:%}
                     <li>
-                        <a href="{{url_for('home', link=video.getLink())}}">
+                        <a href="{{url_for('search', link=video.getLink())}}">
                             <div class="items">
                                 <h2>{{video.title}}</h2>
                                 <img src="{{video.thumbnail_link}}">

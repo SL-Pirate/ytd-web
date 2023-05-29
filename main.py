@@ -203,9 +203,10 @@ def file_get_aud():
     
 # _____________________Search Video Page____________________
 
-@app.route("/browse")
+@app.route("/browse", methods=["GET"])
 def browse():
-    if ("search_term" in session.keys()):
+    print(request.args.get("q"))
+    if (request.args.get("q") != None and request.args.get("q") != ""):
         try:
             # Getting user's region code
             region_code = "US" # defaulting to US
@@ -216,7 +217,7 @@ def browse():
                     region_code = location_response.json()['country']
             except Exception:
                 pass
-            request_url = f"https://youtube.googleapis.com/youtube/v3/search?part=id%2Csnippet&maxResults=5&q={session['search_term']}&regionCode={region_code}&type=video&key={googleApiKey}"
+            request_url = f"https://youtube.googleapis.com/youtube/v3/search?part=id%2Csnippet&maxResults=5&q={request.args.get('q')}&regionCode={region_code}&type=video&key={googleApiKey}"
             response = requests.get(request_url)
             if response:
                 result = response.json()
@@ -233,7 +234,7 @@ def browse():
                         channel_name=search_result['snippet']['channelTitle']
                     ))
 
-                return render_template("browse.html", search_term=session['search_term'], results=search_result_objs)
+                return render_template("browse.html", q=request.args.get('q'), results=search_result_objs)
             else:
                 return redirect("/Error")
         except Exception as e:
@@ -243,28 +244,25 @@ def browse():
 
 # _____________________HOME PAGE___________________________
 
-@app.route("/", methods=['POST', 'GET'])
-@app.route("/main", methods=['POST', 'GET'])
-@app.route("/home", methods=['POST', 'GET'])
+@app.route("/", methods=["GET"])
+@app.route("/main", methods=["GET"])
+@app.route("/home", methods=["GET"])
 def home():
-    if request.method == 'POST':
-        yt_link = request.form['link']
-        if yt_link == "":
-            return redirect("#")
-        else:
-            session['yt_link'] = yt_link
-            return redirect("/select")
-    elif request.method == "GET":
+    return render_template("index.html")
+
+@app.route("/search", methods=["GET"])
+def search():
+    if (request.args.get("link") != None and request.args.get("link") != ""):
+        yt_link = request.args.get("link")
+        session["yt_link"] = yt_link
         try:
-            yt_link = request.args.get('link')
-            if yt_link == None or yt_link == "":
-                return render_template("index.html")
-            session['yt_link'] = yt_link
-            return redirect("/select")
-        except ValueError:
-            return render_template("index.html")
+            yt(yt_link)
+            return redirect(url_for("select", link=yt_link))
+        except RegexMatchError:
+            print(yt_link)
+            return redirect(url_for("browse", q=yt_link))
     else:
-        return render_template("index.html")
+        return redirect("/home")
 
 @app.route("/Error")
 def not_found():
@@ -273,15 +271,16 @@ def not_found():
     else: 
         return redirect("/home")
 
-@app.route("/select")
+@app.route("/select", methods=["GET"])
 def select():
-    if "yt_link" in session:
+    if (request.args.get("link") != None and request.args.get("link") != ""):
+        session["yt_link"] = request.args.get("link")
         try:
             session['video'] = downloader()
             return render_template("select.html", vid_tit=session['video'][0], vid_img=session['video'][1], buttons=session['video'][2], buttons_aud=session['video'][3])
         except RegexMatchError:
-            session['search_term'] = session['yt_link']
-            return redirect("/browse")
+            # session['q'] = session['yt_link']
+            return redirect(url_for("browse", q=session["yt_link"]))
         except Exception as e:
             return render_template("went_wrong.html", exception=e)
             
