@@ -172,7 +172,7 @@ def process_audio() -> None:
         out_path = "web/yt_temp/aud"
         out: str = aud_file.download(out_path)
         pre, ext = os.path.splitext(out)
-        out_file = out.replace(".mp4", ".mp3")
+        out_file = out.replace(ext, ".mp3")
         try:
             os.rename(out, pre + ".mp3")
         except FileExistsError:
@@ -180,10 +180,12 @@ def process_audio() -> None:
             os.rename(out, pre + ".mp3")
 
         session['out_file'] = out_file
+        print(out)
+        print(out_file)
     except Exception as e:
         raise AudioProcessingFailureException(str(e))
 
-    clean(out)
+    clean(out_file)
 
     
 
@@ -203,6 +205,7 @@ def file_get():
 def file_get_aud():
     if ("yt_link" in session.keys()):
         try:
+            print(session['out_file'])
             return send_file(session['out_file'], as_attachment=True)
         except FileNotFoundError as e:
             return render_template("link_expired.html")
