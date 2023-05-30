@@ -21,6 +21,7 @@ config = ConfigParser()
 
 config.read('secrets.key')
 googleApiKey = config['googleApiKey']['key']
+api_key = config['self_api']['key']
 
 config.read('server.cfg')
 max_vids: int = int(config['DEFAULT']['max_vids'])
@@ -54,9 +55,6 @@ def clean(item):
 def downloader():
     link = session['yt_link']
     yt_vid = yt(link)
-    # if yt_vid.age_restricted:
-    #     print("age restrictedZ")
-    #     raise Exception("video is age restricted")
     tit = yt_vid.title
     img = yt_vid.thumbnail_url
     vid_stream = yt_vid.streams.filter(mime_type="video/mp4")
@@ -76,7 +74,7 @@ def downloader():
     buttons_audio = list(button_set_audio)
     buttons_audio.sort()
 
-    return tit, img, buttons, buttons_audio, link
+    return [tit, img, buttons, buttons_audio, link]
 
 def downloader_via_api(yt_link: str, resolution: str):
     session["yt_link"] = yt_link
@@ -140,6 +138,8 @@ def process_video() -> None:
         
     except FileNotFoundError:
         raise VideoProcessingFailureException()
+    except Exception as e:
+        raise VideoProcessingFailureException(str(e))
         
 
 @app.route("/download_aud")
@@ -159,9 +159,18 @@ def process_audio() -> None:
         yt_vid = yt(session['video'][4])
         aud_file = yt_vid.streams.filter(abr=str(qual)).first()
         out_path = "web/yt_temp/aud"
-        out = aud_file.download(out_path)
-    except Exception:
-        raise AudioProcessingFailureException()
+        out: str = aud_file.download(out_path)
+        pre, ext = os.path.splitext(out)
+        out_file = out.replace(".mp4", ".mp3")
+        try:
+            os.rename(out, pre + ".mp3")
+            session['out_file'] = out_file
+        except FileExistsError:
+            os.remove(out_file)
+            os.rename(out, pre + ".mp3")
+            session['out_file'] = out_file
+    except Exception as e:
+        raise AudioProcessingFailureException(str(e))
 
     clean(out)
 
@@ -184,9 +193,8 @@ def file_get():
 @app.route("/get_aud")
 def file_get_aud():
     if ("yt_link" in session.keys()):
-        tit = session['video'][0]
         try:
-            audio_file = f'web/yt_temp/aud/{tit}.mp3'
+            audio_file = session['out_file']
             return send_file(audio_file, as_attachment=True)
         except FileNotFoundError as e:
             return render_template("link_expired.html")
@@ -280,7 +288,7 @@ def select():
         return redirect("/main")
 
 # _____________________ API FOR DIREC VIDEO DOWNLOADING WITH LINK _________________________
-api_key = "some gibberish here"
+# api_key = 
 @app.route("/get_video", methods=['POST'])
 def getVideo():
     '''
