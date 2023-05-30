@@ -118,11 +118,18 @@ def process_video() -> None:
     vid_file = yt_vid.streams.filter(res=str(reso)).first()
     aud_file = yt_vid.streams.filter(only_audio=True).first()
     name = getName()
-    vid_file.download("./web/yt_temp/vid", name)
-    aud_file.download("./web/yt_temp/aud", name)
     in_vid = "./web/yt_temp/vid"
     in_aud = "./web/yt_temp/aud"
     out = "./web/yt_temp/final"
+    out_file = vid_file.download(in_vid)
+    session['out_file'] = out_file
+    try:
+        os.rename(out_file, in_vid + "/" + name)
+    except FileExistsError:
+        os.remove(in_vid + name)
+        os.rename(out_file, in_vid + "/" + name)
+    aud_file.download(in_aud, name)
+
     try:
         mkdir(out)
     except FileExistsError:
@@ -133,8 +140,12 @@ def process_video() -> None:
         #convert(stream)
         ffmpeg_command = 'ffmpeg -i "'+str(in_vid)+'/'+str(stream)+'" -i "'+str(in_aud)+'/'+str(stream)+'" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -y "'+str(out)+'/'+str(stream)+'"'
         cmd(str(ffmpeg_command) ,shell=True)
-        os.rename(out + '/' + stream, out + '/' + session['video'][0] + ".mp4")
-        clean(out + '/' + session['video'][0] + ".mp4")
+        try:
+            os.rename(out + '/' + name, out_file)
+        except FileExistsError:
+            os.remove(out_file)
+            os.rename(out + '/' + name, out_file)
+        clean(out_file)
         
     except FileNotFoundError:
         raise VideoProcessingFailureException()
@@ -164,11 +175,11 @@ def process_audio() -> None:
         out_file = out.replace(".mp4", ".mp3")
         try:
             os.rename(out, pre + ".mp3")
-            session['out_file'] = out_file
         except FileExistsError:
             os.remove(out_file)
             os.rename(out, pre + ".mp3")
-            session['out_file'] = out_file
+
+        session['out_file'] = out_file
     except Exception as e:
         raise AudioProcessingFailureException(str(e))
 
@@ -179,10 +190,8 @@ def process_audio() -> None:
 @app.route("/get")
 def file_get():
     if ("yt_link" in session.keys()):
-        tit = session['video'][0]
         try:
-            down_file = f"web/yt_temp/final/{tit}.mp4"
-            return send_file(down_file, as_attachment=True)
+            return send_file(session['out_file'], as_attachment=True)
         except FileNotFoundError as e:
             return render_template("link_expired.html")
         except Exception as e:
@@ -194,8 +203,7 @@ def file_get():
 def file_get_aud():
     if ("yt_link" in session.keys()):
         try:
-            audio_file = session['out_file']
-            return send_file(audio_file, as_attachment=True)
+            return send_file(session['out_file'], as_attachment=True)
         except FileNotFoundError as e:
             return render_template("link_expired.html")
         except Exception as e:
@@ -318,7 +326,10 @@ def getVideo():
             session["video"] = dl
             try:
                 process_video()
-                return {'status': 200, 'title': dl[0], 'resolution': request.args.get('resolution'), 'format': "mp4", 'download_link': api_server_root + url_for("download_from_link", file_name=f"{dl[0]}.mp4")}
+                out_file = session['out_file']
+                print(out_file)
+                pre, ext = os.path.splitext(out_file)
+                return {'status': 200, 'title': dl[0], 'resolution': request.args.get('resolution'), 'format': ext, 'download_link': api_server_root + url_for("download_from_link", file_name=out_file), "link expire duration": str(keep_time) + " minutes"}
             except AttributeError:
                 return {'status': 404, 'description': "Resolution " + request.args.get("resolution") + " not found"}
             except Exception as e:
@@ -332,8 +343,8 @@ def getVideo():
     
 @app.route("/download/path", methods=['GET'])
 def download_from_link():
-    return send_file(f"./web/yt_temp/final/{request.args.get('file_name')}", as_attachment=True)
+    return send_file(request.args.get('file_name'), as_attachment=True)
 
 # for testing purposes
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5000, host="0.0.0.0")
