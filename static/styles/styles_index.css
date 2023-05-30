@@ -1,18 +1,21 @@
 body {text-align: center;
-font-size: 50px;
+    font-size: 50px;
 }
 
 .para {text-align: center;
-font-size: 25px;
+        font-size: 25px;
 }
 
 .searchbar {font-family: "Roboto";
-font-size: 30px;
-text-align: center;
-width: 75%;
+    font-size: 30px;
+    text-align: center;
+    width: 75%;
+    border-radius: 50px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .bttons {height:30px;
-width: 200px;
-font-size: 20px;
+    width: 200px;
+    font-size: 20px;
 }
