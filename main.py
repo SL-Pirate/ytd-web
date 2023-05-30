@@ -154,22 +154,16 @@ def export_aud():
         return redirect("/home")
 
 def process_audio() -> None:
-    qual = session['qual']
-    yt_vid = yt(session['video'][4])
-    aud_file = yt_vid.streams.filter(abr=str(qual)).first()
-    loc = "./web/yt_temp/aud"
-    out_file = aud_file.download(loc)
-    base = os.path.splitext(out_file)
-    new_file = base[0] + '.mp3'
     try:
-        os.rename(out_file, new_file)
-    except FileExistsError:
-        try:
-            os.remove(new_file)
-            os.rename(out_file, new_file)
-        except Exception as e:
-            raise AudioProcessingFailureException(str(e))
-    clean(new_file)
+        qual = session['qual']
+        yt_vid = yt(session['video'][4])
+        aud_file = yt_vid.streams.filter(abr=str(qual)).first()
+        out_path = "web/yt_temp/aud"
+        out = aud_file.download(out_path)
+    except Exception:
+        raise AudioProcessingFailureException()
+
+    clean(out)
 
     
 
@@ -193,7 +187,6 @@ def file_get_aud():
         tit = session['video'][0]
         try:
             audio_file = f'web/yt_temp/aud/{tit}.mp3'
-            print(tit)
             return send_file(audio_file, as_attachment=True)
         except FileNotFoundError as e:
             return render_template("link_expired.html")
@@ -206,7 +199,6 @@ def file_get_aud():
 
 @app.route("/browse", methods=["GET"])
 def browse():
-    print(request.args.get("q"))
     if (request.args.get("q") != None and request.args.get("q") != ""):
         try:
             # Getting user's region code
@@ -260,7 +252,6 @@ def search():
             yt(yt_link)
             return redirect(url_for("select", link=yt_link))
         except RegexMatchError:
-            print(yt_link)
             return redirect(url_for("browse", q=yt_link))
     else:
         return redirect("/home")
@@ -323,7 +314,7 @@ def getVideo():
             except AttributeError:
                 return {'status': 404, 'description': "Resolution " + request.args.get("resolution") + " not found"}
             except Exception as e:
-                print(traceback.format_exc())
+                # print(traceback.format_exc())
                 return {'status': 500,"description": str(e)}, 500
         except RegexMatchError:
             return {'status': 404, 'description': "Invalid URL"}, 404
