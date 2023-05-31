@@ -52,39 +52,65 @@ def clean(item):
     clean_thread = threading.Thread(target=cleanFunc, args=(item, ))
     clean_thread.start()
 
-def downloader():
-    link = session['yt_link']
+def downloader(
+        link: str=None,
+        resolution: str=None,
+        quality: str=None
+        ) -> list[any]:
+    '''
+        return:
+            [
+                video title: str,
+                link to the thumbnail of the video: str,
+                available video resolutions: list(str),
+                available audio qualities: list(str),
+                video_link: str
+            ]
+    '''
+
+    if (link == None):
+        link = session['yt_link']
+    else:
+        session["yt_link"] = link
+
+    session["reso"] = resolution
+    session['qual'] = quality
     yt_vid = yt(link)
     tit = yt_vid.title
     img = yt_vid.thumbnail_url
-    vid_stream = yt_vid.streams.filter(mime_type="video/mp4")
-    aud_stream = yt_vid.streams.filter(type="audio")
 
-    button_set = {}
-    button_set = set()
-    for stream in vid_stream:
-        button_set.add(str(stream.resolution))
-    buttons = list(button_set)
-    buttons.sort()
+    # Querring resolutions and qualities
+    buttons = None
+    buttons_audio = None
+    if (resolution == None and quality == None):
+        vid_stream = yt_vid.streams.filter(mime_type="video/mp4")
+        aud_stream = yt_vid.streams.filter(type="audio")
 
-    button_set_audio = {}
-    button_set_audio = set()
-    for stream in aud_stream:
-        button_set_audio.add(str(stream.abr))
-    buttons_audio = list(button_set_audio)
-    buttons_audio.sort()
+        button_set = {}
+        button_set = set()
+        for stream in vid_stream:
+            button_set.add(str(stream.resolution))
+        buttons = list(button_set)
+        buttons.sort()
+
+        button_set_audio = {}
+        button_set_audio = set()
+        for stream in aud_stream:
+            button_set_audio.add(str(stream.abr))
+        buttons_audio = list(button_set_audio)
+        buttons_audio.sort()
 
     return [tit, img, buttons, buttons_audio, link]
 
-def downloader_via_api(yt_link: str, resolution: str=None, quality: str=None):
-    session["yt_link"] = yt_link
-    session["reso"] = resolution
-    session['qual'] = quality
-    yt_vid = yt(yt_link)
-    tit = yt_vid.title
-    img = yt_vid.thumbnail_url
+# def downloader_via_api(yt_link: str, resolution: str=None, quality: str=None):
+#     session["yt_link"] = yt_link
+#     session["reso"] = resolution
+#     session['qual'] = quality
+#     yt_vid = yt(yt_link)
+#     tit = yt_vid.title
+#     img = yt_vid.thumbnail_url
 
-    return tit, img, None, None, yt_link
+#     return tit, img, None, None, yt_link
 
 @app.route("/video")
 def download_vid():
@@ -299,18 +325,19 @@ def select():
     else:
         return redirect("/main")
 
+# ____________________________________APIs__________________________________________________
 # _____________________ API FOR DIRECT VIDEO DOWNLOADING WITH LINK _________________________
 @app.route("/get_video", methods=['POST'])
 def getVideo():
     '''
-        request 
+        request
         {
             "key": "api key",
             "video_link": "video link",
             "resolution": "resolution"
         }
 
-        response 
+        response
         {
             "status": status_code,
             "title": "video title",
@@ -322,10 +349,10 @@ def getVideo():
     for item in ("key", "video_link", "resolution"):
         if item not in request.args.keys():
             return {'status': 416, 'request': request.args, "description": f"missing key: {item}"}, 416
-    
+
     if request.args.get('key') == api_key:
         try:
-            dl = downloader_via_api(request.args.get("video_link"), resolution=request.args.get("resolution"))
+            dl = downloader(link=request.args.get("video_link"), resolution=request.args.get("resolution"))
             session["video"] = dl
             try:
                 process_video()
@@ -340,21 +367,22 @@ def getVideo():
                 return {'status': 500,"description": str(e)}, 500
         except RegexMatchError:
             return {'status': 404, 'description': "Invalid URL"}, 404
-    
+
     else:
         return {'status': 401,"description": "Invalid API Key"}, 401
 
+# _____________________ API FOR DIRECT VIDEO DOWNLOADING WITH LINK _________________________
 @app.route("/get_audio", methods=['POST'])
 def getAudio():
     '''
-        request 
+        request
         {
             "key": "api key",
             "video_link": "video link",
             "quality": "quality"
         }
 
-        response 
+        response 200
         {
             "status": status_code,
             "title": "Audio file title",
@@ -362,14 +390,19 @@ def getAudio():
             "format": "audio format"
             "download_link": "download_link"
         }
+        response 400
+        {
+            "status": status_code,
+            "description": "reason for faliure"
+        }
     '''
     for item in ("key", "video_link", "quality"):
         if item not in request.args.keys():
             return {'status': 416, 'request': request.args, "description": f"missing key: {item}"}, 416
-    
+
     if request.args.get('key') == api_key:
         try:
-            dl = downloader_via_api(request.args.get("video_link"), quality=request.args.get("quality"))
+            dl = downloader(link=request.args.get("video_link"), quality=request.args.get("quality"))
             session["video"] = dl
             try:
                 process_audio()
@@ -382,7 +415,52 @@ def getAudio():
                 return {'status': 500,"description": str(e)}, 500
         except RegexMatchError:
             return {'status': 404, 'description': "Invalid URL"}, 404
-    
+
+    else:
+        return {'status': 401,"description": "Invalid API Key"}, 401
+
+# _____________________ API FOR FETCHING AVAILABLE RESOLUTIONS/QUALITIES WITH LINK _________________________
+@app.route("/get_qual", methods=['POST'])
+def getResolution():
+    '''
+        request
+        {
+            "key": "api key",
+            "video_link": "video link"
+        }
+
+        response
+        {
+            "status": status_code,
+            "title": "video title",
+            "available_video_resolutions": ["res1", "res2],
+            "available_audio_qualities": ["qual1", "qual2"]
+        }
+    '''
+    for item in ("key", "video_link"):
+        if item not in request.args.keys():
+            return {'status': 416, 'request': request.args, "description": f"missing key: {item}"}, 416
+
+    if request.args.get('key') == api_key:
+        try:
+            dl = downloader(link=request.args.get("video_link"))
+            session["video"] = dl
+
+            return {'status': 200, 'title': dl[0], 'available_video_resolutions': dl[2], 'available_audio_resolutions': dl[3]}
+            # try:
+            #     process_video()
+            #     out_file = session['out_file']
+            #     print(out_file)
+            #     pre, ext = os.path.splitext(out_file)
+            #     return {'status': 200, 'title': dl[0], 'resolution': request.args.get('resolution'), 'format': ext, 'download_link': api_server_root + url_for("download_from_link", file_name=out_file), "link expire duration": str(keep_time) + " minutes"}
+            # except AttributeError:
+            #     return {'status': 404, 'description': "Resolution " + request.args.get("resolution") + " not found"}
+            # except Exception as e:
+            #     # print(traceback.format_exc())
+            #     return {'status': 500,"description": str(e)}, 500
+        except RegexMatchError:
+            return {'status': 404, 'description': "Invalid URL"}, 404
+
     else:
         return {'status': 401,"description": "Invalid API Key"}, 401
 
