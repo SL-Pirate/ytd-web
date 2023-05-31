@@ -76,9 +76,10 @@ def downloader():
 
     return [tit, img, buttons, buttons_audio, link]
 
-def downloader_via_api(yt_link: str, resolution: str):
+def downloader_via_api(yt_link: str, resolution: str=None, quality: str=None):
     session["yt_link"] = yt_link
     session["reso"] = resolution
+    session['qual'] = quality
     yt_vid = yt(yt_link)
     tit = yt_vid.title
     img = yt_vid.thumbnail_url
@@ -295,8 +296,7 @@ def select():
     else:
         return redirect("/main")
 
-# _____________________ API FOR DIREC VIDEO DOWNLOADING WITH LINK _________________________
-# api_key = 
+# _____________________ API FOR DIRECT VIDEO DOWNLOADING WITH LINK _________________________
 @app.route("/get_video", methods=['POST'])
 def getVideo():
     '''
@@ -322,7 +322,7 @@ def getVideo():
     
     if request.args.get('key') == api_key:
         try:
-            dl = downloader_via_api(request.args.get("video_link"), request.args.get("resolution"))
+            dl = downloader_via_api(request.args.get("video_link"), resolution=request.args.get("resolution"))
             session["video"] = dl
             try:
                 process_video()
@@ -338,10 +338,55 @@ def getVideo():
     
     else:
         return {'status': 401,"description": "Invalid API Key"}, 401
+
+@app.route("/get_audio", methods=['POST'])
+def getAudio():
+    '''
+        request 
+        {
+            "key": "api key",
+            "video_link": "video link",
+            "quality": "quality"
+        }
+
+        response 
+        {
+            "status": status_code,
+            "title": "Audio file title",
+            "quality": "Audio quality",
+            "format": "audio format"
+            "download_link": "download_link"
+        }
+    '''
+    for item in ("key", "video_link", "quality"):
+        if item not in request.args.keys():
+            return {'status': 416, 'request': request.args, "description": f"missing key: {item}"}, 416
     
+    if request.args.get('key') == api_key:
+        try:
+            dl = downloader_via_api(request.args.get("video_link"), quality=request.args.get("quality"))
+            session["video"] = dl
+            try:
+                process_audio()
+                out_file = session['out_file']
+                pre, ext = os.path.splitext(out_file)
+                return {'status': 200, 'title': dl[0], 'quality': request.args.get('quality'), 'format': ext, 'download_link': api_server_root + url_for("download_from_link", file_name=out_file), "link expire duration": str(keep_time) + " minutes"}
+            except AttributeError:
+                return {'status': 404, 'description': "quality " + request.args.get("quality") + " not found"}
+            except Exception as e:
+                return {'status': 500,"description": str(e)}, 500
+        except RegexMatchError:
+            return {'status': 404, 'description': "Invalid URL"}, 404
+    
+    else:
+        return {'status': 401,"description": "Invalid API Key"}, 401
+
 @app.route("/download/path", methods=['GET'])
 def download_from_link():
-    return send_file(request.args.get('file_name'), as_attachment=True)
+    try:
+        return send_file(request.args.get('file_name'), as_attachment=True)
+    except FileNotFoundError:
+        return {'status': 404, 'description': "link expired!"}, 404
 
 # for testing purposes
 if __name__ == "__main__":
