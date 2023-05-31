@@ -181,6 +181,8 @@ def process_audio() -> None:
             os.rename(out, pre + ".mp3")
 
         session['out_file'] = out_file
+        print(out)
+        print(out_file)
     except Exception as e:
         raise AudioProcessingFailureException(str(e))
 
@@ -204,6 +206,7 @@ def file_get():
 def file_get_aud():
     if ("yt_link" in session.keys()):
         try:
+            print(session['out_file'])
             return send_file(session['out_file'], as_attachment=True)
         except FileNotFoundError as e:
             return render_template("link_expired.html")
@@ -327,11 +330,13 @@ def getVideo():
             try:
                 process_video()
                 out_file = session['out_file']
+                print(out_file)
                 pre, ext = os.path.splitext(out_file)
                 return {'status': 200, 'title': dl[0], 'resolution': request.args.get('resolution'), 'format': ext, 'download_link': api_server_root + url_for("download_from_link", file_name=out_file), "link expire duration": str(keep_time) + " minutes"}
             except AttributeError:
                 return {'status': 404, 'description': "Resolution " + request.args.get("resolution") + " not found"}
             except Exception as e:
+                # print(traceback.format_exc())
                 return {'status': 500,"description": str(e)}, 500
         except RegexMatchError:
             return {'status': 404, 'description': "Invalid URL"}, 404
