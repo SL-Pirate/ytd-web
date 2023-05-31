@@ -295,7 +295,7 @@ def select():
     else:
         return redirect("/main")
 
-# _____________________ API FOR DIREC VIDEO DOWNLOADING WITH LINK _________________________
+# _____________________ API FOR DIRECT VIDEO DOWNLOADING WITH LINK _________________________
 # api_key = 
 @app.route("/get_video", methods=['POST'])
 def getVideo():
