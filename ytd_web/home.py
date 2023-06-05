@@ -8,5 +8,4 @@ home_page = Blueprint('home_page', __name__)
 @home_page.route("/main", methods=["GET"])
 @home_page.route("/home", methods=["GET"])
 def home():
-    print(__name__)
     return render_template("index.html", links=StaticLinks)

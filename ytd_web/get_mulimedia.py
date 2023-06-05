@@ -19,7 +19,6 @@ def file_get():
 def file_get_aud():
     if ("yt_link" in session.keys()):
         try:
-            print(session['out_file'])
             return send_file(session['out_file'], as_attachment=True)
         except FileNotFoundError as e:
             return render_template("link_expired.html", links=StaticLinks)

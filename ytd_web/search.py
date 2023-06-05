@@ -7,7 +7,6 @@ search_page = Blueprint('search_page', __name__)
 
 @search_page.route("/search", methods=["GET"])
 def search():
-    print(__name__)
     if (request.args.get("link") != None and request.args.get("link") != ""):
         yt_link: str = request.args.get("link")
         session["yt_link"] = yt_link
