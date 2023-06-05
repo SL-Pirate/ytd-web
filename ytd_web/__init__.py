@@ -9,8 +9,15 @@ from ytd_web.get_mulimedia import get_miltimedia_page
 from ytd_web.download import download_page
 from ytd_web.error import error_page
 
-from ytd_api.audio_api import audio_api
-from ytd_api.video_api import vid_api
-from ytd_api.qual_api import qual_api
 
-endpoints: list[Blueprint] = [home_page, search_page, browse_page, select_page, multimedia_page, get_miltimedia_page, download_page, error_page, audio_api, vid_api, qual_api]
+
+endpoints: list[Blueprint] = [
+    home_page, 
+    search_page, 
+    browse_page, 
+    select_page, 
+    multimedia_page, 
+    get_miltimedia_page, 
+    download_page, 
+    error_page
+]
