@@ -13,5 +13,3 @@ keep_time: int = int(config["DEFAULT"]['keep_time'])
 api_server_root: str = config["DEFAULT"]["api_server_root"]
 
 secret_key = config["session"]['key']
-
-num_vids = 0

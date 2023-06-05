@@ -2,6 +2,7 @@ from flask import request, render_template, redirect, Blueprint
 import requests
 from ytd_helper.search_result import SearchResult
 from ytd_helper import googleApiKey
+from ytd_helper.static_links import StaticLinks
 
 browse_page = Blueprint('browse_page', __name__)
 
@@ -30,16 +31,16 @@ def browse():
                 for search_result in search_results:
                     search_result_objs.append(SearchResult(
                         search_result['id']['videoId'], 
-                        search_result['snippet']['title'], 
-                        # description=search_result['snippet']['description'], 
+                        search_result['snippet']['title'],
                         thumbnail_link=search_result['snippet']['thumbnails']['high']['url'],
                         channel_name=search_result['snippet']['channelTitle']
-                    ))
+                    )
+                )
 
-                return render_template("browse.html", q=request.args.get('q'), results=search_result_objs)
+                return render_template("browse.html", q=request.args.get('q'), results=search_result_objs, links=StaticLinks)
             else:
-                return redirect("/Error")
+                return redirect("/error")
         except Exception as e:
-            return render_template("went_wrong.html", exception=e)
+            return render_template("went_wrong.html", exception=e, links=StaticLinks)
     else:
         return redirect("/home")

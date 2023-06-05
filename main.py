@@ -2,7 +2,7 @@
 
 from flask import Flask
 from ytd_helper import secret_key
-# from ytd_web import browse_page, select_page, multimedia_page, get_miltimedia_page, download_page, error_page
+from ytd_helper.static_links import StaticLinks
 
 from ytd_web.home import home_page
 from ytd_web.search import search_page
@@ -13,7 +13,8 @@ from ytd_web.get_mulimedia import get_miltimedia_page
 from ytd_web.download import download_page
 from ytd_web.error import error_page
 
-app = Flask(__name__)#, template_folder="ytd_web/templates", static_folder="ytd_web/static")
+app = Flask(__name__)
+StaticLinks(app.app_context())
 app.register_blueprint(home_page)
 app.register_blueprint(search_page)
 app.register_blueprint(browse_page)

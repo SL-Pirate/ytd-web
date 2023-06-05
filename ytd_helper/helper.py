@@ -1,6 +1,6 @@
 from time import sleep
 import os
-from ytd_helper import keep_time
+from ytd_helper import keep_time, max_vids
 import threading
 from pytube import YouTube as yt
 from os import mkdir
@@ -8,16 +8,18 @@ from ytd_helper.error import *
 from subprocess import run as cmd
 
 class Helper:
+    # constants for temporary naming or src files
+    num_vids: int = 0
+
     def __init__(self, session):
         self.session = session
 
     @staticmethod
     def getName():
-        global num_vids, max_vids
-        if num_vids > max_vids:
-            num_vids = 0
-        ID = num_vids
-        num_vids += 1
+        if Helper.num_vids > max_vids:
+            Helper.num_vids = 0
+        ID = Helper.num_vids
+        Helper.num_vids += 1
         return "vid" + str(ID) + ".mp4"
     
 
@@ -111,7 +113,6 @@ class Helper:
 
         try:               
             stream = name
-            #convert(stream)
             ffmpeg_command = 'ffmpeg -i "'+str(in_vid)+'/'+str(stream)+'" -i "'+str(in_aud)+'/'+str(stream)+'" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -y "'+str(out)+'/'+str(stream)+'"'
             cmd(str(ffmpeg_command) ,shell=True)
             try:

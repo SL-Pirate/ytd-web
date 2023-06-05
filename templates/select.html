@@ -16,7 +16,7 @@
                 <p>Select Quality</p>
                 <ul>
                     {%for n in buttons:%}
-                        <li><a href="{{url_for('download_vid', reso=n)}}"><button>{{n}}</button></a></li>
+                        <li><a href="{{links.download_vid(n)}}"><button>{{n}}</button></a></li>
                         <br>
                     {%endfor%}
                 </ul>
@@ -26,7 +26,7 @@
                 <p>Select Quality</p>
                 <ul>
                     {%for m in buttons_aud:%}
-                        <li><a href="{{url_for('download_aud', qual=m)}}"><button>{{m}}</button></a></li>
+                        <li><a href="{{links.download_aud(m)}}"><button>{{m}}</button></a></li>
                         <br>
                     {%endfor%}
                 </ul>

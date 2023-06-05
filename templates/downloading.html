@@ -10,7 +10,7 @@
             <p style="font-family: monospace;font-size: 20px;">Please Wait</p>
             <br>
             <img src="{{url_for('static', filename='img/loading.gif')}}">
-            <meta http-equiv="refresh" content="2;url={{url_for('export')}}">
+            <meta http-equiv="refresh" content="2;url={{links.export()}}">
         </div>
     </body>
 </html>
