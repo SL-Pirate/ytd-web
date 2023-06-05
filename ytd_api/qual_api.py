@@ -29,7 +29,7 @@ def getResolution():
 
     if request.args.get('key') == api_key:
         try:
-            dl = Helper(session).downloader(session, link=request.args.get("video_link"))
+            dl = Helper(session).downloader(link=request.args.get("video_link"))
             session["video"] = dl
 
             return {'status': 200, 'title': dl[0], 'available_video_resolutions': dl[2], 'available_audio_resolutions': dl[3]}

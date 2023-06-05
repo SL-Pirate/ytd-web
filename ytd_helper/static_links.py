@@ -16,6 +16,7 @@ class StaticLinks:
     _error = "error_page.error"
     _file_get = "get_multimedia_page.file_get"
     _file_get_aud = "get_multimedia_page.file_get_aud"
+    _download_from_link = "get_multimedia_page.download_from_link"
 
     def __init__(self, context) -> None:
         StaticLinks._context = context
@@ -93,3 +94,9 @@ class StaticLinks:
     @staticmethod
     def file_get_aud():
         return StaticLinks.getUrlFor(StaticLinks._file_get_aud)
+
+    @staticmethod
+    def download_from_link(_file):
+        StaticLinks.validate()
+        with StaticLinks._context:
+            return url_for(StaticLinks._download_from_link, file_name=_file)

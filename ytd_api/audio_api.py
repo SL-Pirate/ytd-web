@@ -1,10 +1,11 @@
-from flask import BluePrint, request,session, url_for
+from flask import Blueprint, request, session
 from ytd_helper import api_key, api_server_root, keep_time
 from ytd_helper.helper import Helper
+from ytd_helper.static_links import StaticLinks
 from pytube.exceptions import RegexMatchError
 import os
 
-audio_api = BluePrint('audio_api', __name__)
+audio_api = Blueprint('audio_api', __name__)
 
 # _____________________ API FOR DIRECT VIDEO DOWNLOADING WITH LINK _________________________
 @audio_api.route("/get_audio", methods=['POST'])
@@ -37,13 +38,20 @@ def getAudio():
 
     if request.args.get('key') == api_key:
         try:
-            dl = Helper(session).downloader(session, link=request.args.get("video_link"), quality=request.args.get("quality"))
+            dl = Helper(session).downloader(link=request.args.get("video_link"), quality=request.args.get("quality"))
             session["video"] = dl
             try:
                 Helper(session).process_audio()
                 out_file = session['out_file']
                 pre, ext = os.path.splitext(out_file)
-                return {'status': 200, 'title': dl[0], 'quality': request.args.get('quality'), 'format': ext, 'download_link': api_server_root + url_for("download_from_link", file_name=out_file), "link expire duration": str(keep_time) + " minutes"}
+                return {
+                    'status': 200, 
+                    'title': dl[0], 
+                    'quality': request.args.get('quality'), 
+                    'format': ext, 
+                    'download_link': api_server_root + StaticLinks.download_from_link(out_file), 
+                    'link expire duration': str(keep_time) + " minutes"
+                }
             except AttributeError:
                 return {'status': 404, 'description': "quality " + request.args.get("quality") + " not found"}
             except Exception as e:
