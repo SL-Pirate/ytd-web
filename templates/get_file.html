@@ -12,8 +12,8 @@
         </style>
         <p style="font-size: 50px">Your download is ready. Click "Download" to proceed</p>
         <p>This download link will expire within {{keep_time}} minuites</p>
-        <a href="{{url_for(file_link)}}"><button>Download</button></a>
+        <a href="{{file_link}}"><button>Download</button></a>
         <br>
-        <a href="{{url_for('home')}}">home</a>
+        <a href="{{links.home()}}">home</a>
     </body>
 </html>

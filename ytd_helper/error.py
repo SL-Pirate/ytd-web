@@ -15,3 +15,9 @@ class InvalidVideoResolutionException(Exception):
     def __init__(self, msg=None) -> None:
         msg = InvalidVideoResolutionException.msg + ": " + msg if msg is not None else InvalidVideoResolutionException.msg
         super().__init__(msg)
+
+class NotInstanciatedError(Exception):
+    class_name = ""
+    def __init__(self, class_name="") -> None:
+        msg = f"Class {class_name} has not instanciated!"
+        super().__init__(msg)

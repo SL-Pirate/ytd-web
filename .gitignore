@@ -12,3 +12,6 @@ note.md
 
 # api keys
 secrets.key
+
+# log files
+console.log
