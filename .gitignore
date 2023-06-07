@@ -18,3 +18,6 @@ console.log
 
 # tests
 test.py 
+
+# databases
+api_users.db

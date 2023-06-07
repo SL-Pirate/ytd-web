@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from db.user import ApiUser
+from sqlite3 import IntegrityError
 
 register_user = Blueprint('register_user', __name__)
 
@@ -10,7 +11,8 @@ def register():
         {
             "first_name": "First Name",
             "last_name": "Last Name",
-            "username": "username"
+            "username": "username",
+            "email": "email address"
         }
 
         response
@@ -20,7 +22,7 @@ def register():
         }
     """
 
-    for item in ("first_name", "last_name", "username"):
+    for item in ("first_name", "last_name", "username", "email"):
         if item not in request.args.keys():
             return {'status': 416, 'request': request.args, "description": f"missing key: {item}"}, 416
 
@@ -28,10 +30,14 @@ def register():
         user = ApiUser(
             request.args.get('username'),
             first_name = request.args.get('first_name'),
-            last_name = request.args.get('last_name')    
+            last_name = request.args.get('last_name'),
+            email= request.args.get('email')
         )
 
         return {'status': 200, 'api_key': user.get_api_key()}
     
+    except IntegrityError:
+        return {'status': 406, 'description': "Email address already registered. Try another one"}
+
     except Exception as e:
         return {'status': 400, 'description': str(e)}, 400

@@ -4,10 +4,11 @@ from ytd_helper import encryption_salt
 import hashlib
 
 class ApiUser:
-    def __init__(self, username: str, first_name: str = None, last_name: str = None) -> None:
+    def __init__(self, username: str, first_name: str = None, last_name: str = None, email: str = None) -> None:
         self._username: str = username
         self._first_name: str = first_name
         self._last_name: str = last_name
+        self._email = email
         self._call_count: int = 0
         self._api_key: str = ApiUser.gen_api_key()
 
@@ -21,10 +22,11 @@ class ApiUser:
                 first_name, 
                 last_name, 
                 username, 
+                email,
                 api_key, 
                 call_count
             )
-            VALUES (?, ?, ?, ?, ?);
+            VALUES (?, ?, ?, ?, ?, ?);
         """
         cursor.execute(sql, self._to_tuple())
         conn.commit()
@@ -33,7 +35,7 @@ class ApiUser:
         return self._api_key
 
     def _to_tuple(self) -> tuple[any]:
-        return (self._first_name, self._last_name, self._username, self._encrypted_api_key, self._call_count)
+        return (self._first_name, self._last_name, self._username, self._email, self._encrypted_api_key, self._call_count)
 
     @staticmethod
     def delete_user_by_api_key(api_key: string):
@@ -54,11 +56,11 @@ class ApiUser:
     def validate_api_key(key: str) -> bool:
         sql = f"SELECT uid FROM {table_name} WHERE api_key = (?);"
         encrypted_key = ApiUser.encrypt(key)
-        result = cursor.execute(sql, (encrypted_key,))
+        result = cursor.execute(sql, (encrypted_key,)).fetchone()
 
-        if (result):
+        if (result != None):
             sql = f"UPDATE {table_name} SET call_count = call_count + 1 WHERE uid = (?)"
-            cursor.execute(sql, result.fetchone())
+            cursor.execute(sql, result)
             conn.commit()
             return True
         else:
@@ -69,7 +71,7 @@ class ApiUser:
     def print_db() -> None:
         results = cursor.execute(f"SELECT * FROM {table_name};")
 
-        print("(uid, first_name, last_name, username, encrypted_api_key, call_count)")
+        print("(uid, first_name, last_name, username, email, encrypted_api_key, call_count)")
         for result in results:
             print(result)
 
@@ -77,5 +79,3 @@ class ApiUser:
     def truncate() -> None:
         cursor.execute(f"DROP TABLE IF EXISTS {table_name};")
         create_table()
-
-

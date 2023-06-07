@@ -12,6 +12,7 @@ def create_table() -> None:
                 first_name VARCHAR(500),
                 last_name VARCHAR(500),
                 username VARCHAR(100) NOT NULL,
+                email VARCHAR(200) NOT NULL UNIQUE,
                 api_key VARCHAR(64) NOT NULL UNIQUE,
                 call_count INTEGER NOT NULL
             )
