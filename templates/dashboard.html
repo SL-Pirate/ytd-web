@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/styles_dashboard.css')}}">
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome {{user.get_username()}}<span id="username"></span>!</h1>
+    <div class="field">
+      <label for="apiKey">Your API Key: {{api_user.get_api_key()}}</label>
+    </div>
+    <div class="field">
+      <label for="usageCount">Usage Count: {{api_user.get_call_count()}}</label>
+    </div>
+    <button id="settingsButton">Settings</button>
+  </div>
+</body>
+</html>

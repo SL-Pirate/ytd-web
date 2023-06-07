@@ -19,11 +19,16 @@ class StaticLinks:
     _download_aud = _multimedia_end + ".download_aud"
     _error = "error_page.error"
     
-    _file_get = ".file_get"
+    _get_multimedia_end = "get_multimedia_page"
+    _file_get = _get_multimedia_end + ".file_get"
+    _file_get_aud = _get_multimedia_end + ".file_get_aud"
 
     _get_multimedia_via_api_end = "get_multimedia_via_api"
-    _file_get_aud = _get_multimedia_via_api_end + ".file_get_aud"
     _download_from_link = _get_multimedia_via_api_end + ".download_from_link"
+
+    _login_signup_end = "login_signup_page"
+    _login = _login_signup_end + ".login"
+    _signup = _login_signup_end + ".signup"
 
     def __init__(self, context) -> None:
         StaticLinks._context = context
@@ -48,17 +53,6 @@ class StaticLinks:
             return url_for(end)
 
 # _____________________________ links __________________________________
-    @staticmethod
-    def select(yt_link: str):
-        StaticLinks.validate()
-        with StaticLinks._context:
-            return url_for(StaticLinks._select, link=yt_link)
-        
-    @staticmethod
-    def browse(yt_link: str):
-        StaticLinks.validate()
-        with StaticLinks._context:
-            return url_for(StaticLinks._browse, q=yt_link)
     
     @staticmethod
     def export_aud():
@@ -71,7 +65,39 @@ class StaticLinks:
     @staticmethod
     def home():
         return StaticLinks.getUrlFor(StaticLinks._home)
+        
+    @staticmethod
+    def error():
+        return StaticLinks.getUrlFor(StaticLinks._error)
+
+    @staticmethod
+    def file_get():
+        return StaticLinks.getUrlFor(StaticLinks._file_get)
     
+    @staticmethod
+    def file_get_aud():
+        return StaticLinks.getUrlFor(StaticLinks._file_get_aud)
+
+    @staticmethod
+    def login():
+        return StaticLinks.getUrlFor(StaticLinks._login)
+
+    @staticmethod
+    def signup():
+        return StaticLinks.getUrlFor(StaticLinks._signup)
+    
+    @staticmethod
+    def select(yt_link: str):
+        StaticLinks.validate()
+        with StaticLinks._context:
+            return url_for(StaticLinks._select, link=yt_link)
+        
+    @staticmethod
+    def browse(yt_link: str):
+        StaticLinks.validate()
+        with StaticLinks._context:
+            return url_for(StaticLinks._browse, q=yt_link)
+        
     @staticmethod
     def download_vid(resolution):
         StaticLinks.validate()
@@ -83,10 +109,6 @@ class StaticLinks:
         StaticLinks.validate()
         with StaticLinks._context:
             return url_for(StaticLinks._download_aud, qual=quality)
-        
-    @staticmethod
-    def error():
-        return StaticLinks.getUrlFor(StaticLinks._error)
     
     @staticmethod
     def search(yt_link):
@@ -94,13 +116,6 @@ class StaticLinks:
         with StaticLinks._context:
             return url_for(StaticLinks._search, link=yt_link)
         
-    @staticmethod
-    def file_get():
-        return StaticLinks.getUrlFor(StaticLinks._file_get)
-    
-    @staticmethod
-    def file_get_aud():
-        return StaticLinks.getUrlFor(StaticLinks._file_get_aud)
 
     @staticmethod
     def download_from_link(_file):

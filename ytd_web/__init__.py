@@ -8,8 +8,7 @@ from ytd_web.multimedia import multimedia_page
 from ytd_web.get_mulimedia import get_miltimedia_page
 from ytd_web.download import download_page
 from ytd_web.error import error_page
-
-
+from ytd_web.login_signup import login_signup_page
 
 endpoints: list[Blueprint] = [
     home_page, 
@@ -19,5 +18,6 @@ endpoints: list[Blueprint] = [
     multimedia_page, 
     get_miltimedia_page, 
     download_page, 
-    error_page
+    error_page,
+    login_signup_page
 ]

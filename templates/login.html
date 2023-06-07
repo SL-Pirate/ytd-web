@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login Page</title>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/styles_login_signup.css')}}">
+</head>
+<body>
+  <div class="container">
+    <form id="loginForm" class="form" action="/login_auth" method="POST">
+      <h2>Login</h2>
+      <div class="form-control">
+        <label for="email">Username:</label>
+        <input type="email" name="email" placeholder="Enter your email" required>
+      </div>
+      <div class="form-control">
+        <label for="password">Password:</label>
+        <input type="password" name="password" placeholder="Enter your password" required>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>

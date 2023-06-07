@@ -2,7 +2,7 @@ from flask import Blueprint, request, session
 from ytd_helper import api_key, api_server_root, keep_time
 from ytd_helper.helper import Helper
 from ytd_helper.static_links import StaticLinks
-from db.user import ApiUser
+from db.api_user import ApiUser
 from pytube.exceptions import RegexMatchError
 import os
 

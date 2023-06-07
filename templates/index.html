@@ -6,13 +6,21 @@
     </head>
     <body>
         <div>
-            <h3>Welcome to YTD-Web</h3>
-            <h5>The YouTube video downloader</h5>
+            <div class="navbar">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="{{links.login()}}">Log In</a></li>
+                    <li><a href="{{links.signup()}}">Sign Up</a></li>
+                    <li><a href="#">API Doc</a></li>
+                </ul>
+            </div>
+            <h3 class="welcome">Welcome to YTD-Web</h3>
+            <h5 class="intro">The YouTube video downloader</h5>
             <p class=para>The place exactly where you need to be.</p>
         </div>
         <br>
         <div>
-            <form action="/search" method="GET">
+            <form action="/search" method="GET" class="search">
                 <input class=searchbar placeholder="Enter search term or YouTube link" name="link">
             <br>
             <input class=bttons type="submit" value="Search">

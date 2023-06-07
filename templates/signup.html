@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sign Up Page</title>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/styles_login_signup.css')}}">
+</head>
+<body>
+  <div class="container">
+    <form id="signupForm" class="form" action="/register" method="POST">
+      <h2>Sign Up</h2>
+      <div class="form-control">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+      </div>
+      <div class="form-control">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+      </div>
+      <div class="form-control">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+      </div>
+      <div class="form-control">
+        <label for="confirm-password">Confirm Password:</label>
+        <input type="password" name="confirm_password" id="confirm-password" placeholder="Confirm your password" required>
+      </div>
+      <button type="submit" id="submit_button">Sign Up</button>
+    </form>
+  </div>
+  <script src="{{url_for('static', filename='scripts/signup.js')}}"></script>
+</body>
+</html>
