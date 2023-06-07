@@ -9,14 +9,21 @@ class StaticLinks:
     _search = "search_page.search"
     _browse = "browse_page.browse"
     _select = "select_page.select"
-    _export = "download_page.export"
-    _export_aud = "download_page.export_aud"
-    _download_vid = "multimedia_page.download_vid"
-    _download_aud = "multimedia_page.download_aud"
+    
+    _download_end = "download_page"
+    _export = _download_end + ".export"
+    _export_aud = _download_end + ".export_aud"
+
+    _multimedia_end = "multimedia_page"
+    _download_vid = _multimedia_end + ".download_vid"
+    _download_aud = _multimedia_end + ".download_aud"
     _error = "error_page.error"
-    _file_get = "get_multimedia_page.file_get"
-    _file_get_aud = "get_multimedia_page.file_get_aud"
-    _download_from_link = "get_multimedia_page.download_from_link"
+    
+    _file_get = ".file_get"
+
+    _get_multimedia_via_api_end = "get_multimedia_via_api"
+    _file_get_aud = _get_multimedia_via_api_end + ".file_get_aud"
+    _download_from_link = _get_multimedia_via_api_end + ".download_from_link"
 
     def __init__(self, context) -> None:
         StaticLinks._context = context
