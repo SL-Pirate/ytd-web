@@ -4,7 +4,7 @@ get_multimedia_via_api = Blueprint('get_multimedia_via_api', __name__)
 
 @get_multimedia_via_api.route("/download/path", methods=['GET'])
 def download_from_link():
-    protected_files = ["secrets.key"]
+    protected_files = ["secrets.key", "api_users.db"]
     for protected_file in protected_files:
         if protected_file in request.args.get('file_name'):
             return {'status': 403, 'description': "Illegal file name!"}, 403

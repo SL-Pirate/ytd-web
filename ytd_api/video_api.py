@@ -2,6 +2,7 @@ from flask import Blueprint, request,session, url_for
 from ytd_helper import api_key, api_server_root, keep_time
 from ytd_helper.helper import Helper
 from ytd_helper.static_links import StaticLinks
+from db.user import ApiUser
 from pytube.exceptions import RegexMatchError
 import os
 
@@ -31,7 +32,7 @@ def getVideo():
         if item not in request.args.keys():
             return {'status': 416, 'request': request.args, "description": f"missing key: {item}"}, 416
 
-    if request.args.get('key') == api_key:
+    if ApiUser.validate_api_key(request.args.get('key')):
         try:
             dl = Helper(session).downloader(link=request.args.get("video_link"), resolution=request.args.get("resolution"))
             session["video"] = dl
@@ -40,7 +41,14 @@ def getVideo():
                 out_file = session['out_file']
                 print(out_file)
                 pre, ext = os.path.splitext(out_file)
-                return {'status': 200, 'title': dl[0], 'resolution': request.args.get('resolution'), 'format': ext, 'download_link': api_server_root + StaticLinks.download_from_link(out_file), "link expire duration": str(keep_time) + " minutes"}
+                return {
+                    'status': 200, 
+                    'title': dl[0], 
+                    'resolution': request.args.get('resolution'), 
+                    'format': ext, 
+                    'download_link': api_server_root + StaticLinks.download_from_link(out_file), 
+                    "link expire duration": str(keep_time) + " minutes"
+                }
             except AttributeError:
                 return {'status': 404, 'description': "Resolution " + request.args.get("resolution") + " not found"}
             except Exception as e:
