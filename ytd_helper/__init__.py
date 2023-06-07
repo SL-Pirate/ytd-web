@@ -6,6 +6,7 @@ config = ConfigParser()
 config.read('secrets.key')
 googleApiKey = config['googleApiKey']['key']
 api_key = config['self_api']['key']
+encryption_salt = api_key
 
 config.read('server.cfg')
 max_vids: int = int(config['DEFAULT']['max_vids'])

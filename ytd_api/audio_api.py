@@ -2,6 +2,7 @@ from flask import Blueprint, request, session
 from ytd_helper import api_key, api_server_root, keep_time
 from ytd_helper.helper import Helper
 from ytd_helper.static_links import StaticLinks
+from db.user import ApiUser
 from pytube.exceptions import RegexMatchError
 import os
 
@@ -36,7 +37,7 @@ def getAudio():
         if item not in request.args.keys():
             return {'status': 416, 'request': request.args, "description": f"missing key: {item}"}, 416
 
-    if request.args.get('key') == api_key:
+    if ApiUser.validate_api_key(request.args.get('key')):
         try:
             dl = Helper(session).downloader(link=request.args.get("video_link"), quality=request.args.get("quality"))
             session["video"] = dl
