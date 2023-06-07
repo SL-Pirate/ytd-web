@@ -40,7 +40,14 @@ def getVideo():
                 out_file = session['out_file']
                 print(out_file)
                 pre, ext = os.path.splitext(out_file)
-                return {'status': 200, 'title': dl[0], 'resolution': request.args.get('resolution'), 'format': ext, 'download_link': api_server_root + StaticLinks.download_from_link(out_file), "link expire duration": str(keep_time) + " minutes"}
+                return {
+                    'status': 200, 
+                    'title': dl[0], 
+                    'resolution': request.args.get('resolution'), 
+                    'format': ext, 
+                    'download_link': api_server_root + StaticLinks.download_from_link(out_file), 
+                    "link expire duration": str(keep_time) + " minutes"
+                }
             except AttributeError:
                 return {'status': 404, 'description': "Resolution " + request.args.get("resolution") + " not found"}
             except Exception as e:
