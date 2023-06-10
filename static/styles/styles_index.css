@@ -1,11 +1,10 @@
-body {
+/* body {
     background-repeat: no-repeat;
     text-align: center;
     font-size: 50px;
 }
 
 .welcome {
-    /* margin: 10px; */
     margin-top: 30px;
     margin-bottom: 0;
 }
@@ -62,11 +61,94 @@ body {
     display: flex;
     justify-content: center;
     padding-left: 0;
-    /* margin-left: 10%;
-    margin-right: 10%; */
 }
 
 .navbar ul li {
     margin-left: 25px;
     margin-right: 25px;
+} */
+
+body {
+  background-color: #f2f2f2;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.navbar {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+}
+
+.navbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar ul li {
+  display: inline;
+}
+
+.navbar ul li a {
+  color: #fff;
+  padding: 10px;
+  text-decoration: none;
+}
+
+.navbar ul li a:hover {
+  background-color: #555;
+}
+
+.welcome {
+  text-align: center;
+  font-size: 28px;
+  margin-top: 50px;
+}
+
+.intro {
+  text-align: center;
+  font-size: 18px;
+  color: #777;
+}
+
+.para {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+  color: #555;
+}
+
+.search {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.searchbar {
+  padding: 10px;
+  width: 300px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.bttons {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.bttons:hover {
+  background-color: #45a049;
 }

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, session, request
+from flask import Blueprint, redirect, render_template, request, session
 from db.user import User
 from db.api_user import ApiUser
 from ytd_helper.static_links import StaticLinks
