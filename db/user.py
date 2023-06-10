@@ -34,7 +34,6 @@ class User:
 
         if (result != None):
             if result[5] == User.encrypt(password, result[6]):
-                print(result)
                 return User(result[4], result[5], result[3], first_name=result[1], last_name=result[2], uid=result[0])
             else:
                 return None

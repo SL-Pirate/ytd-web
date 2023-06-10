@@ -29,6 +29,9 @@ class StaticLinks:
     _login_signup_end = "login_signup_page"
     _login = _login_signup_end + ".login"
     _signup = _login_signup_end + ".signup"
+    _auth = _login_signup_end + ".authenticate"
+    _del_api_key = _login_signup_end + ".del_api_key"
+    _log_out = _login_signup_end + ".logout"
 
     def __init__(self, context) -> None:
         StaticLinks._context = context
@@ -81,16 +84,31 @@ class StaticLinks:
     @staticmethod
     def login():
         return StaticLinks.getUrlFor(StaticLinks._login)
+    
+    @staticmethod
+    def auth():
+        return StaticLinks.getUrlFor(StaticLinks._auth)
 
     @staticmethod
     def signup():
         return StaticLinks.getUrlFor(StaticLinks._signup)
     
     @staticmethod
+    def logout():
+        return StaticLinks.getUrlFor(StaticLinks._log_out)
+    
+    @staticmethod
     def select(yt_link: str):
         StaticLinks.validate()
         with StaticLinks._context:
             return url_for(StaticLinks._select, link=yt_link)
+        
+    @staticmethod
+    def del_api_key(api_key: str):
+        StaticLinks.validate()
+        with StaticLinks._context:
+            return url_for(StaticLinks._del_api_key, api_key=api_key)
+        # return StaticLinks.getUrlFor(StaticLinks._del_api_key)
         
     @staticmethod
     def browse(yt_link: str):

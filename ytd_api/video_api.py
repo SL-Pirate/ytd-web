@@ -39,7 +39,6 @@ def getVideo():
             try:
                 Helper(session).process_video()
                 out_file = session['out_file']
-                print(out_file)
                 pre, ext = os.path.splitext(out_file)
                 return {
                     'status': 200, 

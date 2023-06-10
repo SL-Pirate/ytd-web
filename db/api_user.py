@@ -4,14 +4,16 @@ import hashlib
 
 class ApiUser:
     def __init__(self, uid: int, api_key: str=None, call_count: int=0) -> None:
-        self._synced = False
+        # self._synced = False
         self._uid = uid
-        self._api_key = api_key if not None else ApiUser.gen_api_key()
+        # self._api_key = api_key if not None else ApiUser.gen_api_key()
+        if (api_key != None):
+            self._api_key = api_key
+        else:
+            self._api_key = ApiUser.gen_api_key()
         self._call_count = call_count
 
     def add_to_db(self) -> None:
-        self._api_key: str = ApiUser.gen_api_key()
-        
         sql = f"""
             INSERT INTO {table_name}(
                 uid,
@@ -31,32 +33,35 @@ class ApiUser:
     def get_call_count(self) -> int:
         return self._call_count
     
-    def getUserFromUid(uid: int):
+    def getUserFromUid(uid: int) -> list[any]:
         try:
             sql = f"""
                 SELECT * 
                 FROM {table_name}
                 WHERE uid = (?)
             """
-            result = cursor.execute(sql, (uid,)).fetchone()
+            results = cursor.execute(sql, (uid,)).fetchall()
 
-            user = ApiUser(result[0], api_key=result[1], call_count=result[2])
-            return user
+            users = []
+            for i in range(len(results)):
+                users.append(ApiUser(results[i][0], api_key=results[i][1], call_count=results[i][2]))
+            return users
         except Exception as e:
-            return None
+            print(e)
+            return []
 
-
-    # @staticmethod
-    # def delete_user_by_api_key(api_key: string):
-    #     sql = f"DELETE FROM {table_name} WHERE _api_key = (?)"
-    #     cursor.execute(sql, (api_key,))
-    #     conn.commit()
+    @staticmethod
+    def del_api_key(api_key: str):
+        print(api_key)
+        sql = f"DELETE FROM {table_name} WHERE api_key = (?)"
+        cursor.execute(sql, (api_key, ))
+        conn.commit()
+        ApiUser.print_db()
 
     @staticmethod
     def gen_api_key() -> str:
         letters = string.ascii_letters
         return ''.join(random.choice(letters) for i in range(50))
-
 
     @staticmethod
     def encrypt(key: string) -> str:
