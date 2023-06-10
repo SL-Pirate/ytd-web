@@ -3,6 +3,7 @@ from db import cursor, conn, create_table
 from db import table2_name as table_name
 from ytd_helper import pepper
 import hashlib
+from sqlite3 import IntegrityError
 
 class User:
     def __init__(
@@ -57,6 +58,8 @@ class User:
             cursor.execute(sql, self._to_tuple())
             conn.commit()
             return True, "success"
+        except IntegrityError:
+            return False, f"{self._email} is already in use!"
         except Exception as e:
             return False, str(e)
 

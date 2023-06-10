@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, redirect, render_template, request
 from db.user import User
 from db.api_user import ApiUser
 from ytd_helper.static_links import StaticLinks
@@ -39,14 +39,13 @@ def register():
     password = None
 
     pw = request.form.get('password')
-    cnfrm_pw = request.form.get('confirtm_password')
+    cnfrm_pw = request.form.get('confirm_password')
 
-    password = pw
-    # if (pw == cnfrm_pw):
-    #     password = pw
+    if (pw == cnfrm_pw):
+        password = pw
 
-    # else:
-    #     return redirect('/signup')
+    else:
+        return redirect('/signup')
     
     user = User(username, password, email)
     result = user.register()
