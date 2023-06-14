@@ -32,5 +32,19 @@
     border: none;
     border-radius: 3px;
     cursor: pointer;
+    margin-bottom: 20px;
   }
   
+  #settingsButton a {    
+    text-decoration: inherit;
+    color: inherit;
+  }
+  
+.api_key_item {
+  padding-bottom: 20px;
+}
+
+/* .api_key_item a {
+  text-decoration: inherit;
+  color: black;
+} */

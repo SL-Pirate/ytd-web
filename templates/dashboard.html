@@ -9,23 +9,24 @@
     <h1>Welcome {{user.get_username()}}<span id="username"></span>!</h1>
 
     {%for key in api_keys%}
-    <div class="field">
-      <label for="apiKey">Your API Key: {{key.get_api_key()}}</label>
+    <div class="api_key_item">
+      <div class="field">
+        <label for="apiKey">Your API Key: {{key.get_api_key()}}</label>
+      </div>
+      <div class="field">
+        <label for="usageCount">Usage Count: {{key.get_call_count()}}</label>
+      </div>
+      <div>
+        <button><a href="{{links.del_api_key(key.get_api_key())}}">Delete key</a></button>
+      </div>
     </div>
-    <div class="field">
-      <label for="usageCount">Usage Count: {{key.get_call_count()}}</label>
-    </div>
-    <div>
-      <button><a href="{{links.del_api_key(key.get_api_key())}}">Delete key</a></button>
-    </div>
-    <hr>
+    <!-- <hr> -->
     {%endfor%}
     
     <form action="/gen_api_key" method="POST">
       <input type="hidden" value="{{user.get_uid()}}" name="uid">
       <button id="settingsButton" type="submit">Generate a new key</button>
     </form>
-    <hr>
     <button id="settingsButton">Settings</button>
     <button id="settingsButton"><a href="{{links.logout()}}">Log Out</a></button>
   </div>

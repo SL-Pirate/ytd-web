@@ -77,7 +77,7 @@ def register():
 @login_signup_page.route('/logout')
 def logout():
     logout_method()
-    return render_template('signup_successful.html', links=StaticLinks)
+    return render_template('logout_successful.html', links=StaticLinks)
 
 def logout_method():
     if (session.get('email') != None and session.get('password') != None):
