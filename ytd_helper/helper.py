@@ -143,8 +143,6 @@ class Helper:
                 os.rename(out, pre + ".mp3")
 
             self.session['out_file'] = out_file
-            print(out)
-            print(out_file)
         except Exception as e:
             raise AudioProcessingFailureException(str(e))
 

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Failed!!</title>
+    <style>
+        .container {
+            text-align: center;
+        }
+        
+        h1 {
+            color: red;
+        }
+        
+        p {
+            margin: 10px 0;
+        }
+        
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 18px;
+            color: #333;
+            text-decoration: none;
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 10px 20px;
+        }
+        
+        a:hover {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>    
+</head>
+<body>
+    <div class="container">
+        <h1>Sign Up Failed!</h1>
+        <p>Reason: {{error_code}}</p>
+        <p><a href="{{links.signup()}}">Retry</a></p>
+        <p><a href="{{links.home()}}">Home</a></p>
+    </div>
+</body>
+</html>

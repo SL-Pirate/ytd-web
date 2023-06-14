@@ -2,7 +2,7 @@ from flask import Blueprint, request,session, url_for
 from ytd_helper import api_key, api_server_root, keep_time
 from ytd_helper.helper import Helper
 from ytd_helper.static_links import StaticLinks
-from db.user import ApiUser
+from db.api_user import ApiUser
 from pytube.exceptions import RegexMatchError
 import os
 
@@ -39,7 +39,6 @@ def getVideo():
             try:
                 Helper(session).process_video()
                 out_file = session['out_file']
-                print(out_file)
                 pre, ext = os.path.splitext(out_file)
                 return {
                     'status': 200, 
