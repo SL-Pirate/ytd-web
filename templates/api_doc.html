@@ -6,79 +6,83 @@
 </head>
 <body>
     <h1>API Documentation</h1>
-    
-    <h2>API 1: Get Available Qualities</h2>
-    <pre>
-        <code>
-            Request:
-            {
-                "key": "api key",
-                "video_link": "video link"
-            }
-            
-            Response:
-            {
-                "status": status_code,
-                "title": "video title",
-                "available_video_resolutions": ["res1", "res2"],
-                "available_audio_qualities": ["qual1", "qual2"]
-            }
-        </code>
-    </pre>
 
-    <h2>API 2: Download Video</h2>
-    <pre>
-        <code>
-            Request:
-            {
-                "key": "api key",
-                "video_link": "video link",
-                "resolution": "resolution"
-            }
-            
-            Response:
-            {
-                "status": status_code,
-                "title": "video title",
-                "resolution": "video resolution",
-                "format": "video format",
-                "download_link": "download_link"
-            }
-        </code>
-    </pre>
+    <div class="api-section">
+        <h2>API 1: Get Available Qualities</h2>
+        <pre>
+            <code>
+                <span class="method">POST</span> /get_qual
+                Request:
+                {
+                    "key": "api key",
+                    "video_link": "video link"
+                }
 
-    <h2>API 3: Download Audio</h2>
-    <pre>
-        <code>
-            Request:
-            {
-                "key": "api key",
-                "video_link": "video link",
-                "quality": "quality"
-            }
-            
-            Response (200):
-            {
-                "status": status_code,
-                "title": "Audio file title",
-                "quality": "Audio quality",
-                "format": "audio format",
-                "download_link": "download_link"
-            }
-            
-            Response (400):
-            {
-                "status": status_code,
-                "description": "reason for failure"
-            }
-        </code>
-    </pre>
+                Response:
+                {
+                    "status": status_code,
+                    "title": "video title",
+                    "available_video_resolutions": ["res1", "res2"],
+                    "available_audio_qualities": ["qual1", "qual2"]
+                }
+            </code>
+        </pre>
+    </div>
+
+    <div class="api-section">
+        <h2>API 2: Download Video</h2>
+        <pre>
+            <code>
+                <span class="method">POST</span> /get_video
+                Request:
+                {
+                    "key": "api key",
+                    "video_link": "video link",
+                    "resolution": "resolution"
+                }
+
+                Response:
+                {
+                    "status": status_code,
+                    "title": "video title",
+                    "resolution": "video resolution",
+                    "format": "video format",
+                    "download_link": "download_link"
+                }
+            </code>
+        </pre>
+    </div>
+
+    <div class="api-section">
+        <h2>API 3: Download Audio</h2>
+        <pre>
+            <code>
+                <span class="method">POST</span> /get_audio
+                Request:
+                {
+                    "key": "api key",
+                    "video_link": "video link",
+                    "quality": "quality"
+                }
+
+                Response (200):
+                {
+                    "status": status_code,
+                    "title": "Audio file title",
+                    "quality": "Audio quality",
+                    "format": "audio format",
+                    "download_link": "download_link"
+                }
+
+                Response (400):
+                {
+                    "status": status_code,
+                    "description": "reason for failure"
+                }
+            </code>
+        </pre>
+    </div>
 
     <a class="button" href="{{links.signup()}}">Get API Key</a>
 </body>
 </html>
-
-
-    <!-- <a href="{{links.signup()}}">Get API Key</a>
-</body>
-</html> -->
