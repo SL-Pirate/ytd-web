@@ -26,7 +26,20 @@ cd ytd-web
 - Open `server.cfg` and edit
   - max_vids
   - keep_time
+  #### Set
+  - main_server_root
+  - api_server_root
+  To the address of your host.
+
+  For example if you have hosted your app on "www.example.com",  you should set these values to "https://www.example.com"
+  - Both the server root and api root should set to the same host unless this is an API only host
 - rename `secrets.key.example` to `secrets.key` and add your Google Api key which has YouTube data api enabled
+
+#### Setting up environment variables
+- The server uses a pepper to encrypt passwords stored in the DB for security reasons
+- So you have to set the environment variable of your host "pepper" to any value (preferably a strong and complicated one).
+- Failing to do so will crash the server when trying to manipulate users.
+
 #### install dependancies using pip
 `pip install flask pytube requests`
 
