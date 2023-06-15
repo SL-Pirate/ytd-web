@@ -17,7 +17,7 @@ class StaticLinks:
     _multimedia_end = "multimedia_page"
     _download_vid = _multimedia_end + ".download_vid"
     _download_aud = _multimedia_end + ".download_aud"
-    _error = "error_page.error"
+    _error = "error_page.not_found"
     
     _get_multimedia_end = "get_multimedia_page"
     _file_get = _get_multimedia_end + ".file_get"
