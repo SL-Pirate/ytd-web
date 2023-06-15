@@ -17,7 +17,7 @@ class StaticLinks:
     _multimedia_end = "multimedia_page"
     _download_vid = _multimedia_end + ".download_vid"
     _download_aud = _multimedia_end + ".download_aud"
-    _error = "error_page.error"
+    _error = "error_page.not_found"
     
     _get_multimedia_end = "get_multimedia_page"
     _file_get = _get_multimedia_end + ".file_get"
@@ -36,6 +36,8 @@ class StaticLinks:
     _dashboard_end = "dashboard_page"
     _dashboard = _dashboard_end + ".dashboard"
     _del_api_key = _dashboard_end + ".del_api_key"
+
+    _api_doc = "docs_page.api_doc"
 
     def __init__(self, context) -> None:
         StaticLinks._context = context
@@ -104,6 +106,12 @@ class StaticLinks:
     @staticmethod
     def dashboard():
         return StaticLinks.getUrlFor(StaticLinks._dashboard)
+    
+    @staticmethod
+    def api_doc():
+        return StaticLinks.getUrlFor(StaticLinks._api_doc)
+    
+    # ____________________________________________________________
     
     @staticmethod
     def select(yt_link: str):

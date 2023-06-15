@@ -14,6 +14,8 @@ def export():
             return render_template("get_file.html", file_link=StaticLinks.file_get(), keep_time=keep_time, links=StaticLinks)
         except VideoProcessingFailureException as e:
             return render_template("went_wrong.html", exception=e, links=StaticLinks)
+        except AttributeError:
+            return redirect(StaticLinks.error())
     else:
         return redirect("/home")
     
@@ -24,7 +26,7 @@ def export_aud():
             Helper(session).process_audio()
             return render_template("get_file.html", file_link=StaticLinks.file_get_aud(), keep_time=keep_time, links=StaticLinks)
         except AudioProcessingFailureException as e:
-            return render_template("went_wrong.html", exception=e, links=StaticLinks)
+            return redirect(StaticLinks.error())
     else:
         return redirect("/home")
         
