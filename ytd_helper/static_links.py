@@ -37,6 +37,8 @@ class StaticLinks:
     _dashboard = _dashboard_end + ".dashboard"
     _del_api_key = _dashboard_end + ".del_api_key"
 
+    _api_doc = "docs_page.api_doc"
+
     def __init__(self, context) -> None:
         StaticLinks._context = context
         StaticLinks._isInstanciated = True
@@ -104,6 +106,12 @@ class StaticLinks:
     @staticmethod
     def dashboard():
         return StaticLinks.getUrlFor(StaticLinks._dashboard)
+    
+    @staticmethod
+    def api_doc():
+        return StaticLinks.getUrlFor(StaticLinks._api_doc)
+    
+    # ____________________________________________________________
     
     @staticmethod
     def select(yt_link: str):

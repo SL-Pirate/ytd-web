@@ -10,6 +10,7 @@ from ytd_web.download import download_page
 from ytd_web.error import error_page
 from ytd_web.login_signup import login_signup_page
 from ytd_web.dashboard import dashboard_page
+from ytd_web.docs import docs_page
 
 endpoints: list[Blueprint] = [
     home_page, 
@@ -21,5 +22,6 @@ endpoints: list[Blueprint] = [
     download_page, 
     error_page,
     login_signup_page,
-    dashboard_page
+    dashboard_page,
+    docs_page
 ]
