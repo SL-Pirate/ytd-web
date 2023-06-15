@@ -41,7 +41,7 @@ cd ytd-web
 - Failing to do so will crash the server when trying to manipulate users.
 
 #### install dependancies using pip
-`pip install flask pytube requests`
+`pip install -r requirements.txt`
 
 #### installing ffmpeg
  - Installation process of ffmpeg may vary depending on your operating system
