@@ -17,18 +17,20 @@
         <label for="usageCount">Usage Count: {{key.get_call_count()}}</label>
       </div>
       <div>
-        <button><a href="{{links.del_api_key(key.get_api_key())}}">Delete key</a></button>
+        <a href="{{links.del_api_key(key.get_api_key())}}"><button class="delete_btn">Delete key</button></a>
       </div>
     </div>
-    <!-- <hr> -->
     {%endfor%}
     
+    <hr>
+
     <form action="/gen_api_key" method="POST">
       <input type="hidden" value="{{user.get_uid()}}" name="uid">
       <button id="settingsButton" type="submit">Generate a new key</button>
     </form>
     <button id="settingsButton">Settings</button>
-    <button id="settingsButton"><a href="{{links.logout()}}">Log Out</a></button>
+    <a href="{{links.home()}}"><button id="settingsButton">Home</button></a>
+    <a href="{{links.logout()}}"><button id="settingsButton">Log Out</button></a>
   </div>
 </body>
 </html>
