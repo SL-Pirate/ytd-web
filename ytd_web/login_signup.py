@@ -11,40 +11,17 @@ def login():
 
 @login_signup_page.route('/login_auth', methods=['POST', 'GET'])
 def authenticate():
-    email = None
-    pw = None
-
-    if (session.get('email') != None and session.get('password') != None):
-        email = session['email']
-        pw = session['password']
-
-    else:
-        email = request.form.get('email')
-        pw = request.form.get('password')
+    email = request.form.get('email')
+    pw = request.form.get('password')
 
     user = User.login(email, pw)
     if (user == None):
         return render_template('login_failed.html', links=StaticLinks)
     else:
+        logout_method()
         session['email'] = email
         session['password'] = pw
-        uid = user.get_uid()
-        api_keys = ApiUser.getUserFromUid(uid)
-        # for user in api_keys:
-        #     print(user.get_api_key())
-        return render_template('dashboard.html', user=user, api_keys=api_keys, links=StaticLinks)
-
-@login_signup_page.route('/gen_api_key', methods=['POST'])
-def gen_api_key():
-    uid = request.form.get('uid')
-    ApiUser(uid).add_to_db()
-    return redirect(StaticLinks.auth())
-
-@login_signup_page.route('/del_api_key')
-def del_api_key():
-    api_key = request.args.get('api_key')
-    ApiUser.del_api_key(api_key)
-    return redirect(StaticLinks.auth())
+        return redirect(StaticLinks.dashboard())
     
 @login_signup_page.route('/signup')
 def signup():
@@ -66,7 +43,6 @@ def register():
         return redirect('/signup')
     
     user = User(username, password, email)
-    logout()    
     result = user.register()
 
     if result[0]:
