@@ -7,7 +7,7 @@ login_signup_page = Blueprint('login_signup_page', __name__)
 
 @login_signup_page.route('/login')
 def login():
-    return render_template('login.html')
+    return render_template('login.html', links=StaticLinks)
 
 @login_signup_page.route('/login_auth', methods=['POST', 'GET'])
 def authenticate():
@@ -25,7 +25,7 @@ def authenticate():
     
 @login_signup_page.route('/signup')
 def signup():
-    return render_template("signup.html")
+    return render_template("signup.html", links=StaticLinks)
 
 @login_signup_page.route('/register', methods=['POST'])
 def register():

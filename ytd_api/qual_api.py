@@ -1,5 +1,4 @@
 from flask import Blueprint, request, session
-from ytd_helper import api_key
 from ytd_helper.helper import Helper
 from db.api_user import ApiUser
 from pytube.exceptions import RegexMatchError
