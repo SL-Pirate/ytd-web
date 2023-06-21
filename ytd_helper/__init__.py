@@ -6,7 +6,6 @@ config = ConfigParser()
 
 config.read('secrets.key')
 googleApiKey = config['googleApiKey']['key']
-api_key = config['self_api']['key']
 pepper = os.getenv('pepper')
 
 config.read('server.cfg')
