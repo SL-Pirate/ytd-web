@@ -2,8 +2,7 @@ const myButton = document.getElementById('submit_button');
 function checkCondition() {
   const password = document.getElementById('password').value;
   const confirmPassword = document.getElementById('confirm-password').value;
-  const condition = password === confirmPassword && password != '';
-  return condition;
+  return password === confirmPassword && password != '';
 }
 
   // Function to enable or disable the button based on the condition
@@ -17,7 +16,6 @@ function updateButtonState() {
     myButton.style.backgroundColor = 'green'
   }
 }
+
 // Call the updateButtonState function initially
 updateButtonState();
-// Periodically check the condition every 0.5 seconds
-setInterval(updateButtonState, 500);

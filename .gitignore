@@ -21,3 +21,6 @@ test.py
 
 # databases
 api_users.db
+
+# intellij
+.idea/
