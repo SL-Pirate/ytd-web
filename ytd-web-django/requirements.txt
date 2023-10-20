@@ -1,0 +1,7 @@
+django
+pytube
+django-rest-framework
+requests
+django-sequences
+django-cors-headers
+celery[redis]
