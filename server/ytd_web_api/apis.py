@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from ytd_web_core.download_video import download_video as dlvid
 from ytd_web_core.exceptions import *
 from pytube.exceptions import RegexMatchError, VideoUnavailable
@@ -8,11 +7,41 @@ from ytd_web_core import Status
 from ytd_web_core.models import Downloadable
 from ytd_web_core.util import get_url_from_video_id
 from ytd_web_core.get_qualities import get_qualities
-from rest_framework import serializers
 from rest_framework.views import APIView, Response
-from .serializers import DownloadableSerializer
+from .serializers import *
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class DownloadVideoAPIView(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'video_id',
+                openapi.IN_QUERY,
+                description='ID of the video',
+                type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'quality',
+                openapi.IN_QUERY,
+                description='Video quality. Use the /search/qualities api to determine available qualities',
+                type=openapi.TYPE_STRING,
+            )
+        ],
+        responses={
+            200: openapi.Response(
+                description='Successful response',
+                schema=DownloadableSerializer,
+                examples={
+                    "downloadable_link": "downloadable link",
+                    "file_name": "video file name with extension",
+                    "valid for": "(int) time duration which video is available for download Eg: 5"
+                }
+            ),
+            400: 'Bad Request',
+            404: 'Video not found',
+        }
+    )
     def get(self, request, *args, **kwargs):
         try:
             downloadable: Downloadable = dlvid(
@@ -46,10 +75,27 @@ class DownloadVideoAPIView(APIView):
             )
 
 class GetQualitiesAPIView(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'video_id',
+                openapi.IN_QUERY,
+                description='ID of the video',
+                type=openapi.TYPE_STRING
+            )
+        ],
+        responses={
+            200: openapi.Response(
+                description='Successful response',
+                schema=QualitiesSerializer,
+            ),
+            403: 'Age Restricted',
+            500: 'Internal error'
+        }
+    )
     def get(self, request, *args, **kwargs):
         try:
-            return Response(
-                get_qualities(
+            data = get_qualities(
                     get_url_from_video_id(
                         request.GET.get(
                             'video_id', 
@@ -57,6 +103,11 @@ class GetQualitiesAPIView(APIView):
                         )
                     )
                 )
+            return Response(
+                QualitiesSerializer({
+                    "audio_qualities": data["audio_qualities"],
+                    "video_qualities": data["video_qualities"]
+                }).data
             )
         except AgeRestrictedVideoException:
             return Response(
@@ -75,13 +126,37 @@ class GetQualitiesAPIView(APIView):
             )
 
 class SearchVideoAPIView(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'keyword',
+                openapi.IN_QUERY,
+                description='search keywod',
+                type=openapi.TYPE_STRING
+            )
+        ],
+        responses={
+            200: openapi.Response(
+                description='Successful response',
+                schema=SearchResultsSerializer,
+            ),
+            500: 'Internal error'
+        }
+    )
     def get(self, request, *args, **kwargs):
         results = _search_youtube(request)
         if (results[0].get_status() != Status.FAILURE):
             return Response(
-                {
-                    "results": [search_result.JsonSerialize() for search_result in results]
-                }
+                SearchResultsSerializer({
+                    'results': [
+                        SingleSearchResultSerializer({
+                            'video_id': search_result.get_video_id(),
+                            'title': search_result.get_title(),
+                            'thumbnail_url': search_result.get_thumbnail_url(),
+                            'channel_name': search_result.get_channel_name()
+                        }).data for search_result in results
+                    ]
+                }).data
             )
 
         else:
