@@ -51,7 +51,7 @@ To start the server, run the following command in the terminal:
 
 ```bash
     export csrf="<it is highly recommended that you put your own secret here>";
-    gunicorn ytd_web.wsgi --timeout 600 -b 0.0.0.0:8000
+    gunicorn ytd_web.wsgi --timeout 600 -b 0.0.0.0:8000 --workers 2
 ```
 
 Open up a new terminal/cli instance and run the following command as it is required for cleaning caches

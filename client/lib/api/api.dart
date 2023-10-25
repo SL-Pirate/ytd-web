@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 class Api{
   static final Api instance = Api._();
   final Dio _dio = Dio();
-  // final String _baseUrl = "http://slpirate.pii.at:8000/api/v1";
-  final String _baseUrl = "http://localhost:8000/api/v1";
+  final String _baseUrl = "http://slpirate.pii.at:8000/api/v1";
+  // final String _baseUrl = "http://localhost:8000/api/v1";
 
   Api._();
 
