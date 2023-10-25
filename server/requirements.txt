@@ -6,3 +6,4 @@ django-sequences
 django-cors-headers
 celery[redis]
 drf-yasg
+gunicorn
