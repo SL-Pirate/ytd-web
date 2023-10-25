@@ -8,87 +8,86 @@ from ytd_web_core import Status
 from ytd_web_core.models import Downloadable
 from ytd_web_core.util import get_url_from_video_id
 from ytd_web_core.get_qualities import get_qualities
+from rest_framework import serializers
+from rest_framework.views import APIView, Response
+from .serializers import DownloadableSerializer
 
-def download_video(request) -> JsonResponse:
-    try:
-        downloadable: Downloadable = dlvid(
-            get_url_from_video_id(request.GET.get('video_id', '')),
-            request.GET.get('resolution', ''),
-        )
+class DownloadVideoAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            downloadable: Downloadable = dlvid(
+                get_url_from_video_id(request.GET.get('video_id', '')),
+                request.GET.get('resolution', ''),
+            )
 
-        server_ip = request.build_absolute_uri().split("/api")[0]
+            serializer = DownloadableSerializer(downloadable, context={'request': request})
 
-        return JsonResponse({
-            "downloadable_link": f"{server_ip}/downloads/{downloadable.id}/",
-            "file_name": downloadable.name,
-            "valid for": downloadable.expiration_period
-        })
-    except RegexMatchError:
-        return JsonResponse(
-            {
-                "message": "Invalid link format! Please check again"
-            },
-            status = 404
-        )
-    except AgeRestrictedVideoException:
-        return JsonResponse(
-            {
-                "message": "This video is age restricted!"
-            },
-            status = 404
-        )
-    except VideoUnavailable:
-        return JsonResponse(
-            {
-                "message": "video unavailable"
-            },
-            status = 404
-        )
+            return Response(serializer.data)
+        except RegexMatchError:
+            return Response(
+                {
+                    "message": "Invalid link format! Please check again"
+                },
+                status = 404
+            )
+        except AgeRestrictedVideoException:
+            return Response(
+                {
+                    "message": "This video is age restricted!"
+                },
+                status = 404
+            )
+        except VideoUnavailable:
+            return Response(
+                {
+                    "message": "video unavailable"
+                },
+                status = 404
+            )
 
-
-def get_qual(request) -> JsonResponse:
-    try:
-        return JsonResponse(
-            get_qualities(
-                get_url_from_video_id(
-                    request.GET.get(
-                        'video_id', 
-                        ''
+class GetQualitiesAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            return Response(
+                get_qualities(
+                    get_url_from_video_id(
+                        request.GET.get(
+                            'video_id', 
+                            ''
+                        )
                     )
                 )
             )
-        )
-    except AgeRestrictedVideoException:
-        return JsonResponse(
-            {
-                "message": "Age restricted video"
-            },
-            status = 403
-        )
-    except Exception as e:
-        return JsonResponse(
-            {
-                "message": "Internal server error",
-                "error": e
-            },
-            status = 500
-        )
+        except AgeRestrictedVideoException:
+            return Response(
+                {
+                    "message": "Age restricted video"
+                },
+                status = 403
+            )
+        except Exception as e:
+            return Response(
+                {
+                    "message": "Internal server error",
+                    "error": str(e)
+                },
+                status = 500
+            )
 
+class SearchVideoAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        results = _search_youtube(request)
+        if (results[0].get_status() != Status.FAILURE):
+            return Response(
+                {
+                    "results": [search_result.JsonSerialize() for search_result in results]
+                }
+            )
 
-
-def search(request) -> JsonResponse:
-    results = _search_youtube(request)
-    if (results[0].get_status() != Status.FAILURE):
-        return JsonResponse(
-            {
-                "results": [search_result.JsonSerialize() for search_result in results]
-            }
-        )
-
-    else:
-        return JsonResponse(
-            {
-                "message": "Failed to connect with youtube"
-            },
-            status = 500
-        )
+        else:
+            return Response(
+                {
+                    "message": "Failed to connect with youtube"
+                },
+                status = 500
+            )
