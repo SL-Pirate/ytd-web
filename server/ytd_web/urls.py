@@ -17,20 +17,38 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from ytd_web import views
-from rest_framework_swagger.views import get_swagger_view
+from django.urls import path
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="YTD API",
+        default_version='v1',
+        description="A free and open-source YouTube video downloader.",
+        contact=openapi.Contact(email="isiraherath626@gmail.com"),
+        license=openapi.License(name="GPLv3"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # new endpoints
     path('', views.root),
-    path('docs/', get_swagger_view(title='YTD API Docs')),
     path('link-expired/', views.link_expired),
     path("proxy", views.cors_proxy),
 
     # other apps
     path('', include('ytd_web_core.urls')),
     path('api/v1/', include('ytd_web_api.urls')),
+
+    # docs
+    path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    # path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 
 handler404 = 'ytd_web.views.not_found'

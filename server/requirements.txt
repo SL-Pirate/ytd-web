@@ -5,4 +5,4 @@ requests
 django-sequences
 django-cors-headers
 celery[redis]
-django-rest-swagger
+drf-yasg
