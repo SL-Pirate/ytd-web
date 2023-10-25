@@ -17,12 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from ytd_web import views
+from rest_framework_swagger.views import get_swagger_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # new endpoints
     path('', views.root),
+    path('docs/', get_swagger_view(title='YTD API Docs')),
     path('link-expired/', views.link_expired),
     path("proxy", views.cors_proxy),
 

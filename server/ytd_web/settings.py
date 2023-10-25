@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # 3rd party dependancies
+    'rest_framework',
     'corsheaders',
     'sequences.apps.SequencesConfig',
+    'rest_framework_swagger',
 
     # custom apps
     'ytd_web_core',
