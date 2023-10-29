@@ -10,7 +10,9 @@ def authenticate(request) -> bool:
     timestamp = request.META.get('HTTP_TIMESTAMP')
     # checking timestamp is within 5 minutes
     # and token is valid
-    if not timestamp < time.time * 1000 - 300000 and request.META.get('HTTP_TOKEN') == hashlib.md5(
+    if (
+        (int(timestamp) + 300000) > (time.time() * 1000)
+    ) and request.META.get('HTTP_TOKEN') == hashlib.md5(
         f"{timestamp}{_api_key}".encode()
     ).hexdigest():
         return True
