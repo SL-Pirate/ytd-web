@@ -1,5 +1,10 @@
 from rest_framework import serializers
 from ytd_web_core.models import Downloadable
+from configparser import ConfigParser
+
+config = ConfigParser()
+config.read(".env")
+_server_ip = config["server"]["ip"]
 
 class DownloadableSerializer(serializers.ModelSerializer):
     file_name = serializers.CharField(source='name')
@@ -12,7 +17,7 @@ class DownloadableSerializer(serializers.ModelSerializer):
         
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["downloadable_link"] = self.context["request"].build_absolute_uri().split("/api")[0] + "/downloads/" + str(instance.id)
+        data["downloadable_link"] = _server_ip + "/downloads/" + str(instance.id)
 
         return data
     
