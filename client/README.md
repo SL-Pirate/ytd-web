@@ -1,19 +1,18 @@
-# ytd_web
+# Project YTD - frontend
+This is the frontend for the project YTD which is an Open Source Youtube Video Downloader.
 
-The frontend of the ytd-web project
+## Build instructions
+- Build the project with the following command
+```bash
+flutter build <your platform> --release --dart-define="token=<session token from the .env file of your ytd-web server>" --dart-define="baseUrl=<server url/ip address>:<port>/api/v1"
+```
 
-## Dependanices
-- Linux builds depends on mpv
+### Available Platforms
+- Web Application: `web`
+- Android: `apk`
+- Windows: `windows`
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Other platforms
+- This project also can be built for other platforms such as mac os and IOS
+- But since I don't own a device myself I haven't configured and tested the project for them
+- But if you are interested in building for those platforms, this project is open for contributions
