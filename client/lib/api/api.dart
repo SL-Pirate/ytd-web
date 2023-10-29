@@ -5,10 +5,13 @@ import 'package:http/http.dart' as http;
 class Api{
   static final Api instance = Api._();
   final Dio _dio = Dio();
-  final String _baseUrl = "http://slpirate.pii.at:8000/api/v1";
-  // final String _baseUrl = "http://localhost:8000/api/v1";
+  // final String _baseUrl = "http://slpirate.pii.at:8000/api/v1";
+  final String _baseUrl = "http://localhost:8000/api/v1";
 
-  Api._();
+  Api._() {
+    _dio.options.headers["Content-Type"] = "application/json";
+    _dio.options.headers["Authorization"] = 'Bearer ${const String.fromEnvironment("token")}';
+  }
 
   Future<Response> getVideo (String videoId, String resolution) async {
     try{

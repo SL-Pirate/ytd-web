@@ -2,7 +2,6 @@ from configparser import ConfigParser
 from pytube import YouTube as yt
 from pytube.exceptions import RegexMatchError as InvalidLinkError
 import requests
-import json
 from ytd_web_core import Status
 
 config = ConfigParser()
