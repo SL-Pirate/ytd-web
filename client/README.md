@@ -2,8 +2,14 @@
 This is the frontend for the project YTD which is an Open Source Youtube Video Downloader.
 
 ## Build instructions
+- Make sure you have flutter installed
+- This can be ferified with 
+```bash
+flutter doctor -v
+```
 - Build the project with the following command
 ```bash
+flutter pub get
 flutter build <your platform> --release --dart-define="token=<session token from the .env file of your ytd-web server>" --dart-define="baseUrl=<server url/ip address>:<port>/api/v1"
 ```
 
