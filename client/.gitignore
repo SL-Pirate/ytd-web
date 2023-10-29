@@ -42,3 +42,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# buildscripts which contain sensitive information that should be kept away from public
+# These scripts are created just for the convenience
+scripts/
