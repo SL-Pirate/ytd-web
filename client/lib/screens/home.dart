@@ -57,15 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: SearchBar(
                     controller: _ctrlr,
+                    onSubmitted: onSubmitted,
                     trailing: [
                       IconButton(
-                          onPressed: () {
-                            if (_ctrlr.text.isNotEmpty) {
-                              setState(() {
-                                output = _ctrlr.text;
-                              });
-                            }
-                          },
+                          onPressed: onSubmitted,
                           icon: const Icon(Icons.search)
                       )
                     ],
@@ -78,5 +73,13 @@ class _HomeScreenState extends State<HomeScreen> {
         body: SearchResultsComponent(output),
       ),
     );
+  }
+
+  void onSubmitted([String? result]) {
+    if (_ctrlr.text.isNotEmpty) {
+      setState(() {
+        output = _ctrlr.text;
+      });
+    }
   }
 }
