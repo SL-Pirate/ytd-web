@@ -67,6 +67,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+
+    # custom middleware
+    'ytd_web.middleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'ytd_web.urls'
@@ -150,3 +153,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SWAGGER_SETTINGS = {
     "DEFAULT_MODEL_RENDERING": "example"
 }
+
+# Configuration for authentication middleware
+PUBLIC_ENDPOINTS = [
+    '/',
+    '/docs',
+]
+
+PUBLIC_URL_PATTERNS = [
+    '/downloads/'
+]

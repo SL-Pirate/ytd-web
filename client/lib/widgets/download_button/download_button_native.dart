@@ -17,10 +17,10 @@ class DownloadingButtonPlatform extends StatefulWidget {
   });
 
   @override
-  State<DownloadingButtonPlatform> createState() => _DownloadingButtionState();
+  State<DownloadingButtonPlatform> createState() => _DownloadingButtonState();
 }
 
-class _DownloadingButtionState extends State<DownloadingButtonPlatform> {
+class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
   bool isDownloading = false;
   Widget downloadButtonIcon = const Icon(Icons.download, color: Colors.green,);
 
@@ -86,9 +86,6 @@ class _DownloadingButtionState extends State<DownloadingButtonPlatform> {
                   setState(() {
                     downloadButtonIcon = const Icon(Icons.close, color: Colors.red,);
                   });
-
-              // case TaskStatus.paused:
-              //   print('Download was paused');
 
                 default:
                   setState(() {
