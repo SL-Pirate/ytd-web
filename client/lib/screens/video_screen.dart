@@ -49,7 +49,19 @@ class _VideoScreenState extends State<VideoScreen> {
       children: [
         Center(
           child: ClipRect(
-            child: Image.network(widget.searchResult.thumbnailUrl),
+            child: FutureBuilder(
+              future: Api.instance.getImage(widget.searchResult.thumbnailUrl),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Image.memory(snapshot.data);
+                }
+                else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            )
           ),
         ),
         Center(

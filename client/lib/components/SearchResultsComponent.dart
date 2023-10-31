@@ -39,15 +39,21 @@ class _SearchResultsComponentState extends State<SearchResultsComponent> {
             );
           }
           List<dynamic> data = snapshot.data["results"];
-          return ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (BuildContext context, int i) => SearchResultWidget(
-              SearchResultModel(
-                title: data[i]["title"],
-                channelName: data[i]["channel_name"],
-                thumbnailUrl: data[i]["thumbnail_url"],
-                videoId: data[i]["video_id"]
-              )
+          return SingleChildScrollView(
+            child: Center(
+              child: Column(
+                children: [
+                  for (var item in data)
+                    SearchResultWidget(
+                        SearchResultModel(
+                            title: item["title"],
+                            channelName: item["channel_name"],
+                            thumbnailUrl: item["thumbnail_url"],
+                            videoId: item["video_id"]
+                        )
+                    )
+                ],
+              ),
             ),
           );
         }

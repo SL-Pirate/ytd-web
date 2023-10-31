@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:typed_data';
+// import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
@@ -25,7 +25,7 @@ class Api{
       return await _dio.get(
           "$_baseUrl/download/video",
           options: Options(
-            headers: header
+              headers: header
           ),
           queryParameters: {
             "video_id": videoId,
@@ -60,21 +60,6 @@ class Api{
     }
   }
 
-  Future<Stream<Uint8List>?> getDownloadable(String url) async {
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        return Stream.value(response.bodyBytes);
-
-      }
-    } catch (error) {
-      return null;
-    }
-
-    return null;
-  }
-
   Future<dynamic> getQualities(String videoId) async {
     var response = await _dio.get(
         "$_baseUrl/search/qualities",
@@ -90,6 +75,27 @@ class Api{
       return response.data;
     }
 
+
+    return null;
+  }
+
+  Future<dynamic> getImage(String url) async {
+    try {
+      var response = await _dio.get(
+          url,
+          options: Options(
+              headers: header,
+            responseType: ResponseType.bytes
+          ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+    }
+    catch (error) {
+      return null;
+    }
 
     return null;
   }

@@ -11,7 +11,6 @@ from rest_framework.views import APIView, Response
 from .serializers import *
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from ytd_web_api.auth import authenticate
 
 class DownloadVideoAPIView(APIView):
     @swagger_auto_schema(
@@ -46,13 +45,6 @@ class DownloadVideoAPIView(APIView):
     )
     def get(self, request, *args, **kwargs):
         try:
-            if not authenticate(request):
-                return Response(
-                    {
-                        "message": "Invalid API key"
-                    },
-                    status = 403
-                )
             downloadable: Downloadable = dlvid(
                 get_url_from_video_id(request.GET.get('video_id', '')),
                 request.GET.get('resolution', ''),
@@ -105,13 +97,6 @@ class GetQualitiesAPIView(APIView):
     )
     def get(self, request, *args, **kwargs):
         try:
-            if not authenticate(request):
-                return Response(
-                    {
-                        "message": "Invalid API key"
-                    },
-                    status = 403
-                )
             data = get_qualities(
                     get_url_from_video_id(
                         request.GET.get(
@@ -162,13 +147,6 @@ class SearchVideoAPIView(APIView):
         }
     )
     def get(self, request, *args, **kwargs):
-        if not authenticate(request):
-            return Response(
-                {
-                    "message": "Invalid API key"
-                },
-                status = 403
-            )
         results = _search_youtube(request)
         if (results[0].get_status() != Status.FAILURE):
             return Response(
