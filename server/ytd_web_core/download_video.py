@@ -10,8 +10,25 @@ from ytd_web_core import cache_folder as global_cache_folder
 from typing import Optional
 from ytd_web_core.models import Downloadable
 from time import time
+from enum import Enum
 
-def has_audio(filename):
+class VideoFormat(Enum):
+    DEFAULT = ''
+    MP4 = "mp4"
+    WEBM = "webm"
+    MKV = "mkv"
+
+def _is_needed_to_be_encoded(
+        filename: str, 
+        required_format: VideoFormat,
+        current_format: str
+    ) -> bool:
+    if (
+        required_format != VideoFormat.DEFAULT 
+        and str.lower(current_format) != str.lower(required_format.value)
+    ):
+        return True
+    
     result = subprocess.run(
         [
             "ffprobe", 
@@ -25,15 +42,38 @@ def has_audio(filename):
         stderr=subprocess.STDOUT
     )
     
-    return (int(result.stdout) -1)
+    if (not (int(result.stdout) -1)):
+        return True
+    
+    return False
 
-def download_video(video_link: str, reso: str) -> Downloadable:
-    is_needed_to_be_encoded = False
+def _process(
+        name: str, 
+        out: str, 
+        out_file: str, 
+        in_aud: str, 
+        in_vid: str,
+        video_codec: str = "copy",
+    ):
     try:
-        is_needed_to_be_encoded = int(reso.split("p")[0]) > 720
-    except Exception:
-        is_needed_to_be_encoded = True
+        stream: str = name
+        ffmpeg_command = 'ffmpeg -i "'+str(in_vid)+'/'+str(stream)+'" -i "'+str(in_aud)+'/'+str(stream)+'" -c:v ' + str(video_codec) + ' -c:a aac -map 0:v:0 -map 1:a:0 -y "'+str(out)+'/'+str(stream)+'"'
+        cmd(str(ffmpeg_command) ,shell=True)
+        try:
+            os.rename(out + '/' + name, out_file)
+        except FileExistsError:
+            os.remove(out_file)
+            os.rename(out + '/' + name, out_file)
+    except FileNotFoundError:
+        raise VideoProcessingFailureException()
+    except Exception as e:
+        raise VideoProcessingFailureException(str(e))
 
+def download_video(
+        video_link: str, 
+        reso: str, 
+        format: str = VideoFormat.DEFAULT.value
+    ) -> Downloadable:
     yt_vid = yt(video_link)
     if (yt_vid.age_restricted):
         raise AgeRestrictedVideoException
@@ -46,9 +86,22 @@ def download_video(video_link: str, reso: str) -> Downloadable:
     out: str = f"{cache_folder}/yt_temp/final"
     out_file: str = vid_file.download(in_vid)
 
-    is_needed_to_be_encoded = not has_audio(out_file)
+    # checking if the format is an available format
+    for (key, value) in VideoFormat.__members__.items():
+        if (format == value.value):
+            format = value
+            break
 
-    if is_needed_to_be_encoded:
+    # if (format is str):
+    #     format = VideoFormat.DEFAULT
+
+    # checking if needed to be processed
+    current_format = out_file.split(".")[-1]
+    if _is_needed_to_be_encoded(
+        out_file, 
+        format,
+        current_format
+    ):
         aud_file = yt_vid.streams.filter(only_audio=True).first()
         name: str = get_name()
 
@@ -63,20 +116,16 @@ def download_video(video_link: str, reso: str) -> Downloadable:
             mkdir(out)
         except FileExistsError:
             pass
+        
+        if format != VideoFormat.DEFAULT:
+            out_file = out_file.replace(current_format, format.value)
 
-        try:               
-            stream: str = name
-            ffmpeg_command = 'ffmpeg -i "'+str(in_vid)+'/'+str(stream)+'" -i "'+str(in_aud)+'/'+str(stream)+'" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -y "'+str(out)+'/'+str(stream)+'"'
-            cmd(str(ffmpeg_command) ,shell=True)
-            try:
-                os.rename(out + '/' + name, out_file)
-            except FileExistsError:
-                os.remove(out_file)
-                os.rename(out + '/' + name, out_file)
-        except FileNotFoundError:
-            raise VideoProcessingFailureException()
-        except Exception as e:
-            raise VideoProcessingFailureException(str(e))
+        codec: str = "copy"
+        if (reso == '144p'):
+            codec = 'h264'
+
+        _process(name, out, out_file, in_aud, in_vid, codec)
+
         
     downloadable = Downloadable(
         path=out_file, 

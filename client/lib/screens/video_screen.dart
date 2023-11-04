@@ -87,9 +87,6 @@ class _VideoScreenState extends State<VideoScreen> {
             if (snapshot.hasData) {
               if (availableQualities.isEmpty) {
                 for (String q in snapshot.data["video_qualities"]) {
-                  // skipping 144p quality as it typically fails to play properly on the player
-                  if (q == "144p") continue;
-
                   availableQualities.add(
                       DropdownMenuEntry(
                           value: q,

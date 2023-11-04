@@ -1,4 +1,5 @@
 from ytd_web_core.download_video import download_video as dlvid
+from ytd_web_core.download_video import VideoFormat
 from ytd_web_core.exceptions import *
 from pytube.exceptions import RegexMatchError, VideoUnavailable
 from ytd_web_core.exceptions import AgeRestrictedVideoException
@@ -26,6 +27,13 @@ class DownloadVideoAPIView(APIView):
                 openapi.IN_QUERY,
                 description='Video quality. Use the /search/qualities api to determine available qualities',
                 type=openapi.TYPE_STRING,
+            ),
+            openapi.Parameter(
+                'video_format',
+                openapi.IN_QUERY,
+                required=False,
+                description='Video output format. If not provided, the format available from youtube will be used. \nAvailable formats: mp4, webm, mkv',
+                type=openapi.TYPE_STRING,
             )
         ],
         responses={
@@ -48,6 +56,7 @@ class DownloadVideoAPIView(APIView):
             downloadable: Downloadable = dlvid(
                 get_url_from_video_id(request.GET.get('video_id', '')),
                 request.GET.get('resolution', ''),
+                request.GET.get('video_format', '')
             )
 
             serializer = DownloadableSerializer(downloadable, context={'request': request})
@@ -73,6 +82,13 @@ class DownloadVideoAPIView(APIView):
                     "message": "video unavailable"
                 },
                 status = 404
+            )
+        except Exception as e:
+            return Response(
+                {
+                    "message": "Bad request",
+                },
+                status = 400
             )
 
 class GetQualitiesAPIView(APIView):
