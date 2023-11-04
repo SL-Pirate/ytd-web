@@ -106,6 +106,7 @@ class _VideoScreenState extends State<VideoScreen> {
                       child: DropdownMenu(
                         width: MediaQuery.of(context).size.width - 40,
                         hintText: "Select video resolution",
+                        initialSelection: "360p",
                         dropdownMenuEntries: availableQualities,
                         onSelected: (selection) {
                           quality["currentQuality"] = selection;

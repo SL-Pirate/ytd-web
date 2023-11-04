@@ -1,7 +1,5 @@
 import 'dart:convert';
-// import 'dart:typed_data';
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 
 class Api{
@@ -29,7 +27,8 @@ class Api{
           ),
           queryParameters: {
             "video_id": videoId,
-            "resolution": resolution ?? "360p"
+            "resolution": resolution ?? "360p",
+            "video_format": "mp4"
           }
       );
     }
