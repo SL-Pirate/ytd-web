@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ytd_web/components/SearchResultsComponent.dart';
 import 'package:ytd_web/util/styles.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,8 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         preferredSize: const Size(double.infinity, 250),
         child: Material(
           color: Styles.blue,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Stack(
             children: [
               Material(
                 elevation: 10,
@@ -51,17 +49,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: Image.asset(
                         "assets/img/logo.png",
                         width: 100,
-                        height: 50,
-                        // scale: 5,
+                        height: 50
                       ),
                     ),
                     Container(
-                      width: 100,
-                      margin: const EdgeInsets.all(8),
+                      width: 90,
+                      height: 35,
+                      margin: const EdgeInsets.all(20),
                       decoration: const BoxDecoration(
                           color: Styles.red,
                           borderRadius: BorderRadius.all(Radius.circular(5))
@@ -72,15 +70,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             "Log In",
                             style: TextStyle(
                               color: Styles.white,
-                              fontFamily: Styles.fontFamily
+                              fontSize: 12,
+                              fontFamily: Styles.fontFamily,
+                              fontWeight: FontWeight.bold
                             ),
-                          )
+                          ),
                       ),
                     )
                   ],
                 ),
               ),
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -110,10 +111,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.all(8.0),
                     child: Text(
                       "Use this convenient YouTube video Downloader site to easily save"
-                          "your favorite videos for offline viewing.",
+                          " your favorite videos for offline viewing.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Styles.white,
+                        fontSize: 12,
                         fontFamily: Styles.fontFamily
                       ),
                     ),
@@ -136,18 +138,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         const Text(
                           "YouTube Video URL"
-                          " Or Search Term",
+                          " or Search Term",
                           maxLines: 2,
                           style: TextStyle(
                             color: Styles.white,
-                            fontWeight: FontWeight.bold,
                             fontFamily: Styles.fontFamily
                           ),
                         ),
                         Container(
-                          margin: const EdgeInsets.all(10),
-                          height: 50,
-                          child: TextField(
+                          margin: const EdgeInsets.symmetric(vertical: 20),
+                          height: 40,
+                          child: TextFormField(
                             controller: controller,
                             decoration: const InputDecoration(
                               fillColor: Styles.white,
@@ -157,15 +158,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Styles.grey,
                                 fontFamily: Styles.fontFamily
                               ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(8))
+                              )
                             ),
-                          )
+                            style: const TextStyle(
+                              fontFamily: Styles.fontFamily,
+                              fontSize: 12,
+                              height: 1
+                            ),
+                          ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8,
-                            horizontal: 25
-                          ),
-                          margin: const EdgeInsets.symmetric(vertical: 20),
+                          height: 50,
+                          width: 140,
+                          margin: const EdgeInsets.only(top: 20),
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                             color: Styles.red,
@@ -176,6 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               "Submit",
                               style: TextStyle(
                                 color: Styles.white,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: Styles.fontFamily
                               ),
@@ -187,48 +195,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ],
               ),
-              const SizedBox()
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: double.infinity,
+                  height: 30,
+                  color: Styles.black.withOpacity(0.25),
+                  child: Center(
+                    child: Text(
+                      "Copyright © ${DateTime.now().year} $product. "
+                          "All Rights Reserved",
+                      style: TextStyle(
+                        color: Styles.grey.withOpacity(0.5),
+                        fontSize: 12,
+                        fontFamily: Styles.fontFamily
+                      ),
+                    ),
+                  ),
+                )
+              )
             ],
           ),
         ),
       )
-
-      // Scaffold(
-      //   appBar: PreferredSize(
-      //     preferredSize: const Size(double.infinity,  125),
-      //     child: Container(
-      //       color: Colors.blue,
-      //       child: Column(
-      //         children: [
-      //           Padding(
-      //             padding: const EdgeInsets.all(8.0),
-      //             child: Text(
-      //               "Welcome to $product",
-      //               style: const TextStyle(
-      //                 fontWeight: FontWeight.bold,
-      //                 fontSize: 24
-      //               ),
-      //             ),
-      //           ),
-      //           Padding(
-      //             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      //             child: SearchBar(
-      //               controller: _ctrlr,
-      //               onSubmitted: onSubmitted,
-      //               trailing: [
-      //                 IconButton(
-      //                     onPressed: onSubmitted,
-      //                     icon: const Icon(Icons.search)
-      //                 )
-      //               ],
-      //             ),
-      //           )
-      //         ],
-      //       ),
-      //     ),
-      //   ),
-      //   body: SearchResultsComponent(output),
-      // ),
     );
   }
 }
