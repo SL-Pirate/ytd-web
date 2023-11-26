@@ -164,6 +164,13 @@ class SearchVideoAPIView(APIView):
     )
     def get(self, request, *args, **kwargs):
         results = _search_youtube(request)
+        if (len(results) == 0):
+            return Response(
+                {
+                    "message": "No results found"
+                },
+                status = 404
+            )
         if (results[0].get_status() != Status.FAILURE):
             return Response(
                 SearchResultsSerializer({

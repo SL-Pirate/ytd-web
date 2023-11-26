@@ -52,10 +52,15 @@ class Api{
           }
       );
 
-      return response.data;
+      if (response.statusCode == 200) {
+        return response.data["results"];
+      }
+      else {
+        return List.from([]);
+      }
     }
     on DioException {
-      return Future(() => null);
+      return List.from([]);
     }
   }
 

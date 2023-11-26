@@ -5,10 +5,28 @@ import 'package:media_kit/media_kit.dart';
 import 'package:ytd_web/screens/home.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'screens/base_frame.dart';
+
+String product = "";
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
   requestStoragePerms();
+
+  if (kIsWeb) {
+    product = "YTD-Web";
+  }
+  else if (Platform.isAndroid || Platform.isIOS) {
+    product = "YTD-Mobile";
+  }
+  else if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+    product = "YTD-Desktop";
+  }
+  else {
+    product = "YTDL";
+  }
+
   runApp(const MyApp());
 }
 
@@ -33,7 +51,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SafeArea(child: HomeScreen()),
+      home: BaseFrame(
+        product: product,
+        child: const HomePage(),
+      )
     );
   }
 }
