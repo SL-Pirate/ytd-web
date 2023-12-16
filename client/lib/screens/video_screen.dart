@@ -20,6 +20,7 @@ class VideoScreen extends StatefulWidget {
 
 class _VideoScreenState extends State<VideoScreen> {
   static const double playerMaxWidth = 540;
+  static const double playerMaxHeight = 304;
   final ValueNotifier<String> videoResolution = ValueNotifier("360p");
   final Map<String, String> downloadable = {};
   final Player videoPlayer = Player();
@@ -153,7 +154,7 @@ class _VideoScreenState extends State<VideoScreen> {
                   ),
                   Container(
                     constraints: const BoxConstraints(
-                        maxWidth: playerMaxWidth
+                      maxWidth: playerMaxWidth,
                     ),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -203,7 +204,13 @@ class _VideoScreenState extends State<VideoScreen> {
   void setupPlayer(String src) {
     videoPlayer.open(Media(src));
     setState(() {
-      preview = Video(controller: controller,);
+      preview = Container(
+          constraints: const BoxConstraints(
+              maxWidth: playerMaxWidth,
+              maxHeight: playerMaxHeight
+          ),
+          child: Video(controller: controller,)
+      );
     });
   }
 

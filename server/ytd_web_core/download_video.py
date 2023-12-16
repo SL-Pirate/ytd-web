@@ -21,12 +21,16 @@ class VideoFormat(Enum):
 def _is_needed_to_be_encoded(
         filename: str, 
         required_format: VideoFormat,
-        current_format: str
+        current_format: str,
+        reso: str = None
     ) -> bool:
     if (
         required_format != VideoFormat.DEFAULT 
         and str.lower(current_format) != str.lower(required_format.value)
     ):
+        return True
+    
+    if (reso == '144p' or reso == '240p'):
         return True
     
     result = subprocess.run(
@@ -92,9 +96,6 @@ def download_video(
             format = value
             break
 
-    # if (format is str):
-    #     format = VideoFormat.DEFAULT
-
     # checking if needed to be processed
     current_format = out_file.split(".")[-1]
     if _is_needed_to_be_encoded(
@@ -121,7 +122,7 @@ def download_video(
             out_file = out_file.replace(current_format, format.value)
 
         codec: str = "copy"
-        if (reso == '144p'):
+        if (reso == '144p' or reso == '240p'):
             codec = 'h264'
 
         _process(name, out, out_file, in_aud, in_vid, codec)
