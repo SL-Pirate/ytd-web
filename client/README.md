@@ -3,7 +3,7 @@ This is the frontend for the project YTD which is an Open Source Youtube Video D
 
 ## Build instructions
 - Make sure you have flutter installed
-- This can be ferified with 
+- This can be verified with 
 ```bash
 flutter doctor -v
 ```
