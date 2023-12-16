@@ -31,7 +31,7 @@ void main() {
 }
 
 void requestStoragePerms() async {
-  if (!kIsWeb && Platform.isAndroid) {
+  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
     PermissionStatus status = await Permission.storage.status;
     if (status.isDenied) {
       status = await Permission.storage.request();
