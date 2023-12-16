@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ytd_web/api/api.dart';
+import 'package:ytd_web/util/api.dart';
 import 'package:ytd_web/main.dart';
 import 'package:ytd_web/modals/search_result_model.dart';
 import 'package:ytd_web/screens/base_frame.dart';
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
             ),
             Container(
               constraints: const BoxConstraints(
-                  maxWidth: 1000,
+                maxWidth: 1000,
               ),
               width: double.infinity,
               padding: const EdgeInsets.symmetric(
@@ -266,4 +266,3 @@ class _HomePageState extends State<HomePage> {
     });
   }
 }
-

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:html_unescape/html_unescape.dart';
-import 'package:ytd_web/api/api.dart';
+import 'package:ytd_web/util/api.dart';
 import 'package:ytd_web/modals/search_result_model.dart';
 import 'package:ytd_web/util/styles.dart';
+import 'package:ytd_web/widgets/channel_label.dart';
 
 class SearchResultWidget extends StatelessWidget {
   final SearchResultModel searchResultModel;
@@ -46,39 +47,7 @@ class SearchResultWidget extends StatelessWidget {
                   )
               ),
               const SizedBox(height: 18,),
-              Row(
-                children: [
-                  FutureBuilder(
-                      future: searchResultModel.channelThumbnailProvider,
-                      builder: (context, snap) {
-                        return CircleAvatar(
-                          radius: 10.5,
-                          backgroundColor: Styles.white,
-                          backgroundImage: snap.data,
-                          child: snap.data == null ? const Center(
-                              child: Icon(
-                                Icons.person,
-                                size: 12.58,
-                              )
-                          ) : null,
-                        );
-                      }
-                  ),
-                  const SizedBox(width: 10,),
-                  Expanded(
-                    child: Text(
-                        searchResultModel.channelName,
-                        style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Styles.white,
-                            fontFamily: Styles.fontFamily
-                        ),
-                        overflow: TextOverflow.ellipsis
-                    ),
-                  ),
-                ],
-              )
+              ChannelLabel(searchResultModel: searchResultModel)
             ],
           ),
         )

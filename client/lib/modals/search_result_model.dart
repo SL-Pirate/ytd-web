@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:ytd_web/api/api.dart';
+import 'package:ytd_web/util/api.dart';
 
 class SearchResultModel{
   final String videoId;
@@ -22,7 +22,10 @@ class SearchResultModel{
   Future<Image?> get thumbnail async {
     try{
       final bytes = await Api.instance.getImage(_thumbnailUrl!);
-      return Image.memory(bytes);
+      return Image.memory(
+        bytes,
+        fit: BoxFit.fitWidth,
+      );
     }
     catch(e){
       return null;

@@ -1,5 +1,4 @@
 from ytd_web_core.download_video import download_video as dlvid
-from ytd_web_core.download_video import VideoFormat
 from ytd_web_core.exceptions import *
 from pytube.exceptions import RegexMatchError, VideoUnavailable
 from ytd_web_core.exceptions import AgeRestrictedVideoException
@@ -87,6 +86,7 @@ class DownloadVideoAPIView(APIView):
             return Response(
                 {
                     "message": "Bad request",
+                    "error": str(e)
                 },
                 status = 400
             )
@@ -163,95 +163,6 @@ class SearchVideoAPIView(APIView):
         }
     )
     def get(self, request, *args, **kwargs):
-
-        return Response(SearchResultsSerializer(
-            {
-                "results": [
-                    {
-                        "video_id": "v6IAJOOmDMg",
-                        "title": "The Chainsmokers, XYLØ - Setting Fires (Lyric) ft. XYLØ",
-                        "description": "The Chainsmokers debut album 'Memories... Do Not Open' is out now! Buy & Stream: http://smarturl.it/TCSMemories Physical CD: ...",
-                        "thumbnail_url": "http://localhost:8000/proxy?url=https://i.ytimg.com/vi/v6IAJOOmDMg/hqdefault.jpg",
-                        "channel_name": "ChainsmokersVEVO",
-                        "channel_thumbnail_url": "http://localhost:8000/proxy?url=https://yt3.ggpht.com/7LLsTxYTnoAUm3zd4ANd9xh1Tr5VhDkBesxTQhn1QWAEW3Eii-CTxlzthvi1qpyD-gN1dU1pgkc=s88-c-k-c0x00ffffff-no-nd-rj"
-                        # "channel_thumbnail_url": None
-                    },
-                    {
-                        "video_id": "TKJrq_hS0_g",
-                        "title": "The Chainsmokers, XYLØ - Setting Fires (Lyrics)",
-                        "description": "Follow 7clouds on Spotify : http://bit.ly/7CLOUDS The Chainsmokers, XYLØ - Setting Fires (Lyrics) ⏬ Download / Stream: ...",
-                        "thumbnail_url": "http://localhost:8000/proxy?url=https://i.ytimg.com/vi/TKJrq_hS0_g/hqdefault.jpg",
-                        "channel_name": "7clouds",
-                        "channel_thumbnail_url": "http://localhost:8000/proxy?url=https://yt3.ggpht.com/bhG7T_FzfLoxqmJwGobKF1B9u9FhIXiYA8JYRPPoHcOASht0psOD3LZHZ3HqPEICEn30FWkDfg=s88-c-k-c0x00ffffff-no-rj"
-                    },
-                    {
-                        "video_id": "ZrM9JmKwpHs",
-                        "title": "The Chainsmokers, XYLØ - Setting Fires (Acoustic Version) ft. XYLØ",
-                        "description": "Collage EP OUT NOW: http://smarturl.it/TCSCollage Urban Outfitters White Vinyl: http://smarturl.it/CollageVinyl Amazon Physical: ...",
-                        "thumbnail_url": "http://localhost:8000/proxy?url=https://i.ytimg.com/vi/ZrM9JmKwpHs/hqdefault.jpg",
-                        "channel_name": "ChainsmokersVEVO",
-                        "channel_thumbnail_url": "http://localhost:8000/proxy?url=https://yt3.ggpht.com/7LLsTxYTnoAUm3zd4ANd9xh1Tr5VhDkBesxTQhn1QWAEW3Eii-CTxlzthvi1qpyD-gN1dU1pgkc=s88-c-k-c0x00ffffff-no-nd-rj"
-                    },
-                    {
-                        "video_id": "jWhV70gVTEo",
-                        "title": "The Chainsmokers - Setting Fires ft. XYLØ",
-                        "description": "Proximity - Your favorite music you haven't heard yet. » Spotify!: http://spoti.fi/Proximity » Facebook: http://bit.ly/FBProximity The ...",
-                        "thumbnail_url": "http://localhost:8000/proxy?url=https://i.ytimg.com/vi/jWhV70gVTEo/hqdefault.jpg",
-                        "channel_name": "Proximity",
-                        "channel_thumbnail_url": "http://localhost:8000/proxy?url=https://yt3.ggpht.com/ytc/AIf8zZTc6BcK0_84_i5alboja5Ca6XKP9W1qYa80AxnVcw=s88-c-k-c0x00ffffff-no-rj"
-                    },
-                    {
-                        "video_id": "7UWf6sQU4oQ",
-                        "title": "The Chainsmokers Ft. XYLØ - Setting Fires (it&#39;s different Remix)",
-                        "description": "Trap City Merch: http://trapcity.tv/shop Subscribe here: http://trapcity.tv/subscribe Buy / Stream the original: https://trapcity.tv/2w8YX ...",
-                        "thumbnail_url": "http://localhost:8000/proxy?url=https://i.ytimg.com/vi/7UWf6sQU4oQ/hqdefault.jpg",
-                        "channel_name": "Trap City",
-                        "channel_thumbnail_url": "http://localhost:8000/proxy?url=https://yt3.ggpht.com/E8WhdAlUKLu36Zx2Y46Q3NoLxvPzQ4VxPV8QlHlISy2Kdn_nEnIOYWUV4deOq36-ACXJEfUu9F8=s88-c-k-c0x00ffffff-no-rj"
-                    },
-                    {
-                        "video_id": "R0mZdxMrHhQ",
-                        "title": "The Chainsmokers, XYLØ - Setting Fires (Audio Clip) ft. XYLØ",
-                        "description": "The Chainsmokers debut album 'Memories... Do Not Open' is out now! Buy & Stream: http://smarturl.it/TCSMemories Physical CD: ...",
-                        "thumbnail_url": "http://localhost:8000/proxy?url=https://i.ytimg.com/vi/R0mZdxMrHhQ/hqdefault.jpg",
-                        "channel_name": "ChainsmokersVEVO",
-                        "channel_thumbnail_url": "http://localhost:8000/proxy?url=https://yt3.ggpht.com/7LLsTxYTnoAUm3zd4ANd9xh1Tr5VhDkBesxTQhn1QWAEW3Eii-CTxlzthvi1qpyD-gN1dU1pgkc=s88-c-k-c0x00ffffff-no-nd-rj"
-                    },
-                    {
-                        "video_id": "oc64W6N9U2I",
-                        "title": "The Chainsmokers, XYLØ - Setting Fires (Sigma Remix Audio) ft. XYLØ",
-                        "description": "The Chainsmokers debut album 'Memories... Do Not Open' is out now! Buy & Stream: http://smarturl.it/TCSMemories Physical CD: ...",
-                        "thumbnail_url": "http://localhost:8000/proxy?url=https://i.ytimg.com/vi/oc64W6N9U2I/hqdefault.jpg",
-                        "channel_name": "ChainsmokersVEVO",
-                        "channel_thumbnail_url": "http://localhost:8000/proxy?url=https://yt3.ggpht.com/7LLsTxYTnoAUm3zd4ANd9xh1Tr5VhDkBesxTQhn1QWAEW3Eii-CTxlzthvi1qpyD-gN1dU1pgkc=s88-c-k-c0x00ffffff-no-nd-rj"
-                    },
-                    {
-                        "video_id": "DEJAd7Zp87U",
-                        "title": "The Chainsmokers ft. XYLØ - Setting Fires (VANIC Remix)",
-                        "description": "The Chainsmokers ft. XYLØ - Setting Fires (VANIC Remix) STREAM NOW: https://trapnation.komi.io The Chainsmokers ...",
-                        "thumbnail_url": "http://localhost:8000/proxy?url=https://i.ytimg.com/vi/DEJAd7Zp87U/hqdefault.jpg",
-                        "channel_name": "Trap Nation",
-                        "channel_thumbnail_url": "http://localhost:8000/proxy?url=https://yt3.ggpht.com/ZoViy6jSW8lGsT7Fgz7PsxsWznVseOVjGNkqh9U34cJ-7eXAGs_f2s0yCWwgxsxZT6d7icafVr8=s88-c-k-c0x00ffffff-no-rj"
-                    },
-                    {
-                        "video_id": "kclCH4yINhM",
-                        "title": "The Chainsmokers ft. XYLØ - Setting Fires",
-                        "description": "Purchase/Stream it here: http://smarturl.it/TCSCollage The Chainsmokers with XYLØ, DAMN what a collab!! Literally fire ...",
-                        "thumbnail_url": "http://localhost:8000/proxy?url=https://i.ytimg.com/vi/kclCH4yINhM/hqdefault.jpg",
-                        "channel_name": "xKito Music",
-                        "channel_thumbnail_url": "http://localhost:8000/proxy?url=https://yt3.ggpht.com/i6xNr7EQzSvIOZ2E4BC2twnqlFqi-QeruOUDQOM0pgPC7OvygMKHCnXDqDgJe-DTgACJbtALMQ=s88-c-k-c0x00ffffff-no-rj"
-                    },
-                    {
-                        "video_id": "54HTh0HP-s8",
-                        "title": "Setting Fires - The Chainsmokers ft. XYLØ / Yoojung Lee Choreography",
-                        "description": "Yoojung teaches choreography to Setting Fires by The Chainsmokers ft. XYLØ . Learn from instructors of 1MILLION Dance Studio ...",
-                        "thumbnail_url": "http://localhost:8000/proxy?url=https://i.ytimg.com/vi/54HTh0HP-s8/hqdefault.jpg",
-                        "channel_name": "1MILLION Dance Studio",
-                        "channel_thumbnail_url": "http://localhost:8000/proxy?url=https://yt3.ggpht.com/ytc/AIf8zZRvDNBJNIlVV_beH50MXTiJwDiiHC1PyAxApEDMRA=s88-c-k-c0x00ffffff-no-rj"
-                    }
-                ]
-            }
-        ).data)
-
         results = _search_youtube(request)
         if (len(results) == 0):
             return Response(
