@@ -1,5 +1,4 @@
 from ytd_web_core.download_video import download_video as dlvid
-from ytd_web_core.download_video import VideoFormat
 from ytd_web_core.exceptions import *
 from pytube.exceptions import RegexMatchError, VideoUnavailable
 from ytd_web_core.exceptions import AgeRestrictedVideoException
@@ -87,6 +86,7 @@ class DownloadVideoAPIView(APIView):
             return Response(
                 {
                     "message": "Bad request",
+                    "error": str(e)
                 },
                 status = 400
             )
@@ -164,6 +164,13 @@ class SearchVideoAPIView(APIView):
     )
     def get(self, request, *args, **kwargs):
         results = _search_youtube(request)
+        if (len(results) == 0):
+            return Response(
+                {
+                    "message": "No results found"
+                },
+                status = 404
+            )
         if (results[0].get_status() != Status.FAILURE):
             return Response(
                 SearchResultsSerializer({
@@ -171,8 +178,10 @@ class SearchVideoAPIView(APIView):
                         SingleSearchResultSerializer({
                             'video_id': search_result.get_video_id(),
                             'title': search_result.get_title(),
+                            'description': search_result.get_description(),
                             'thumbnail_url': search_result.get_thumbnail_url(),
-                            'channel_name': search_result.get_channel_name()
+                            'channel_name': search_result.get_channel_name(),
+                            'channel_thumbnail_url': search_result.get_channel_thumbnail_url()
                         }).data for search_result in results
                     ]
                 }).data

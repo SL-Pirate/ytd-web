@@ -2,9 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:ytd_web/api/api.dart';
+import 'package:ytd_web/components/download_section.dart';
+import 'package:ytd_web/util/api.dart';
 import 'package:ytd_web/modals/search_result_model.dart';
 import 'package:dio/dio.dart';
+import 'package:ytd_web/util/styles.dart';
+import 'package:ytd_web/widgets/channel_label.dart';
 import 'package:ytd_web/widgets/download_button/download_button.dart';
 
 class VideoScreen extends StatefulWidget {
@@ -16,19 +19,19 @@ class VideoScreen extends StatefulWidget {
 }
 
 class _VideoScreenState extends State<VideoScreen> {
-  Map<String, String> downloadable = {};
-  Widget? preview;
-  late Widget thumbnail;
-  bool isDownloading = false;
-  Widget downloadButtonIcon = const Icon(Icons.download, color: Colors.green,);
+  static const double playerMaxWidth = 540;
+  final ValueNotifier<String> videoResolution = ValueNotifier("360p");
+  final Map<String, String> downloadable = {};
   final Player videoPlayer = Player();
   late final VideoController controller;
+  Widget? preview;
+  bool isDownloading = false;
+  Widget downloadButtonIcon = const Icon(Icons.download, color: Colors.green,);
   Widget startPlayerIndicator = const Icon(
     Icons.play_circle, color: Colors.white70,
     size: 69,
   );
-  List<DropdownMenuEntry> availableQualities = [];
-  Map<String, String> quality = {"currentQuality": "360p"};
+  final List<DropdownMenuEntry> availableQualities = [];
   Future<dynamic>? qualityResponse;
 
   @override
@@ -45,95 +48,53 @@ class _VideoScreenState extends State<VideoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    thumbnail = Stack(
-      children: [
-        Center(
-          child: ClipRect(
-            child: FutureBuilder(
-              future: Api.instance.getImage(widget.searchResult.thumbnailUrl),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Image.memory(snapshot.data);
-                }
-                else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            )
-          ),
-        ),
-        Center(
-          child: startPlayerIndicator,
-        )
-      ],
-    );
-
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Center(
-            child: Text(
-              widget.searchResult.title,
-              maxLines: 2,
-            ),
-          ),
-          backgroundColor: Colors.blue,
-        ),
-        body: FutureBuilder(
-          future: fetchQualities(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (availableQualities.isEmpty) {
-                for (String q in snapshot.data["video_qualities"]) {
-                  availableQualities.add(
-                      DropdownMenuEntry(
-                          value: q,
-                          label: q
-                      )
-                  );
-                }
-              }
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(
+                height: 100,
+              ),
+              Wrap(
+                alignment: WrapAlignment.spaceEvenly,
                 children: [
-                  Center(
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: DropdownMenu(
-                        width: MediaQuery.of(context).size.width - 40,
-                        hintText: "Select video resolution",
-                        initialSelection: "360p",
-                        dropdownMenuEntries: availableQualities,
-                        onSelected: (selection) {
-                          quality["currentQuality"] = selection;
-                          // preventing sending requests when usr has not requested a video
-                          if (downloadable["link"] != null) {
-                            Api.instance.getVideo(
-                                widget.searchResult.videoId,
-                                selection
-                            ).then((value) {
-                              downloadable["link"] = value.data["downloadable_link"];
-                              videoPlayer.open(Media(downloadable["link"]!)).then((value) {
-                                videoPlayer.play();
-                              });
-                            });
-                          }
-                        },
-                      ),
+                  Container(
+                    constraints: const BoxConstraints(
+                        maxWidth: playerMaxWidth
                     ),
-                  ),
-                  SizedBox(
-                    child: preview
-                        ?? GestureDetector(
+                    child: Column(
+                      children: [
+                        preview ?? GestureDetector(
                             child: Container(
-                                width: 500,
-                                height: 250,
                                 color: Colors.black,
-                                child: thumbnail
+                                child: FutureBuilder(
+                                  future: widget.searchResult.thumbnail,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return SizedBox(
+                                          width: double.infinity,
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              snapshot.data!,
+                                              Center(
+                                                child: startPlayerIndicator,
+                                              )
+                                            ],
+                                          )
+                                      );
+                                    }
+                                    else {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                  },
+                                )
                             ),
                             onTap: () async {
                               setState(() {
@@ -142,7 +103,7 @@ class _VideoScreenState extends State<VideoScreen> {
                               if (downloadable["link"] == null) {
                                 Response<dynamic> response = await Api.instance.getVideo(
                                     widget.searchResult.videoId,
-                                    quality["currentQuality"]!
+                                    videoResolution.value
                                 );
                                 if (response.statusCode != 404) {
                                   downloadable["link"] = response.data["downloadable_link"];
@@ -171,52 +132,68 @@ class _VideoScreenState extends State<VideoScreen> {
                               }
                             }
                         ),
-                  ),
-                  Center(
-                    child: Text(widget.searchResult.channelName),
-                  ),
-                  const SizedBox(
-                    height: 100,
-                    width: 100,
-                  )
-                ],
-              );
-            }
-            else if (snapshot.hasError) {
-              return const Center(
-                child: Card(
-                  elevation: 4.0,
-                  margin: EdgeInsets.all(16.0),
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      'This video is unavailable!',
-                      style: TextStyle(fontSize: 16.0),
-                      textAlign: TextAlign.center,
+                        const SizedBox(height: 30,),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            widget.searchResult.title,
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: Styles.fontFamily,
+                                color: Styles.white
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 15,),
+                        ChannelLabel(searchResultModel: widget.searchResult),
+                        const SizedBox(height: 50,),
+                      ],
                     ),
                   ),
-                ),
-              );
-            }
-            else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
+                  Container(
+                    constraints: const BoxConstraints(
+                        maxWidth: playerMaxWidth
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 50
+                    ),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                            color: Colors.red,
+                            width: 2
+                        )
+                    ),
+                    child: Column(
+                      children: [
+                        DownloadSection(
+                          videoId: widget.searchResult.videoId,
+                          videoResolution: videoResolution,
+                          onDownload: (type, quality) {},
+                        ),
+                        const SizedBox(height: 30,),
+                        DownloadButton(
+                            downloadable: downloadable,
+                            searchResult: widget.searchResult,
+                            quality: videoResolution
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(height: 50,),
+            ],
+          ),
         ),
-        floatingActionButton: DownloadButton(
-          downloadable: downloadable,
-          searchResult: widget.searchResult,
-          quality: quality,
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
 
-  Stream<int> uint8ListToStreamInt(Stream<Uint8List> uint8ListStream) async* {
-    await for (final Uint8List chunk in uint8ListStream) {
+  Stream<int> uInt8ListToStreamInt(Stream<Uint8List> uInt8ListStream) async* {
+    await for (final Uint8List chunk in uInt8ListStream) {
       for (final int byte in chunk) {
         yield byte;
       }
@@ -226,13 +203,7 @@ class _VideoScreenState extends State<VideoScreen> {
   void setupPlayer(String src) {
     videoPlayer.open(Media(src));
     setState(() {
-      preview = Container(
-          constraints: const BoxConstraints(
-              maxWidth: 500,
-              maxHeight: 300
-          ),
-          child: Video(controller: controller,)
-      );
+      preview = Video(controller: controller,);
     });
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 
 class Api{
   static final Api instance = Api._();
@@ -8,7 +9,11 @@ class Api{
   final String _baseUrl = const String.fromEnvironment("baseUrl");
   final String _token = const String.fromEnvironment("token");
 
-  Api._();
+  Api._() {
+    if (kDebugMode) {
+      print(_baseUrl);
+    }
+  }
 
   Map<String, String> get header {
     String time = DateTime.now().millisecondsSinceEpoch.toString();
@@ -52,10 +57,15 @@ class Api{
           }
       );
 
-      return response.data;
+      if (response.statusCode == 200) {
+        return response.data["results"];
+      }
+      else {
+        return List.from([]);
+      }
     }
     on DioException {
-      return Future(() => null);
+      return List.from([]);
     }
   }
 
@@ -81,11 +91,11 @@ class Api{
   Future<dynamic> getImage(String url) async {
     try {
       var response = await _dio.get(
-          url,
-          options: Options(
-              headers: header,
+        url,
+        options: Options(
+            headers: header,
             responseType: ResponseType.bytes
-          ),
+        ),
       );
 
       if (response.statusCode == 200) {

@@ -1,0 +1,1 @@
+enum DownloadType { video, audio }
