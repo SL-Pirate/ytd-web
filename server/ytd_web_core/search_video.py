@@ -99,7 +99,7 @@ def search(request) -> list[SearchResult]:
             description=video.description,
             thumbnail_url=video.thumbnail_url,
             channel_name=video.channel_id,
-            channel_thumbnail_url=video.channel_thumbnail_url
+            channel_thumbnail_url=get_channel_thumbnail_url([video.channel_id])
         )]
     
     except InvalidLinkError:

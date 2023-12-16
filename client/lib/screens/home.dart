@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
     ),
   );
 
-  bool isShowingSuggestions = false;
   dynamic result;
 
   @override
@@ -76,6 +75,9 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
+              constraints: const BoxConstraints(
+                  maxWidth: 1000,
+              ),
               width: double.infinity,
               padding: const EdgeInsets.symmetric(
                   horizontal: 20,
@@ -142,27 +144,47 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            if (isShowingSuggestions) Column(
-              children: [
-                const SizedBox(height: 50),
-                for (dynamic item in result) Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 10,
-                    top: 10,
-                    left: 16
-                  ),
-                  child: SearchResultWidget(
-                    SearchResultModel(
+            if (result != null) Column(
+                children:
+                    () {
+                  List<Widget> children = [];
+
+                  children.add(const SizedBox(height: 50));
+
+                  for (dynamic item in result) {
+                    SearchResultModel data = SearchResultModel(
                         videoId: item["video_id"],
                         title: item["title"],
                         description: item["description"],
                         thumbnailUrl: item["thumbnail_url"],
                         channelName: item["channel_name"],
                         channelThumbnailUrl: item["channel_thumbnail_url"]
-                    ),
-                  ),
-                )
-              ],
+                    );
+
+                    children.add(Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: 10,
+                          top: 10,
+                          left: 16
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => BaseFrame(
+                                      product: product,
+                                      child: VideoScreen(searchResult: data)
+                                  )
+                              )
+                          );
+                        },
+                        child: SearchResultWidget(data),
+                      ),
+                    ));
+                  }
+
+                  return children;
+                } ()
             )
           ],
         ),
@@ -229,7 +251,6 @@ class _HomePageState extends State<HomePage> {
       else {
         setState(() {
           result = value;
-          isShowingSuggestions = true;
           submitButtonText = const Text(
             "Submit",
             style: TextStyle(

@@ -4,25 +4,24 @@ import 'package:ytd_web/api/api.dart';
 class SearchResultModel{
   final String videoId;
   final String title;
-  final String _thumbnailUrl;
+  final String? _thumbnailUrl;
   final String? description;
   final String channelName;
-  final String _channelThumbnailUrl;
+  final String? _channelThumbnailUrl;
 
   const SearchResultModel({
     required this.videoId,
     required this.title,
     this.description,
-    required String thumbnailUrl,
+    required String? thumbnailUrl,
     required this.channelName,
-    required String channelThumbnailUrl,
+    required String? channelThumbnailUrl,
   }) : _thumbnailUrl = thumbnailUrl,
-       _channelThumbnailUrl = channelThumbnailUrl;
+        _channelThumbnailUrl = channelThumbnailUrl;
 
   Future<Image?> get thumbnail async {
-    final bytes = await Api.instance.getImage(_thumbnailUrl);
-
     try{
+      final bytes = await Api.instance.getImage(_thumbnailUrl!);
       return Image.memory(bytes);
     }
     catch(e){
@@ -31,9 +30,8 @@ class SearchResultModel{
   }
 
   Future<MemoryImage?> get thumbnailProvider async {
-    final bytes = await Api.instance.getImage(_thumbnailUrl);
-
     try{
+      final bytes = await Api.instance.getImage(_thumbnailUrl!);
       return MemoryImage(bytes);
     }
     catch(e){
@@ -42,8 +40,8 @@ class SearchResultModel{
   }
 
   Future<Image?> get channelThumbnail async {
-    final bytes = await Api.instance.getImage(_channelThumbnailUrl);
     try{
+      final bytes = await Api.instance.getImage(_channelThumbnailUrl!);
       return Image.memory(bytes);
     }
     catch(e){
@@ -52,8 +50,8 @@ class SearchResultModel{
   }
 
   Future<MemoryImage?> get channelThumbnailProvider async {
-    final bytes = await Api.instance.getImage(_channelThumbnailUrl);
     try{
+      final bytes = await Api.instance.getImage(_channelThumbnailUrl!);
       return MemoryImage(bytes);
     }
     catch(e){
