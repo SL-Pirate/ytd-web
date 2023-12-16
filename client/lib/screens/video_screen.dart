@@ -49,10 +49,10 @@ class _VideoScreenState extends State<VideoScreen> {
         Center(
           child: ClipRect(
             child: FutureBuilder(
-              future: Api.instance.getImage(widget.searchResult.thumbnailUrl),
+              future: widget.searchResult.thumbnail,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return Image.memory(snapshot.data);
+                  return snapshot.data!;
                 }
                 else {
                   return const Center(
@@ -195,8 +195,8 @@ class _VideoScreenState extends State<VideoScreen> {
     );
   }
 
-  Stream<int> uint8ListToStreamInt(Stream<Uint8List> uint8ListStream) async* {
-    await for (final Uint8List chunk in uint8ListStream) {
+  Stream<int> uInt8ListToStreamInt(Stream<Uint8List> uInt8ListStream) async* {
+    await for (final Uint8List chunk in uInt8ListStream) {
       for (final int byte in chunk) {
         yield byte;
       }

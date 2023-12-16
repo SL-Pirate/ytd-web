@@ -28,8 +28,10 @@ class QualitiesSerializer(serializers.Serializer):
 class SingleSearchResultSerializer(serializers.Serializer):
     video_id = serializers.CharField()
     title = serializers.CharField()
+    description = serializers.CharField()
     thumbnail_url = serializers.CharField()
     channel_name = serializers.CharField()
+    channel_thumbnail_url = serializers.CharField()
 
 class SearchResultsSerializer(serializers.Serializer):
     results=serializers.ListField(child=SingleSearchResultSerializer())

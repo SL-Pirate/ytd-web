@@ -1,13 +1,63 @@
+import 'package:flutter/widgets.dart';
+import 'package:ytd_web/api/api.dart';
+
 class SearchResultModel{
-  final String title;
-  final String channelName;
-  final String thumbnailUrl;
   final String videoId;
+  final String title;
+  final String _thumbnailUrl;
+  final String? description;
+  final String channelName;
+  final String _channelThumbnailUrl;
 
   const SearchResultModel({
-    required this.title,
     required this.videoId,
+    required this.title,
+    this.description,
+    required String thumbnailUrl,
     required this.channelName,
-    required this.thumbnailUrl
-  });
+    required String channelThumbnailUrl,
+  }) : _thumbnailUrl = thumbnailUrl,
+       _channelThumbnailUrl = channelThumbnailUrl;
+
+  Future<Image?> get thumbnail async {
+    final bytes = await Api.instance.getImage(_thumbnailUrl);
+
+    try{
+      return Image.memory(bytes);
+    }
+    catch(e){
+      return null;
+    }
+  }
+
+  Future<MemoryImage?> get thumbnailProvider async {
+    final bytes = await Api.instance.getImage(_thumbnailUrl);
+
+    try{
+      return MemoryImage(bytes);
+    }
+    catch(e){
+      return null;
+    }
+  }
+
+  Future<Image?> get channelThumbnail async {
+    final bytes = await Api.instance.getImage(_channelThumbnailUrl);
+    try{
+      return Image.memory(bytes);
+    }
+    catch(e){
+      return null;
+    }
+  }
+
+  Future<MemoryImage?> get channelThumbnailProvider async {
+    final bytes = await Api.instance.getImage(_channelThumbnailUrl);
+    try{
+      return MemoryImage(bytes);
+    }
+    catch(e){
+      return null;
+    }
+  }
 }

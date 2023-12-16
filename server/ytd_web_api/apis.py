@@ -178,8 +178,10 @@ class SearchVideoAPIView(APIView):
                         SingleSearchResultSerializer({
                             'video_id': search_result.get_video_id(),
                             'title': search_result.get_title(),
+                            'description': search_result.get_description(),
                             'thumbnail_url': search_result.get_thumbnail_url(),
-                            'channel_name': search_result.get_channel_name()
+                            'channel_name': search_result.get_channel_name(),
+                            'channel_thumbnail_url': search_result.get_channel_thumbnail_url()
                         }).data for search_result in results
                     ]
                 }).data

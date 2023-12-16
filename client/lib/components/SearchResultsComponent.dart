@@ -48,8 +48,10 @@ class _SearchResultsComponentState extends State<SearchResultsComponent> {
                         SearchResultModel(
                             title: item["title"],
                             channelName: item["channel_name"],
+                            description: item["description"],
                             thumbnailUrl: item["thumbnail_url"],
-                            videoId: item["video_id"]
+                            videoId: item["video_id"],
+                            channelThumbnailUrl: item["channel_thumbnail_url"]
                         )
                     )
                 ],
