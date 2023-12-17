@@ -5,7 +5,7 @@ import 'package:ytd_web/modals/search_result_model.dart';
 import 'package:ytd_web/screens/base_frame.dart';
 import 'package:ytd_web/screens/video_screen.dart';
 import 'package:ytd_web/util/styles.dart';
-import 'package:ytd_web/widgets/search_result_widget.dart';
+import 'package:ytd_web/components/search_result_component.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                                 )
                             );
                           },
-                          child: SearchResultWidget(data),
+                          child: SearchResultComponent(data),
                         ),
                       ));
                     }

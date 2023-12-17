@@ -85,7 +85,7 @@ class BaseFrame extends StatelessWidget {
                         "All Rights Reserved.",
                     style: TextStyle(
                         color: Styles.grey.withOpacity(0.5),
-                        fontSize: 12,
+                        fontSize: Styles.of(context).fontSizeSmall,
                         fontFamily: Styles.fontFamily
                     ),
                   ),

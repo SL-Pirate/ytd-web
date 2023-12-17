@@ -7,7 +7,7 @@ import 'package:ytd_web/util/api.dart';
 import 'package:ytd_web/modals/search_result_model.dart';
 import 'package:dio/dio.dart';
 import 'package:ytd_web/util/styles.dart';
-import 'package:ytd_web/widgets/channel_label.dart';
+import 'package:ytd_web/components/channel_label.dart';
 import 'package:ytd_web/widgets/download_button/download_button.dart';
 
 class VideoScreen extends StatefulWidget {
@@ -20,20 +20,15 @@ class VideoScreen extends StatefulWidget {
 
 class _VideoScreenState extends State<VideoScreen> {
   static const double playerMaxWidth = 540;
-  static const double playerMaxHeight = 304;
   final ValueNotifier<String> videoResolution = ValueNotifier("360p");
   final Map<String, String> downloadable = {};
   final Player videoPlayer = Player();
   late final VideoController controller;
   Widget? preview;
-  bool isDownloading = false;
-  Widget downloadButtonIcon = const Icon(Icons.download, color: Colors.green,);
   Widget startPlayerIndicator = const Icon(
     Icons.play_circle, color: Colors.white70,
     size: 69,
   );
-  final List<DropdownMenuEntry> availableQualities = [];
-  Future<dynamic>? qualityResponse;
 
   @override
   void initState() {
@@ -138,24 +133,22 @@ class _VideoScreenState extends State<VideoScreen> {
                           width: double.infinity,
                           child: Text(
                             widget.searchResult.title,
-                            style: const TextStyle(
-                                fontSize: 12,
+                            style: TextStyle(
+                                fontSize: Styles.of(context).subtitleFontSize,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: Styles.fontFamily,
                                 color: Styles.white
                             ),
                           ),
                         ),
-                        const SizedBox(height: 15,),
+                        SizedBox(height: Styles.of(context).isMobile ? 15 : 20),
                         ChannelLabel(searchResultModel: widget.searchResult),
                         const SizedBox(height: 50,),
                       ],
                     ),
                   ),
                   Container(
-                    constraints: const BoxConstraints(
-                      maxWidth: playerMaxWidth,
-                    ),
+                    width: playerMaxWidth,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 50
@@ -207,18 +200,10 @@ class _VideoScreenState extends State<VideoScreen> {
       preview = Container(
           constraints: const BoxConstraints(
               maxWidth: playerMaxWidth,
-              maxHeight: playerMaxHeight
+              maxHeight: 304
           ),
           child: Video(controller: controller,)
       );
     });
-  }
-
-  Future<dynamic> fetchQualities() {
-    qualityResponse ??= Api.instance.getQualities(
-        widget.searchResult.videoId
-    );
-
-    return qualityResponse!;
   }
 }

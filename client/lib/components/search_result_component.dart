@@ -3,11 +3,11 @@ import 'package:html_unescape/html_unescape.dart';
 import 'package:ytd_web/util/api.dart';
 import 'package:ytd_web/modals/search_result_model.dart';
 import 'package:ytd_web/util/styles.dart';
-import 'package:ytd_web/widgets/channel_label.dart';
+import 'package:ytd_web/components/channel_label.dart';
 
-class SearchResultWidget extends StatelessWidget {
+class SearchResultComponent extends StatelessWidget {
   final SearchResultModel searchResultModel;
-  const SearchResultWidget(this.searchResultModel, {super.key});
+  const SearchResultComponent(this.searchResultModel, {super.key});
 
   @override
   Widget build(BuildContext context) {

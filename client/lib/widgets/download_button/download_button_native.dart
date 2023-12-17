@@ -5,6 +5,7 @@ import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:ytd_web/util/api.dart';
 import 'package:ytd_web/modals/search_result_model.dart';
 import 'package:ytd_web/util/styles.dart';
+import 'package:ytd_web/widgets/generic_button.dart';
 
 class DownloadingButtonPlatform extends StatefulWidget {
   final Map<String, String> downloadable;
@@ -23,15 +24,7 @@ class DownloadingButtonPlatform extends StatefulWidget {
 
 class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
   bool isDownloading = false;
-  static const downloadLabel = Text(
-      "Download",
-      style: TextStyle(
-          fontSize: 12,
-          fontFamily: Styles.fontFamily,
-          fontWeight: FontWeight.bold,
-          color: Colors.white
-      )
-  );
+  static const downloadLabel = GenericButton("Download");
   late Widget downloadButtonIcon;
 
   @override
