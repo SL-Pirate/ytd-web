@@ -123,7 +123,10 @@ class _HomePageState extends State<HomePage> {
                               fontSize: Styles.of(context).bodyFontSize
                           ),
                           suffixIcon: InkWell(
-                            onTap: onSubmit,
+                            onTap: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              onSubmit();
+                            },
                             child: Container(
                               decoration: const BoxDecoration(
                                 color: Styles.red,

@@ -24,7 +24,7 @@ class DownloadingButtonPlatform extends StatefulWidget {
 
 class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
   bool isDownloading = false;
-  static const downloadLabel = GenericButton("Download");
+  static const downloadLabel = Center(child: GenericButton("Download"));
   late Widget downloadButtonIcon;
 
   @override
@@ -158,17 +158,7 @@ class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
           );
         }
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 29,
-          vertical: 12,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Styles.red,
-        ),
-        child: downloadButtonIcon,
-      ),
+      child: downloadButtonIcon
     );
   }
 

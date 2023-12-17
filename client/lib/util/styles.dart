@@ -24,10 +24,10 @@ class Styles {
   // font family
   static const String fontFamily = "Poppins";
 
-  get titleFontSize => (isMobile) ? 25.0 : 50.0;
-  get subtitleFontSize => (isMobile) ? 12.0 : 20.0;
-  get bodyFontSize => (isMobile) ? 12.0 : 16.0;
-  get fontSizeSmall => (isMobile) ? 10 : 12;
+  double get titleFontSize => (isMobile) ? 25.0 : 50.0;
+  double get subtitleFontSize => (isMobile) ? 12.0 : 20.0;
+  double get bodyFontSize => (isMobile) ? 12.0 : 16.0;
+  double get fontSizeSmall => (isMobile) ? 10 : 12;
 
   bool get isMobile => (MediaQuery.of(context!).size.width < 600);
 }
