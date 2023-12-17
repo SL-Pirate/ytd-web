@@ -45,6 +45,27 @@ class Api{
     }
   }
 
+  Future<Response> getAudio (String videoId, String? bitrate) async {
+    try{
+      return await _dio.get(
+          "$_baseUrl/download/audio",
+          options: Options(
+              headers: header
+          ),
+          queryParameters: {
+            "video_id": videoId,
+            "resolution": bitrate ?? "128kbps"
+          }
+      );
+    }
+    on DioException {
+      return Future(() => Response(
+          requestOptions: RequestOptions(),
+          statusCode: 404
+      ));
+    }
+  }
+
   Future<dynamic> search(String searchParam) async {
     try{
       Response response = await _dio.get(

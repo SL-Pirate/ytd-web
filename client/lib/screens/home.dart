@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 20),
-                    height: 40,
+                    height: Styles.of(context).isMobile ? 40 : 50,
                     child: TextField(
                       controller: controller,
                       decoration: InputDecoration(

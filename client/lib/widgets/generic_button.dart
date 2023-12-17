@@ -22,8 +22,8 @@ class GenericButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: width ?? (Styles.of(context).isMobile ? 120 : 190),
-        height: height ?? (Styles.of(context).isMobile ? 40 : 60),
+        width: width ?? (Styles.of(context).isMobile ? 120 : 150),
+        height: height ?? (Styles.of(context).isMobile ? 40 : 50),
         decoration: BoxDecoration(
             color: Styles.red,
             borderRadius: BorderRadius.circular(5),

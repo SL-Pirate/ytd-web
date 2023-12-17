@@ -2,8 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
-import 'package:ytd_web/util/api.dart';
-import 'package:ytd_web/modals/search_result_model.dart';
+import 'package:ytd_web/modals/downloadable.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
@@ -11,14 +10,10 @@ import 'package:ytd_web/util/styles.dart';
 import 'package:ytd_web/widgets/generic_button.dart';
 
 class DownloadingButtonPlatform extends StatefulWidget {
-  final Map<String, String> downloadable;
-  final SearchResultModel searchResult;
-  final ValueNotifier quality;
+  final Future<Downloadable?> Function() getDownloadable;
   const DownloadingButtonPlatform({
     super.key,
-    required this.downloadable,
-    required this.searchResult,
-    required this.quality
+    required this.getDownloadable
   });
 
   @override
@@ -50,20 +45,10 @@ class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
             );
           });
 
-          if (widget.downloadable["link"] == null) {
-            Response<dynamic> fileResponse = await Api.instance.getVideo(
-                widget.searchResult.videoId,
-                widget.quality.value!
-            );
-            if (fileResponse.statusCode != 404) {
-              widget.downloadable["link"] =
-              fileResponse.data["downloadable_link"];
-              widget.downloadable["name"] = fileResponse.data["file_name"];
-            }
-          }
-          if (widget.downloadable["link"] != null) {
+          Downloadable? downloadable = await widget.getDownloadable();
+          if (downloadable != null) {
             final Response<dynamic> response = await Dio().get(
-              widget.downloadable["link"]!,
+              downloadable.url,
               options: Options(
                   responseType: ResponseType.bytes
               ),
@@ -76,7 +61,7 @@ class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
               final blob = html.Blob([Uint8List.fromList(response.data)]);
 
               final anchor = html.AnchorElement(href: html.Url.createObjectUrlFromBlob(blob))
-                ..setAttribute('download', widget.downloadable["name"]!) // Set the filename
+                ..setAttribute('download', downloadable.name) // Set the filename
                 ..click();
 
               html.Url.revokeObjectUrl(anchor.href!);
@@ -115,22 +100,13 @@ class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
                 downloadButtonIcon = downloadLabel;
               });
             }
-            else {
-              if (!context.mounted) return;
-              showFailureSnackBar(context);
-              setState(() {
-                downloadButtonIcon = downloadLabel;
-              });
-            }
           }
           else {
+            if (!context.mounted) return;
+            showFailureSnackBar(context);
             setState(() {
-              downloadButtonIcon = const Icon(Icons.close, color: Colors.red,);
+              downloadButtonIcon = downloadLabel;
             });
-            if (!mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Video unavailable!"))
-            );
           }
 
           isDownloading = false;
@@ -138,8 +114,11 @@ class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
         else {
           ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                  content: Text(
-                      "Please be patient while the requested file is downloaded"
+                  content: Expanded(
+                    child: Text(
+                      "Please be patient while the requested file is downloaded",
+                      maxLines: 2,
+                    ),
                   )
               )
           );

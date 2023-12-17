@@ -7,11 +7,15 @@ import 'package:ytd_web/widgets/square_icon_button.dart';
 class DownloadSection extends StatefulWidget {
   final String videoId;
   final ValueNotifier<String> videoResolution;
+  final ValueNotifier<String> audioBitRate;
+  final ValueNotifier<DownloadType> type;
   final void Function(DownloadType type, String quality) onDownload;
   const DownloadSection({
     super.key,
     required this.videoId,
     required this.videoResolution,
+    required this.audioBitRate,
+    required this.type,
     required this.onDownload
   });
 
@@ -20,9 +24,6 @@ class DownloadSection extends StatefulWidget {
 }
 
 class _DownloadSectionState extends State<DownloadSection> {
-  DownloadType type = DownloadType.video;
-  String audioQuality = "128kbps";
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -40,7 +41,7 @@ class _DownloadSectionState extends State<DownloadSection> {
                 width: double.infinity,
                 child: Text(
                   "Select ${
-                      (type == DownloadType.video)
+                      (widget.type.value == DownloadType.video)
                           ? "Resolution"
                           : "Bitrate"
                   }",
@@ -66,8 +67,8 @@ class _DownloadSectionState extends State<DownloadSection> {
                           borderRadius: BorderRadius.circular(4)
                       ),
                       child: DropdownButton(
-                        value: type == DownloadType.video
-                            ? widget.videoResolution.value : audioQuality,
+                        value: widget.type.value == DownloadType.video
+                            ? widget.videoResolution.value : widget.audioBitRate.value,
                         isExpanded: true,
                         style: TextStyle(
                             color: Styles.black,
@@ -82,7 +83,7 @@ class _DownloadSectionState extends State<DownloadSection> {
                         items: () {
                           List<DropdownMenuItem> entries = [
                             for (var quality in snapshot.data[
-                            type == DownloadType.video
+                            widget.type.value == DownloadType.video
                                 ? "video_qualities" : "audio_qualities"
                             ]) DropdownMenuItem(
                               value: quality,
@@ -109,11 +110,11 @@ class _DownloadSectionState extends State<DownloadSection> {
                         } (),
                         onChanged: (selection) {
                           setState(() {
-                            if (type == DownloadType.video) {
+                            if (widget.type.value == DownloadType.video) {
                               widget.videoResolution.value = selection;
                             }
                             else {
-                              audioQuality = selection;
+                              widget.audioBitRate.value = selection;
                             }
                           });
                         },
@@ -123,39 +124,32 @@ class _DownloadSectionState extends State<DownloadSection> {
                   Row(
                       children: [
                         SquareIconButton(
-                          color: type == DownloadType.video
+                          color: widget.type.value == DownloadType.video
                               ? Styles.red : Styles.white,
                           icon: Icon(
                             Icons.videocam,
-                            color: type == DownloadType.video
+                            color: widget.type.value == DownloadType.video
                                 ? Styles.white : Styles.black,
                           ),
                           onPressed: () {
                             setState(() {
-                              type = DownloadType.video;
+                              widget.type.value = DownloadType.video;
                             });
                           },
                         ),
                         const SizedBox(width: 6,),
                         SquareIconButton(
-                          color: type == DownloadType.audio
+                          color: widget.type.value == DownloadType.audio
                               ? Styles.red : Styles.white,
                           icon: Icon(
                             Icons.music_note,
-                            color: type == DownloadType.audio
+                            color: widget.type.value == DownloadType.audio
                                 ? Styles.white : Styles.black,
                           ),
                           onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        "Audio download is not available yet!"
-                                    )
-                                )
-                            );
-                            // setState(() {
-                            //   type = DownloadType.audio;
-                            // });
+                            setState(() {
+                              widget.type.value = DownloadType.audio;
+                            });
                           },
                         )
                       ]

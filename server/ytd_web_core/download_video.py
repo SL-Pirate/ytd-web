@@ -4,7 +4,7 @@ from pytube import Stream
 from os import mkdir
 import subprocess
 from subprocess import run as cmd
-from ytd_web_core.exceptions import VideoProcessingFailureException, AgeRestrictedVideoException
+from ytd_web_core.exceptions import VideoProcessingFailureException, AgeRestrictedVideoException, UnavailableVideoQualityException
 from ytd_web_core.util import get_name
 from ytd_web_core import cache_folder as global_cache_folder
 from typing import Optional
@@ -83,6 +83,9 @@ def download_video(
         raise AgeRestrictedVideoException
     vid_file: Optional[Stream] = yt_vid.streams.filter(res=str(reso)).first()
     aud_file: Optional[Stream]
+
+    if vid_file is None:
+        raise UnavailableVideoQualityException
     
     cache_folder = global_cache_folder + "/" + str(time())
     in_vid: str = f"{cache_folder}/yt_temp/vid"
