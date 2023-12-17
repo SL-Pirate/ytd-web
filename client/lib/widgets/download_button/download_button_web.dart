@@ -8,6 +8,7 @@ import 'package:ytd_web/modals/search_result_model.dart';
 import 'dart:html' as html;
 
 import 'package:ytd_web/util/styles.dart';
+import 'package:ytd_web/widgets/generic_button.dart';
 
 class DownloadingButtonPlatform extends StatefulWidget {
   final Map<String, String> downloadable;
@@ -26,15 +27,7 @@ class DownloadingButtonPlatform extends StatefulWidget {
 
 class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
   bool isDownloading = false;
-  static const downloadLabel = Text(
-      "Download",
-      style: TextStyle(
-          fontSize: 12,
-          fontFamily: Styles.fontFamily,
-          fontWeight: FontWeight.bold,
-          color: Colors.white
-      )
-  );
+  static const downloadLabel = Center(child: GenericButton("Download"));
   late Widget downloadButtonIcon;
 
   @override
@@ -152,17 +145,7 @@ class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
           );
         }
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 29,
-          vertical: 12,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Styles.red,
-        ),
-        child: downloadButtonIcon,
-      ),
+      child: downloadButtonIcon,
     );
   }
 

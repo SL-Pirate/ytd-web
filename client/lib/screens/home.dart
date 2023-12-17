@@ -5,10 +5,9 @@ import 'package:ytd_web/modals/search_result_model.dart';
 import 'package:ytd_web/screens/base_frame.dart';
 import 'package:ytd_web/screens/video_screen.dart';
 import 'package:ytd_web/util/styles.dart';
-import 'package:ytd_web/widgets/search_result_widget.dart';
+import 'package:ytd_web/components/search_result_component.dart';
 
 class HomePage extends StatefulWidget {
-  static const double mainTextSize = 24;
   const HomePage({super.key});
 
   @override
@@ -16,44 +15,50 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Widget searchSuffix = const SizedBox();
+  Widget? searchText;
   final TextEditingController controller = TextEditingController();
-  Widget submitButtonText = const Text(
-    "Submit",
-    style: TextStyle(
-        color: Styles.white,
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        fontFamily: Styles.fontFamily
-    ),
-  );
-
   dynamic result;
 
   @override
   Widget build(BuildContext context) {
+    if (searchText == null) {
+      searchText = Text(
+          "Search",
+          style: TextStyle(
+              color: Styles.white,
+              fontFamily: Styles.fontFamily,
+              fontWeight: Styles.of(context).isMobile ? null : FontWeight.bold,
+              fontSize: Styles.of(context).bodyFontSize
+          )
+      );
+
+      searchSuffix = searchText!;
+    }
+
     return Expanded(
       child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 100),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   "YouTube Video",
                   style: TextStyle(
-                      fontSize: HomePage.mainTextSize,
+                      fontSize: Styles.of(context).titleFontSize,
                       color: Styles.white,
                       fontWeight: FontWeight.bold,
                       fontFamily: Styles.fontFamily
                   ),
                 ),
-                SizedBox(width: 10,),
+                const SizedBox(width: 10,),
                 Text(
                   "Downloader",
                   style: TextStyle(
-                      fontSize: HomePage.mainTextSize,
+                      fontSize: Styles.of(context).titleFontSize,
                       color: Styles.red,
                       fontWeight: FontWeight.bold,
                       fontFamily: Styles.fontFamily
@@ -61,15 +66,15 @@ class _HomePageState extends State<HomePage> {
                 )
               ],
             ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Text(
                 "Use this convenient YouTube video Downloader site to easily save"
                     " your favorite videos for offline viewing.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Styles.white,
-                    fontSize: 12,
+                    fontSize: Styles.of(context).bodyFontSize,
                     fontFamily: Styles.fontFamily
                 ),
               ),
@@ -93,13 +98,13 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     "YouTube Video URL"
                         " or Search Term",
-                    maxLines: 2,
                     style: TextStyle(
                         color: Styles.white,
-                        fontFamily: Styles.fontFamily
+                        fontFamily: Styles.fontFamily,
+                        fontSize: Styles.of(context).subtitleFontSize
                     ),
                   ),
                   Container(
@@ -107,84 +112,96 @@ class _HomePageState extends State<HomePage> {
                     height: 40,
                     child: TextField(
                       controller: controller,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           fillColor: Styles.white,
                           filled: true,
-                          hintText: "Search",
+                          hintText: "YouTube Video URL"
+                              " or Search Term",
                           hintStyle: TextStyle(
                               color: Styles.grey,
-                              fontFamily: Styles.fontFamily
+                              fontFamily: Styles.fontFamily,
+                              fontSize: Styles.of(context).bodyFontSize
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                          border: OutlineInputBorder(
+                          suffixIcon: InkWell(
+                            onTap: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              onSubmit();
+                            },
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Styles.red,
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(8),
+                                  bottomRight: Radius.circular(8),
+                                ),
+                              ),
+                              width: Styles.of(context).isMobile ? 80 : 100,
+                              child: Center(
+                                  child: searchSuffix
+                              ),
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                          border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(8))
                           )
                       ),
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontFamily: Styles.fontFamily,
-                          fontSize: 12,
-                          height: 1
+                          fontSize: Styles.of(context).bodyFontSize
                       ),
                       onSubmitted: onSubmit,
                     ),
                   ),
-                  Container(
-                    height: 50,
-                    width: 140,
-                    margin: const EdgeInsets.only(top: 20),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      color: Styles.red,
-                    ),
-                    child: TextButton(
-                        onPressed: onSubmit,
-                        child: submitButtonText
-                    ),
-                  )
                 ],
               ),
             ),
-            if (result != null) Column(
-                children:
-                    () {
-                  List<Widget> children = [];
+            if (result != null) Container(
+              constraints: const BoxConstraints(
+                maxWidth: 1000,
+              ),
+              child: Column(
+                  children:
+                      () {
+                    List<Widget> children = [];
 
-                  children.add(const SizedBox(height: 50));
+                    children.add(const SizedBox(height: 50));
 
-                  for (dynamic item in result) {
-                    SearchResultModel data = SearchResultModel(
-                        videoId: item["video_id"],
-                        title: item["title"],
-                        description: item["description"],
-                        thumbnailUrl: item["thumbnail_url"],
-                        channelName: item["channel_name"],
-                        channelThumbnailUrl: item["channel_thumbnail_url"]
-                    );
+                    for (dynamic item in result) {
+                      SearchResultModel data = SearchResultModel(
+                          videoId: item["video_id"],
+                          title: item["title"],
+                          description: item["description"],
+                          thumbnailUrl: item["thumbnail_url"],
+                          channelName: item["channel_name"],
+                          channelThumbnailUrl: item["channel_thumbnail_url"]
+                      );
 
-                    children.add(Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 10,
-                          top: 10,
-                          left: 16
-                      ),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => BaseFrame(
-                                      product: product,
-                                      child: VideoScreen(searchResult: data)
-                                  )
-                              )
-                          );
-                        },
-                        child: SearchResultWidget(data),
-                      ),
-                    ));
-                  }
+                      children.add(Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 10,
+                            top: 10,
+                            left: 16
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => BaseFrame(
+                                        product: product,
+                                        child: VideoScreen(searchResult: data)
+                                    )
+                                )
+                            );
+                          },
+                          child: SearchResultComponent(data),
+                        ),
+                      ));
+                    }
 
-                  return children;
-                } ()
+                    return children;
+                  } ()
+              ),
             )
           ],
         ),
@@ -196,7 +213,7 @@ class _HomePageState extends State<HomePage> {
     if (controller.text.isEmpty) return;
     if (value != null) controller.text = value;
     setState(() {
-      submitButtonText = const SizedBox(
+      searchSuffix = const SizedBox(
         width: 20,
         height: 20,
         child: CircularProgressIndicator(
@@ -209,15 +226,7 @@ class _HomePageState extends State<HomePage> {
       if (!context.mounted) return;
       if ((value as List).isEmpty) {
         setState(() {
-          submitButtonText = const Text(
-            "Submit",
-            style: TextStyle(
-                color: Styles.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                fontFamily: Styles.fontFamily
-            ),
-          );
+          searchSuffix = searchText!;
         });
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -251,15 +260,7 @@ class _HomePageState extends State<HomePage> {
       else {
         setState(() {
           result = value;
-          submitButtonText = const Text(
-            "Submit",
-            style: TextStyle(
-                color: Styles.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                fontFamily: Styles.fontFamily
-            ),
-          );
+          searchSuffix = searchText!;
         });
         return;
       }

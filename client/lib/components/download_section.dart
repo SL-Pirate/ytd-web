@@ -39,12 +39,15 @@ class _DownloadSectionState extends State<DownloadSection> {
               SizedBox(
                 width: double.infinity,
                 child: Text(
-                  (type == DownloadType.video)
-                      ? "Resolution"
-                      : "Bitrate",
-                  style: const TextStyle(
-                      fontSize: 15,
+                  "Select ${
+                      (type == DownloadType.video)
+                          ? "Resolution"
+                          : "Bitrate"
+                  }",
+                  style: TextStyle(
+                      fontSize: Styles.of(context).subtitleFontSize,
                       fontFamily: Styles.fontFamily,
+                      fontWeight: FontWeight.bold,
                       color: Styles.white
                   ),
                 ),
@@ -55,6 +58,7 @@ class _DownloadSectionState extends State<DownloadSection> {
                 children: [
                   Expanded(
                     child: Container(
+                      height: 40,
                       margin: const EdgeInsets.only(right: 22),
                       padding: const EdgeInsets.only(left: 15),
                       decoration: BoxDecoration(
@@ -65,10 +69,14 @@ class _DownloadSectionState extends State<DownloadSection> {
                         value: type == DownloadType.video
                             ? widget.videoResolution.value : audioQuality,
                         isExpanded: true,
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: Styles.black,
-                            fontSize: 12,
+                            fontSize: Styles.of(context).bodyFontSize,
                             fontFamily: Styles.fontFamily
+                        ),
+                        icon: const Padding(
+                          padding: EdgeInsets.only(right: 8.0),
+                          child: Icon(Icons.arrow_drop_down),
                         ),
                         underline: const SizedBox(),
                         items: () {
@@ -82,8 +90,12 @@ class _DownloadSectionState extends State<DownloadSection> {
                             )
                           ];
                           entries.sort((a, b) {
-                            int? aQuality = int.tryParse(a.value.replaceAll(RegExp(r'(p|kbps)$'), ''));
-                            int? bQuality = int.tryParse(b.value.replaceAll(RegExp(r'(p|kbps)$'), ''));
+                            int? aQuality = int.tryParse(
+                                a.value.replaceAll(RegExp(r'(p|kbps)$'), '')
+                            );
+                            int? bQuality = int.tryParse(
+                                b.value.replaceAll(RegExp(r'(p|kbps)$'), '')
+                            );
 
                             if (aQuality == null || bQuality == null) {
                               return 0;
@@ -102,9 +114,6 @@ class _DownloadSectionState extends State<DownloadSection> {
                           else {
                             audioQuality = selection;
                           }
-
-                          // // preventing sending requests when usr has not requested a video
-                          // widget.onDownload(type, selection);
                         },
                       ),
                     ),

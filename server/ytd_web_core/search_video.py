@@ -72,8 +72,6 @@ def get_channel_thumbnail_url(channel_ids: list[str]) -> dict:
     for channel_id in channel_ids:
         url += f"&id={channel_id}"
 
-    print(url)
-
     payload = {}
     headers = {
     'Accept': 'application/json'
