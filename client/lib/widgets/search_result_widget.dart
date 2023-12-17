@@ -14,8 +14,8 @@ class SearchResultWidget extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 186,
-          height: 109,
+          width: Styles.of(context).isMobile ? 186 : 444,
+          height: Styles.of(context).isMobile ? 109: 241,
           child: FutureBuilder(
               future: searchResultModel.thumbnail,
               builder: (context, snapshot) {
@@ -32,21 +32,21 @@ class SearchResultWidget extends StatelessWidget {
               }
           ),
         ),
-        const SizedBox(width: 10,),
+        SizedBox(width: Styles.of(context).isMobile ? 10 : 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                   HtmlUnescape().convert(searchResultModel.title),
-                  style: const TextStyle(
-                      fontSize: 12,
+                  style: TextStyle(
+                      fontSize: Styles.of(context).subtitleFontSize,
                       fontWeight: FontWeight.bold,
                       color: Styles.white,
                       fontFamily: Styles.fontFamily
                   )
               ),
-              const SizedBox(height: 18,),
+              SizedBox(height: Styles.of(context).isMobile ? 15 : 20,),
               ChannelLabel(searchResultModel: searchResultModel)
             ],
           ),

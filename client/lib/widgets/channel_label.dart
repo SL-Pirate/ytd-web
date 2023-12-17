@@ -14,24 +14,26 @@ class ChannelLabel extends StatelessWidget {
             future: searchResultModel.channelThumbnailProvider,
             builder: (context, snap) {
               return CircleAvatar(
-                radius: 10.5,
+                radius: Styles.of(context).isMobile ? 12.58 : 15,
                 backgroundColor: Styles.white,
                 backgroundImage: snap.data,
-                child: snap.data == null ? const Center(
+                child: snap.data == null ? Center(
                     child: Icon(
                       Icons.person,
-                      size: 12.58,
+                      size: Styles.of(context).isMobile ? 12.58 : 15,
                     )
                 ) : null,
               );
             }
         ),
-        const SizedBox(width: 10,),
+        const SizedBox(
+          width: 10,
+        ),
         Expanded(
           child: Text(
               searchResultModel.channelName,
-              style: const TextStyle(
-                  fontSize: 10,
+              style: TextStyle(
+                  fontSize: Styles.of(context).fontSizeSmall,
                   fontWeight: FontWeight.bold,
                   color: Styles.white,
                   fontFamily: Styles.fontFamily

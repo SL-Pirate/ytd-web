@@ -44,6 +44,8 @@ dependencies:
   background_downloader: ^7.9.4
   crypto: ^3.0.3
   html_unescape: ^2.0.0
+  font_awesome_flutter: ^10.6.0
+  url_launcher: ^6.2.2
 
 dev_dependencies:
   flutter_test:

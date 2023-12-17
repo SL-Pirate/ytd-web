@@ -1,6 +1,16 @@
-import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 
 class Styles {
+  BuildContext? context;
+  Styles._();
+
+  static Styles of(BuildContext context) {
+    Styles styles = Styles._();
+    styles.context = context;
+
+    return styles;
+  }
+
   // primary colors
   static const  Color blue = Color(0xFF11263E);
   static const Color red = Color(0xFFE9242B);
@@ -13,4 +23,11 @@ class Styles {
 
   // font family
   static const String fontFamily = "Poppins";
+
+  get titleFontSize => (isMobile) ? 25.0 : 50.0;
+  get subtitleFontSize => (isMobile) ? 12.0 : 20.0;
+  get bodyFontSize => (isMobile) ? 12.0 : 16.0;
+  get fontSizeSmall => (isMobile) ? 10 : 12;
+
+  bool get isMobile => (MediaQuery.of(context!).size.width < 600);
 }
