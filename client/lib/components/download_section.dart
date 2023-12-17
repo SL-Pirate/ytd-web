@@ -108,12 +108,14 @@ class _DownloadSectionState extends State<DownloadSection> {
                           return entries;
                         } (),
                         onChanged: (selection) {
-                          if (type == DownloadType.video) {
-                            widget.videoResolution.value = selection;
-                          }
-                          else {
-                            audioQuality = selection;
-                          }
+                          setState(() {
+                            if (type == DownloadType.video) {
+                              widget.videoResolution.value = selection;
+                            }
+                            else {
+                              audioQuality = selection;
+                            }
+                          });
                         },
                       ),
                     ),
