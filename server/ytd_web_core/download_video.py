@@ -11,6 +11,7 @@ from typing import Optional
 from ytd_web_core.models import Downloadable
 from time import time
 from enum import Enum
+from youtube_dl import YoutubeDL
 
 class VideoFormat(Enum):
     DEFAULT = ''
@@ -140,3 +141,36 @@ def download_video(
     downloadable.initInvalidation()
 
     return downloadable
+
+def download_video_dl(
+        video_link: str,
+        reso: str
+    ) -> Downloadable:
+    # cache_folder = global_cache_folder + "/" + str(time())
+    cache_folder = "/home/slpirate/Downloads"
+
+    ydl_opts = {
+        'format': 'bestvideo[height<='+reso+']',
+        'outtmpl': f'{cache_folder}/%(title)s.%(ext)s',
+        'merge_output_format': 'mp4',
+        'postprocessors': [{
+            'key': 'FFmpegVideoConvertor',
+            'preferedformat': 'mp4'
+        }],
+        'quiet': True
+    }
+    with YoutubeDL(ydl_opts) as ydl:
+        ydl.download([video_link])
+        info_dict = ydl.extract_info(video_link, download=False)
+
+    print(
+        info_dict
+    )
+    # downloadable = Downloadable(
+    #     path=f'', 
+    #     name=out_file.split("/")[-1],
+    #     folder=cache_folder
+    # )
+
+if __name__ == "__main__":
+    download_video_dl("https://www.youtube.com/watch?v=QglaLzo_aPk", "144p")

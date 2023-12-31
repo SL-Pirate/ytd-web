@@ -1,71 +1,17 @@
-from configparser import ConfigParser
 from pytube import YouTube as yt
 from pytube.exceptions import RegexMatchError as InvalidLinkError
 import requests
 from ytd_web_core import Status
+from yt_dlp.utils import DownloadError
+import ytd_web_core.exceptions as exceptions
+from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError
+from ytd_web_core.models import SearchResult
+from configparser import ConfigParser
 
-config = ConfigParser()
-config.read(".env")
-_api_key = config["googleApiKey"]["key"]
-_server_ip = config["server"]["ip"]
-
-
-class SearchResult:
-    def __init__(
-        self, 
-        video_id: str = None,
-        title: str = None, 
-        description: str = None,
-        thumbnail_url: str = None, 
-        channel_name: str = None, 
-        channel_thumbnail_url: str = None,
-        status: Status = Status.SUCCESSFUL
-    ) -> None:
-        self._video_id = video_id
-        self._title = title
-        self._description = description
-        self._channel_name = channel_name
-        self._channel_thumbnail_url = channel_thumbnail_url
-        self._status = status
-
-        if (_server_ip == None):
-            self._thumbnail_url = thumbnail_url
-            self._channel_thumbnail_url = channel_thumbnail_url
-        else:
-            self._thumbnail_url = f"{_server_ip}/proxy?url={thumbnail_url}"
-            self._channel_thumbnail_url = f"{_server_ip}/proxy?url={channel_thumbnail_url}"
-
-    def get_video_id(self):
-        return self._video_id
-    
-    def get_title(self):
-        return self._title
-    
-    def get_description(self):
-        return self._description
-    
-    def get_thumbnail_url(self):
-        return self._thumbnail_url
-    
-    def get_channel_name(self):
-        return self._channel_name
-    
-    def get_channel_thumbnail_url(self):
-        return self._channel_thumbnail_url
-
-    def get_status(self):
-        return self._status
-    
-    
-    def JsonSerialize(self):
-        return {
-            "video_id": self._video_id,
-            "title": self._title,
-            "edscription": self._description,
-            "thumbnail_url": self._thumbnail_url,
-            "channel_name": self._channel_name,
-            "channel_thumbnail_url": self._channel_thumbnail_url
-        }
+_config = ConfigParser()
+_config.read(".env")
+_api_key = _config["googleApiKey"]["key"]
 
 def get_channel_thumbnail_url(channel_ids: list[str]) -> dict:
     url = f"https://youtube.googleapis.com/youtube/v3/channels?part=snippet&maxResults=10&key={_api_key}&type=video"
@@ -87,25 +33,52 @@ def get_channel_thumbnail_url(channel_ids: list[str]) -> dict:
     else:
         return dict()
 
-def search(request) -> list[SearchResult]:
+def search_video_from_url(url: str) -> list[SearchResult]:
     try:
-        search_term = request.GET.get('keyword', '')
+        search_term = url
         video = yt(search_term)
         return [SearchResult(
             video_id=video.video_id,
+            url=url,
             title=video.title,
             description=video.description,
             thumbnail_url=video.thumbnail_url,
             channel_name=video.channel_id,
             channel_thumbnail_url=get_channel_thumbnail_url([video.channel_id])
         )]
-    
     except InvalidLinkError:
+        with YoutubeDL(
+            {
+                'quiet': True,
+                'skip_download': True,
+                'no_warnings': True
+            }
+        ) as ydl:
+            try:
+                video = ydl.extract_info(url, download=False)
+                return [SearchResult(
+                    source="other",
+                    url=url,
+                    video_id=video.get('id'),
+                    title=video.get('title'),
+                    description=video.get('description'),
+                    thumbnail_url=video.get('thumbnail'),
+                    channel_name=video.get('uploader')
+                )]
+            except DownloadError:
+                raise exceptions.InvalidLinkError()
+
+def search(request) -> list[SearchResult]:
+    try:
+        search_term = request.GET.get('keyword', '')
+        return search_video_from_url(search_term)
+    
+    except exceptions.InvalidLinkError:
         url = f"https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q={search_term}&key={_api_key}&type=video"
 
         payload = {}
         headers = {
-        'Accept': 'application/json'
+            'Accept': 'application/json'
         }
 
         response = requests.request("GET", url, headers=headers, data=payload)
@@ -124,6 +97,7 @@ def search(request) -> list[SearchResult]:
                 search_result_objs.append(
                     SearchResult(
                         video_id=search_result['id']['videoId'], 
+                        url="https://www.youtube.com/watch?v="+search_result['id']['videoId'],
                         title=search_result['snippet']['title'],
                         description=search_result['snippet']['description'],
                         thumbnail_url=search_result['snippet']['thumbnails']['high']['url'],

@@ -1,11 +1,11 @@
-from ytd_web_core.download_video import download_video as dlvid
+from ytd_web_core.download_video import download_video_dl as dlvid
 from ytd_web_core.download_audio import download_audio as dlaud
 from pytube.exceptions import RegexMatchError, VideoUnavailable
 from ytd_web_core.exceptions import AgeRestrictedVideoException, UnavailableVideoQualityException
 from ytd_web_core.models import Downloadable
 from ytd_web_core.util import get_url_from_video_id
 from rest_framework.views import APIView, Response
-from ..serializers import *
+from ytd_web_api.serializers import *
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 

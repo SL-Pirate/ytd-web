@@ -33,8 +33,8 @@ class ChannelLabel extends StatelessWidget {
           child: Text(
               searchResultModel.channelName,
               style: TextStyle(
-                  fontSize: Styles.of(context).fontSizeSmall,
-                  fontWeight: FontWeight.bold,
+                  fontSize: Styles.of(context).bodyFontSize,
+                  // fontWeight: FontWeight.bold,
                   color: Styles.white,
                   fontFamily: Styles.fontFamily
               ),

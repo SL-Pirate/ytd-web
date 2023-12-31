@@ -28,6 +28,7 @@ class Styles {
   double get subtitleFontSize => (isMobile) ? 12.0 : 20.0;
   double get bodyFontSize => (isMobile) ? 12.0 : 16.0;
   double get fontSizeSmall => (isMobile) ? 10 : 12;
+  double get fontSizeChannelLabel => (isMobile) ? 12 : 15;
 
   bool get isMobile => (MediaQuery.of(context!).size.width < 600);
 }

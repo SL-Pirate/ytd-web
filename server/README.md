@@ -61,3 +61,10 @@ Open up a new terminal/cli instance and run the following command as it is requi
 
 ## API Documentation
 - To refer the API Documentation, run the server and go to [https://localhost:8000/docs](https://localhost:8000/docs)
+
+### TODO
+#### goal - Implement ability to download from different sources other than youtube
+- [x] Improvements to search API
+- [ ] Improvements to thumbnail proxy
+- [ ] Improvements to get video API
+- [ ] Improvements to get audio API

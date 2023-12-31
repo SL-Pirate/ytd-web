@@ -49,19 +49,12 @@ class BaseFrame extends StatelessWidget {
                     padding: const EdgeInsets.all(20.0),
                     child: Image.asset(
                         "assets/img/logo.png",
-                        width: 100,
-                        height: 50
+                        height: 55
                     ),
                   ),
-                  Container(
-                    width: 90,
-                    height: 35,
-                    margin: const EdgeInsets.all(20),
-                    decoration: const BoxDecoration(
-                        color: Styles.red,
-                        borderRadius: BorderRadius.all(Radius.circular(5))
-                    ),
-                    child: const GenericButton("Log In"),
+                  const Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: GenericButton("Log In"),
                   )
                 ],
               ),

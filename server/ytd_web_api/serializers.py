@@ -26,6 +26,8 @@ class QualitiesSerializer(serializers.Serializer):
     video_qualities = serializers.ListField()
     
 class SingleSearchResultSerializer(serializers.Serializer):
+    source = serializers.CharField()
+    url = serializers.CharField()
     video_id = serializers.CharField()
     title = serializers.CharField()
     description = serializers.CharField()
