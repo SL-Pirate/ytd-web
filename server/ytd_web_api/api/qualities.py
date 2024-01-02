@@ -12,13 +12,24 @@ class GetQualitiesAPIView(APIView):
             openapi.Parameter(
                 'video_id',
                 openapi.IN_QUERY,
-                description='ID of the video',
-                type=openapi.TYPE_STRING
+                description="""ID of the YouTube video. Either this or the url parameter is required. 
+                    If both are provided, video_id will be used.""",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'url',
+                openapi.IN_QUERY,
+                description='URL of the video. Either this or the video_id parameter is required.',
+                type=openapi.TYPE_STRING,
+                required=False
             )
         ],
         responses={
             200: openapi.Response(
-                description='Successful response',
+                description="""Returns a list of available qualities. 
+                Audio qualities will be in kbps and video qualities will be in
+                either progressive or adaptive resolutions.""",
                 schema=QualitiesSerializer,
             ),
             403: 'Invalid API key',
@@ -28,19 +39,12 @@ class GetQualitiesAPIView(APIView):
     )
     def get(self, request, *args, **kwargs):
         try:
-            data = get_qualities(
-                    get_url_from_video_id(
-                        request.GET.get(
-                            'video_id', 
-                            ''
-                        )
-                    )
-                )
+            assert request.GET.get('video_id') is not None or request.GET.get('url') is not None
+            
             return Response(
-                QualitiesSerializer({
-                    "audio_qualities": data["audio_qualities"],
-                    "video_qualities": data["video_qualities"]
-                }).data
+                QualitiesSerializer(get_qualities(
+                    get_url_from_video_id(request.GET.get('video_id')) if request.GET.get('video_id') is not None else request.GET.get('url')
+                )).data
             )
         except AgeRestrictedVideoException:
             return Response(
@@ -49,6 +53,13 @@ class GetQualitiesAPIView(APIView):
                 },
                 status = 403
             )
+        except AssertionError:
+                return Response(
+                    {
+                        "message": "video_id or url parameter is required"
+                    },
+                    status = 400
+                )
         except Exception as e:
             return Response(
                 {

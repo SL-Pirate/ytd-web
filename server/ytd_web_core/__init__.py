@@ -12,3 +12,9 @@ cache_folder: str = config['cache_folder']
 class Status(Enum):
     SUCCESSFUL = 1
     FAILURE = -1
+
+YOUTUBE_DL_OPTIONS = {
+    'quiet': True,
+    'skip_download': True,
+    'no_warnings': True
+}

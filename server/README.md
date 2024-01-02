@@ -71,6 +71,6 @@ A Redis server should be connected to handle the cache cleaning process with Cel
 #### goal - Implement ability to download from different sources other than youtube
 - [x] Improvements to search API
 - [x] Improvements to thumbnail proxy
-- [ ] Improvements to get qualities API
+- [x] Improvements to get qualities API
 - [ ] Improvements to get video API
 - [ ] Improvements to get audio API

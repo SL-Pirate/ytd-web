@@ -1,9 +1,9 @@
 from pytube import YouTube as yt
-from pytube.exceptions import RegexMatchError as InvalidLinkError
+from pytube.exceptions import RegexMatchError as InvalidYoutubeLinkError
 import requests
-from ytd_web_core import Status
+from ytd_web_core import Status, YOUTUBE_DL_OPTIONS
 from yt_dlp.utils import DownloadError
-import ytd_web_core.exceptions as exceptions
+from ytd_web_core.exceptions import InvalidLinkError
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 from ytd_web_core.models import SearchResult
@@ -47,14 +47,8 @@ def search_video_from_url(url: str) -> list[SearchResult]:
             channel_name=video.channel_id,
             channel_thumbnail_url=get_channel_thumbnail_url([video.channel_id])
         )]
-    except InvalidLinkError:
-        with YoutubeDL(
-            {
-                'quiet': True,
-                'skip_download': True,
-                'no_warnings': True
-            }
-        ) as ydl:
+    except InvalidYoutubeLinkError:
+        with YoutubeDL(YOUTUBE_DL_OPTIONS) as ydl:
             try:
                 video = ydl.extract_info(url, download=False)
                 return [SearchResult(
@@ -67,14 +61,14 @@ def search_video_from_url(url: str) -> list[SearchResult]:
                     channel_name=video.get('uploader')
                 )]
             except DownloadError:
-                raise exceptions.InvalidLinkError()
+                raise InvalidLinkError()
 
 def search(request) -> list[SearchResult]:
     try:
         search_term = request.GET.get('keyword', '')
         return search_video_from_url(search_term)
     
-    except exceptions.InvalidLinkError:
+    except InvalidLinkError:
         url = f"https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q={search_term}&key={_api_key}&type=video"
 
         payload = {}
