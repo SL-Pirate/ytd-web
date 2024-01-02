@@ -8,6 +8,7 @@ from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 from ytd_web_core.models import SearchResult
 from configparser import ConfigParser
+from ytd_web_core.util import get_url_from_video_id
 
 _config = ConfigParser()
 _config.read(".env")
@@ -97,7 +98,7 @@ def search(request) -> list[SearchResult]:
                 search_result_objs.append(
                     SearchResult(
                         video_id=search_result['id']['videoId'], 
-                        url="https://www.youtube.com/watch?v="+search_result['id']['videoId'],
+                        url=get_url_from_video_id(search_result['id']['videoId']),
                         title=search_result['snippet']['title'],
                         description=search_result['snippet']['description'],
                         thumbnail_url=search_result['snippet']['thumbnails']['high']['url'],

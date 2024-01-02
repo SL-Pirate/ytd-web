@@ -5,6 +5,7 @@ from ytd_web_core.celery import clean_func
 from sequences import get_next_value
 from configparser import ConfigParser
 from ytd_web_core import Status
+from ytd_web_core.util import str_to_base64
 
 _config = ConfigParser()
 _config.read(".env")
@@ -48,13 +49,8 @@ class SearchResult:
         self._channel_name = channel_name
         self._channel_thumbnail_url = channel_thumbnail_url
         self._status = status
-
-        if (_server_ip == None):
-            self._thumbnail_url = thumbnail_url
-            self._channel_thumbnail_url = channel_thumbnail_url
-        else:
-            self._thumbnail_url = f"{_server_ip}/proxy?url={thumbnail_url}" if thumbnail_url is not None else None
-            self._channel_thumbnail_url = f"{_server_ip}/proxy?url={channel_thumbnail_url}" if channel_thumbnail_url is not None else None
+        self._thumbnail_url = SearchResult.wrap_in_proxy(thumbnail_url)
+        self._channel_thumbnail_url = SearchResult.wrap_in_proxy(channel_thumbnail_url)
 
     def get_source(self):
         return self._source
@@ -95,3 +91,9 @@ class SearchResult:
             "channel_thumbnail_url": self._channel_thumbnail_url
         }
 
+    @staticmethod
+    def wrap_in_proxy(url: str) -> str:
+        if _server_ip == None or url == None:
+            return url
+        else:
+            return f"{_server_ip}/proxy?url={str_to_base64(url)}"

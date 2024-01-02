@@ -47,14 +47,19 @@ A Redis server should be connected to handle the cache cleaning process with Cel
 
 ### Deploy command
 
-To start the server, run the following command in the terminal:
+1.To generate (collect) static files run the following command
+```bash
+    python manage.py collectstatic
+```
+
+2.To start the server, run the following command in the terminal:
 
 ```bash
     export csrf="<it is highly recommended that you put your own secret here>";
     gunicorn ytd_web.wsgi --timeout 600 -b 0.0.0.0:8000 --workers 2
 ```
 
-Open up a new terminal/cli instance and run the following command as it is required for cleaning caches
+3.Open up a new terminal/cli instance and run the following command as it is required for cleaning caches
 ```bash
     celery -A ytd_web_core worker -l INFO
 ```
@@ -65,6 +70,7 @@ Open up a new terminal/cli instance and run the following command as it is requi
 ### TODO
 #### goal - Implement ability to download from different sources other than youtube
 - [x] Improvements to search API
-- [ ] Improvements to thumbnail proxy
+- [x] Improvements to thumbnail proxy
+- [ ] Improvements to get qualities API
 - [ ] Improvements to get video API
 - [ ] Improvements to get audio API
