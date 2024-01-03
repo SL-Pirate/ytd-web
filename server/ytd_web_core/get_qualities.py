@@ -30,9 +30,9 @@ def get_qualities (link: str) -> dict:
         with YoutubeDL(YOUTUBE_DL_OPTIONS) as ydl:
             video = ydl.extract_info(link, download=False)
             for stream in video['formats']:
-                if stream.get('resolution') is not None and stream.get('resolution') != 'audio only':
+                if stream.get('resolution') is not None and stream.get('resolution') != 'audio only' and stream.get('resolution') not in video_qualities:
                     video_qualities.append(stream["resolution"])
-                if stream.get('abr') is not None and stream.get('abr') != 0:
+                if stream.get('abr') is not None and stream.get('abr') != 0 and stream.get('abr') not in audio_qualities:
                     audio_qualities.append(str(stream['abr']) + "kbps")
         
         return {

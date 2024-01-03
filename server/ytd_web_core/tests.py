@@ -24,7 +24,8 @@ def download_video_dl(
             if reso is not None 
             else 'bestvideo+bestaudio/best',
         'outtmpl': f'{cache_folder}/%(title)s.%(ext)s',
-        'quiet': True
+        'quiet': True,
+        'merge_output_format': 'mp4'
     }
 
     try:

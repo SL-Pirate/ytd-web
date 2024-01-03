@@ -72,5 +72,5 @@ A Redis server should be connected to handle the cache cleaning process with Cel
 - [x] Improvements to search API
 - [x] Improvements to thumbnail proxy
 - [x] Improvements to get qualities API
-- [ ] Improvements to get video API
+- [x] Improvements to get video API
 - [ ] Improvements to get audio API

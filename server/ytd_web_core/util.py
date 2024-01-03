@@ -1,6 +1,7 @@
 from shutil import rmtree
 from ytd_web_core import max_vids
 import base64
+import warnings
 
 num_vids = 0
 
@@ -31,3 +32,9 @@ def base64_to_str(string: str) -> str:
     if string is None:
         return None
     return base64.b64decode(string).decode('utf-8')
+
+def depricated(func):
+    def wrapper(*args, **kwargs):
+        warnings.warn(f"Function {func.__name__} is depricated and will be removed in the future.", DeprecationWarning)
+        return func(*args, **kwargs)
+    return wrapper

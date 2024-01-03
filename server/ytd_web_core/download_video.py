@@ -11,7 +11,8 @@ from typing import Optional
 from ytd_web_core.models import Downloadable
 from time import time
 from enum import Enum
-from youtube_dl import YoutubeDL
+from yt_dlp import YoutubeDL
+from ytd_web_core.util import depricated
 
 class VideoFormat(Enum):
     DEFAULT = ''
@@ -74,6 +75,7 @@ def _process(
     except Exception as e:
         raise VideoProcessingFailureException(str(e))
 
+@depricated
 def download_video(
         video_link: str, 
         reso: str, 
@@ -142,35 +144,57 @@ def download_video(
 
     return downloadable
 
+def _extract_height(reso: str) -> int | None:
+    value = None
+    if 'p' in reso:
+        value = reso.split('p')[0]
+    elif 'x' in reso:
+        value = reso.split('x')[1]
+        
+    if value is not None:
+        try:
+            return int(value)
+        except ValueError:
+            return None
+
+def _get_format(reso: str) -> str:
+    height: str | None = str(_extract_height(reso))
+    if height is None:
+        return 'bestvideo+bestaudio/best'
+    else:
+        return f'bestvideo[height<={height}]+bestaudio/best[height<={height}]'
+
 def download_video_dl(
         video_link: str,
-        reso: str
+        reso: str,
+        # format: str = None
     ) -> Downloadable:
-    # cache_folder = global_cache_folder + "/" + str(time())
-    cache_folder = "/home/slpirate/Downloads"
+    cache_folder = global_cache_folder + "/" + str(time())
+    file_name = str(time())
 
     ydl_opts = {
-        'format': 'bestvideo[height<='+reso+']',
+        'format': _get_format(reso),
         'outtmpl': f'{cache_folder}/%(title)s.%(ext)s',
-        'merge_output_format': 'mp4',
-        'postprocessors': [{
-            'key': 'FFmpegVideoConvertor',
-            'preferedformat': 'mp4'
-        }],
         'quiet': True
     }
-    with YoutubeDL(ydl_opts) as ydl:
-        ydl.download([video_link])
-        info_dict = ydl.extract_info(video_link, download=False)
 
-    print(
-        info_dict
+    try:
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.download([video_link])
+            file_name = ydl.prepare_filename(ydl.extract_info(video_link, download=False))
+    except OSError:
+        # Handeling filename too long error
+        ydl_opts['outtmpl'] = f'{cache_folder}/{str(time())}.%(ext)s'
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.download([video_link])
+            file_name = ydl.prepare_filename(ydl.extract_info(video_link, download=False))
+
+    downloadable = Downloadable(
+        path=file_name, 
+        name=file_name.split("/")[-1],
+        folder=cache_folder
     )
-    # downloadable = Downloadable(
-    #     path=f'', 
-    #     name=out_file.split("/")[-1],
-    #     folder=cache_folder
-    # )
+    downloadable.save()
+    downloadable.initInvalidation()
 
-if __name__ == "__main__":
-    download_video_dl("https://www.youtube.com/watch?v=QglaLzo_aPk", "144p")
+    return downloadable

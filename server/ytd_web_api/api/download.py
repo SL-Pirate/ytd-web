@@ -8,6 +8,7 @@ from rest_framework.views import APIView, Response
 from ytd_web_api.serializers import *
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.http import HttpRequest
 
 class DownloadVideoAPIView(APIView):
     @swagger_auto_schema(
@@ -15,8 +16,16 @@ class DownloadVideoAPIView(APIView):
             openapi.Parameter(
                 'video_id',
                 openapi.IN_QUERY,
-                description='ID of the video',
-                type=openapi.TYPE_STRING
+                description='ID of the video. Either video_id or url must be provided. Works only for youtube videos',
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'url',
+                openapi.IN_QUERY,
+                description='URL of the video. Either video_id or url must be provided',
+                type=openapi.TYPE_STRING,
+                required=False
             ),
             openapi.Parameter(
                 'resolution',
@@ -47,12 +56,17 @@ class DownloadVideoAPIView(APIView):
             404: 'Video not found',
         }
     )
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest, *args, **kwargs):
         try:
+            assert request.GET.get('video_id', '') != '' or request.GET.get('url', '') != ''
+            if request.GET.get('video_id', '') != '':
+                url = get_url_from_video_id(request.GET.get('video_id', ''))
+            else:
+                url = request.GET.get('url', '')
             downloadable: Downloadable = dlvid(
-                get_url_from_video_id(request.GET.get('video_id', '')),
+                url,
                 request.GET.get('resolution', ''),
-                request.GET.get('video_format', '')
+                # request.GET.get('video_format', '')
             )
 
             serializer = DownloadableSerializer(downloadable, context={'request': request})
@@ -85,6 +99,13 @@ class DownloadVideoAPIView(APIView):
                     "message": "Invalid/Unavailable video resolution"
                 },
                 status = 404
+            )
+        except AssertionError:
+            return Response(
+                {
+                    "message": "Either video_id or url must be provided"
+                },
+                status = 400
             )
         except Exception as e:
             return Response(
