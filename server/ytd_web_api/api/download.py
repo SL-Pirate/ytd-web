@@ -1,5 +1,5 @@
 from ytd_web_core.download_video import download_video_dl as dlvid
-from ytd_web_core.download_audio import download_audio as dlaud
+from ytd_web_core.download_audio import download_audio_dl as dlaud
 from pytube.exceptions import RegexMatchError, VideoUnavailable
 from ytd_web_core.exceptions import AgeRestrictedVideoException, UnavailableVideoQualityException
 from ytd_web_core.models import Downloadable
@@ -65,8 +65,8 @@ class DownloadVideoAPIView(APIView):
                 url = request.GET.get('url', '')
             downloadable: Downloadable = dlvid(
                 url,
-                request.GET.get('resolution', ''),
-                # request.GET.get('video_format', '')
+                request.GET.get('resolution'),
+                request.GET.get('video_format')
             )
 
             serializer = DownloadableSerializer(downloadable, context={'request': request})
@@ -122,8 +122,16 @@ class DownloadAudioAPIView(APIView):
             openapi.Parameter(
                 'video_id',
                 openapi.IN_QUERY,
-                description='ID of the video',
-                type=openapi.TYPE_STRING
+                description='ID of the video. Either video_id or url must be provided. Works only for youtube videos',
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'url',
+                openapi.IN_QUERY,
+                description='URL of the video. Either video_id or url must be provided',
+                type=openapi.TYPE_STRING,
+                required=False
             ),
             openapi.Parameter(
                 'bitrate',
@@ -149,9 +157,14 @@ class DownloadAudioAPIView(APIView):
     )
     def get(self, request, *args, **kwargs):
         try:
+            assert request.GET.get('video_id', '') != '' or request.GET.get('url', '') != ''
+            if request.GET.get('video_id', '') != '':
+                url = get_url_from_video_id(request.GET.get('video_id', ''))
+            else:
+                url = request.GET.get('url', '')
             downloadable: Downloadable = dlaud(
-                get_url_from_video_id(request.GET.get('video_id', '')),
-                request.GET.get('bitrate', '')
+                url,
+                request.GET.get('bitrate')
             )
 
             serializer = DownloadableSerializer(downloadable, context={'request': request})
@@ -185,10 +198,18 @@ class DownloadAudioAPIView(APIView):
                 },
                 status = 404
             )
+        except AssertionError:
+            return Response(
+                {
+                    "message": "Either video_id or url must be provided"
+                },
+                status = 400
+            )
         except Exception as e:
             return Response(
                 {
-                    "message": "Bad request"
+                    "message": "Bad request",
+                    "error": str(e)
                 },
                 status = 400
             )

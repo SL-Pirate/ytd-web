@@ -75,7 +75,7 @@ def _process(
     except Exception as e:
         raise VideoProcessingFailureException(str(e))
 
-@depricated
+@depricated()
 def download_video(
         video_link: str, 
         reso: str, 
@@ -157,7 +157,9 @@ def _extract_height(reso: str) -> int | None:
         except ValueError:
             return None
 
-def _get_format(reso: str) -> str:
+def _get_format(reso: str | None) -> str:
+    if reso is None:
+        return 'bestvideo+bestaudio/best'
     height: str | None = str(_extract_height(reso))
     if height is None:
         return 'bestvideo+bestaudio/best'
@@ -167,7 +169,7 @@ def _get_format(reso: str) -> str:
 def download_video_dl(
         video_link: str,
         reso: str,
-        # format: str = None
+        format: str = None
     ) -> Downloadable:
     cache_folder = global_cache_folder + "/" + str(time())
     file_name = str(time())
@@ -177,6 +179,14 @@ def download_video_dl(
         'outtmpl': f'{cache_folder}/%(title)s.%(ext)s',
         'quiet': True
     }
+
+    if format is not None:
+        ydl_opts["postprocessors"] = [
+            {
+                'key': 'FFmpegVideoConvertor',
+                'preferedformat': format
+            }
+        ]
 
     try:
         with YoutubeDL(ydl_opts) as ydl:
@@ -188,6 +198,10 @@ def download_video_dl(
         with YoutubeDL(ydl_opts) as ydl:
             ydl.download([video_link])
             file_name = ydl.prepare_filename(ydl.extract_info(video_link, download=False))
+
+    if format is not None:
+        current_format = file_name.split(".")[-1]
+        file_name = file_name.replace(current_format, format)
 
     downloadable = Downloadable(
         path=file_name, 

@@ -33,8 +33,13 @@ def base64_to_str(string: str) -> str:
         return None
     return base64.b64decode(string).decode('utf-8')
 
-def depricated(func):
-    def wrapper(*args, **kwargs):
-        warnings.warn(f"Function {func.__name__} is depricated and will be removed in the future.", DeprecationWarning)
-        return func(*args, **kwargs)
-    return wrapper
+def depricated(message: str = None):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            if message is None:
+                message - f"Function {func.__name__} is depricated and will be removed in the future."
+            warnings.warn(message, DeprecationWarning)
+            return func(*args, **kwargs)
+        return wrapper
+    
+    return decorator
