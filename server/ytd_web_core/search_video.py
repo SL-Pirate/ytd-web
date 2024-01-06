@@ -47,7 +47,7 @@ def search_video_from_url(url: str) -> list[SearchResult]:
             channel_name=video.channel_id,
             channel_thumbnail_url=get_channel_thumbnail_url([video.channel_id])
         )]
-    except InvalidYoutubeLinkError:
+    except Exception:
         with YoutubeDL(YOUTUBE_DL_OPTIONS) as ydl:
             try:
                 video = ydl.extract_info(url, download=False)
