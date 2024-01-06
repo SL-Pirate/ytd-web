@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 100),
             SvgPicture.asset(
-              "img/home_page_icon.svg",
+              "assets/img/home_page_icon.svg",
               width: 200,
               height: 175,
             ),
