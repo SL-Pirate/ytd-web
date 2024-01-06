@@ -22,6 +22,7 @@ class VideoScreen extends StatefulWidget {
 
 class _VideoScreenState extends State<VideoScreen> {
   static const double playerMaxWidth = 640;
+  static const double playerMaxHeight = 360;
   final ValueNotifier<String?> videoResolution = ValueNotifier(null);
   final ValueNotifier<String?> audioBitRate = ValueNotifier(null);
   final ValueNotifier<DownloadType> type = ValueNotifier(DownloadType.video);
@@ -72,7 +73,10 @@ class _VideoScreenState extends State<VideoScreen> {
                                 child: Container(
                                     color: Colors.black,
                                     child: FutureBuilder(
-                                      future: widget.searchResult.thumbnail,
+                                      future: widget.searchResult.getThumbnail(
+                                        width: playerMaxWidth,
+                                        height: playerMaxHeight,
+                                      ),
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
                                           return SizedBox(
@@ -238,6 +242,7 @@ class _VideoScreenState extends State<VideoScreen> {
         child: Container(
             constraints: const BoxConstraints(
               maxWidth: playerMaxWidth,
+              maxHeight: playerMaxHeight,
             ),
             child: Video(
               controller: controller,

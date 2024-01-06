@@ -24,12 +24,18 @@ class SearchResultModel {
     return 'SearchResultModel(url: $url, title: $title, description: $description, channelName: $channelName)';
   }
 
-  Future<Image?> get thumbnail async {
+  Future<Image?> getThumbnail({
+    double? width,
+    double? height,
+    BoxFit? fit,
+  }) async {
     try {
       final bytes = await Api.instance.getImage(_thumbnailUrl!);
       return Image.memory(
         bytes,
-        fit: BoxFit.fitWidth,
+        fit: fit ?? BoxFit.contain,
+        width: width,
+        height: height,
       );
     } catch (e) {
       return null;
