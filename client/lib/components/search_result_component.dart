@@ -13,22 +13,22 @@ class SearchResultComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SizedBox(
-          width: Styles.of(context).isMobile ? 186 : 444,
-          height: Styles.of(context).isMobile ? 109 : 241,
-          child: FutureBuilder(
-              future: searchResultModel.thumbnail,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Container(
-                    color: Colors.black,
-                    child: const Center(child: CircularProgressIndicator()),
-                  );
-                }
+        FutureBuilder(
+            future: searchResultModel.getThumbnail(
+              width: Styles.of(context).isMobile ? 186 : 444,
+              height: Styles.of(context).isMobile ? 109 : 241,
+              fit: BoxFit.fitWidth,
+            ),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Container(
+                  color: Colors.black,
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              }
 
-                return snapshot.data!;
-              }),
-        ),
+              return snapshot.data!;
+            }),
         SizedBox(width: Styles.of(context).isMobile ? 10 : 16),
         Expanded(
           child: Column(

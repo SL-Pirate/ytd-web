@@ -37,6 +37,9 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+            ),
             const SizedBox(height: 100),
             SvgPicture.asset(
               "img/home_page_icon.svg",
