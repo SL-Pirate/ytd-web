@@ -10,19 +10,11 @@ class GetQualitiesAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'video_id',
-                openapi.IN_QUERY,
-                description="""ID of the YouTube video. Either this or the url parameter is required. 
-                    If both are provided, video_id will be used.""",
-                type=openapi.TYPE_STRING,
-                required=False
-            ),
-            openapi.Parameter(
                 'url',
                 openapi.IN_QUERY,
                 description='URL of the video. Either this or the video_id parameter is required.',
                 type=openapi.TYPE_STRING,
-                required=False
+                required=True
             )
         ],
         responses={
@@ -39,12 +31,8 @@ class GetQualitiesAPIView(APIView):
     )
     def get(self, request, *args, **kwargs):
         try:
-            assert request.GET.get('video_id') is not None or request.GET.get('url') is not None
-            
             return Response(
-                QualitiesSerializer(get_qualities(
-                    get_url_from_video_id(request.GET.get('video_id')) if request.GET.get('video_id') is not None else request.GET.get('url')
-                )).data
+                QualitiesSerializer(get_qualities(request.GET.get('url'))).data
             )
         except AgeRestrictedVideoException:
             return Response(

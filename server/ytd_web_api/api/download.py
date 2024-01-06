@@ -14,18 +14,11 @@ class DownloadVideoAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'video_id',
-                openapi.IN_QUERY,
-                description='ID of the video. Either video_id or url must be provided. Works only for youtube videos',
-                type=openapi.TYPE_STRING,
-                required=False
-            ),
-            openapi.Parameter(
                 'url',
                 openapi.IN_QUERY,
-                description='URL of the video. Either video_id or url must be provided',
+                description='URL of the video',
                 type=openapi.TYPE_STRING,
-                required=False
+                required=True
             ),
             openapi.Parameter(
                 'resolution',
@@ -58,13 +51,8 @@ class DownloadVideoAPIView(APIView):
     )
     def get(self, request: HttpRequest, *args, **kwargs):
         try:
-            assert request.GET.get('video_id', '') != '' or request.GET.get('url', '') != ''
-            if request.GET.get('video_id', '') != '':
-                url = get_url_from_video_id(request.GET.get('video_id', ''))
-            else:
-                url = request.GET.get('url', '')
             downloadable: Downloadable = dlvid(
-                url,
+                request.GET.get('url', ''),
                 request.GET.get('resolution'),
                 request.GET.get('video_format')
             )
@@ -100,13 +88,6 @@ class DownloadVideoAPIView(APIView):
                 },
                 status = 404
             )
-        except AssertionError:
-            return Response(
-                {
-                    "message": "Either video_id or url must be provided"
-                },
-                status = 400
-            )
         except Exception as e:
             return Response(
                 {
@@ -120,18 +101,11 @@ class DownloadAudioAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'video_id',
-                openapi.IN_QUERY,
-                description='ID of the video. Either video_id or url must be provided. Works only for youtube videos',
-                type=openapi.TYPE_STRING,
-                required=False
-            ),
-            openapi.Parameter(
                 'url',
                 openapi.IN_QUERY,
-                description='URL of the video. Either video_id or url must be provided',
+                description='URL of the video',
                 type=openapi.TYPE_STRING,
-                required=False
+                required=True
             ),
             openapi.Parameter(
                 'bitrate',
@@ -157,13 +131,8 @@ class DownloadAudioAPIView(APIView):
     )
     def get(self, request, *args, **kwargs):
         try:
-            assert request.GET.get('video_id', '') != '' or request.GET.get('url', '') != ''
-            if request.GET.get('video_id', '') != '':
-                url = get_url_from_video_id(request.GET.get('video_id', ''))
-            else:
-                url = request.GET.get('url', '')
             downloadable: Downloadable = dlaud(
-                url,
+                request.GET.get('url', ''),
                 request.GET.get('bitrate')
             )
 
@@ -197,13 +166,6 @@ class DownloadAudioAPIView(APIView):
                     "message": "Invalid/Unavailable audio bitrate"
                 },
                 status = 404
-            )
-        except AssertionError:
-            return Response(
-                {
-                    "message": "Either video_id or url must be provided"
-                },
-                status = 400
             )
         except Exception as e:
             return Response(

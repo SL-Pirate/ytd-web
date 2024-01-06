@@ -160,10 +160,11 @@ def _extract_height(reso: str) -> int | None:
 def _get_format(reso: str | None) -> str:
     if reso is None:
         return 'bestvideo+bestaudio/best'
-    height: str | None = str(_extract_height(reso))
+    height: str | None = _extract_height(reso)
     if height is None:
         return 'bestvideo+bestaudio/best'
     else:
+        height = str(height)
         return f'bestvideo[height<={height}]+bestaudio/best[height<={height}]'
 
 def download_video_dl(

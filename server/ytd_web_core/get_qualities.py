@@ -26,7 +26,7 @@ def get_qualities (link: str) -> dict:
             "audio_qualities": audio_qualities,
             "video_qualities": video_qualities
         }
-    except InvalidYoutubeLinkError:
+    except (InvalidYoutubeLinkError, AgeRestrictedError):
         with YoutubeDL(YOUTUBE_DL_OPTIONS) as ydl:
             video = ydl.extract_info(link, download=False)
             for stream in video['formats']:
@@ -39,6 +39,3 @@ def get_qualities (link: str) -> dict:
             "audio_qualities": audio_qualities,
             "video_qualities": video_qualities
         }
-
-    except AgeRestrictedError:
-        raise AgeRestrictedVideoException

@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 
-class Api{
+class Api {
   static final Api instance = Api._();
   final Dio _dio = Dio();
   final String _baseUrl = const String.fromEnvironment("baseUrl");
@@ -23,88 +23,67 @@ class Api{
     };
   }
 
-  Future<Response> getVideo (String videoId, String? resolution) async {
-    try{
-      return await _dio.get(
-          "$_baseUrl/download/video",
-          options: Options(
-              headers: header
-          ),
+  Future<Response> getVideo(
+    String? rul,
+    String? resolution,
+  ) async {
+    try {
+      return await _dio.get("$_baseUrl/download/video",
+          options: Options(headers: header),
           queryParameters: {
-            "video_id": videoId,
-            "resolution": resolution ?? "360p",
+            "url": rul,
+            "resolution": resolution,
             "video_format": "mp4"
-          }
-      );
-    }
-    on DioException {
-      return Future(() => Response(
-          requestOptions: RequestOptions(),
-          statusCode: 404
-      ));
+          });
+    } on DioException {
+      return Future(
+          () => Response(requestOptions: RequestOptions(), statusCode: 404));
     }
   }
 
-  Future<Response> getAudio (String videoId, String? bitrate) async {
-    try{
-      return await _dio.get(
-          "$_baseUrl/download/audio",
-          options: Options(
-              headers: header
-          ),
+  Future<Response> getAudio(
+    String? url,
+    String? bitrate,
+  ) async {
+    try {
+      return await _dio.get("$_baseUrl/download/audio",
+          options: Options(headers: header),
           queryParameters: {
-            "video_id": videoId,
-            "resolution": bitrate ?? "128kbps"
-          }
-      );
-    }
-    on DioException {
-      return Future(() => Response(
-          requestOptions: RequestOptions(),
-          statusCode: 404
-      ));
+            "url": url,
+            "resolution": bitrate,
+          });
+    } on DioException {
+      return Future(
+          () => Response(requestOptions: RequestOptions(), statusCode: 404));
     }
   }
 
   Future<dynamic> search(String searchParam) async {
-    try{
-      Response response = await _dio.get(
-          "$_baseUrl/search",
-          options: Options(
-              headers: header
-          ),
-          queryParameters: {
-            "keyword": searchParam
-          }
-      );
+    try {
+      Response response = await _dio.get("$_baseUrl/search",
+          options: Options(headers: header),
+          queryParameters: {"keyword": searchParam});
 
       if (response.statusCode == 200) {
         return response.data["results"];
-      }
-      else {
+      } else {
         return List.from([]);
       }
-    }
-    on DioException {
+    } on DioException {
       return List.from([]);
     }
   }
 
-  Future<dynamic> getQualities(String videoId) async {
-    var response = await _dio.get(
-        "$_baseUrl/search/qualities",
-        options: Options(
-            headers: header
-        ),
+  Future<dynamic> getQualities(String? url) async {
+    var response = await _dio.get("$_baseUrl/search/qualities",
+        options: Options(headers: header),
         queryParameters: {
-          "video_id": videoId
-        }
-    );
+          "url": url,
+        });
 
     if (response.statusCode == 200) {
       return response.data;
     }
-
 
     return null;
   }
@@ -113,17 +92,13 @@ class Api{
     try {
       var response = await _dio.get(
         url,
-        options: Options(
-            headers: header,
-            responseType: ResponseType.bytes
-        ),
+        options: Options(headers: header, responseType: ResponseType.bytes),
       );
 
       if (response.statusCode == 200) {
         return response.data;
       }
-    }
-    catch (error) {
+    } catch (error) {
       return null;
     }
 

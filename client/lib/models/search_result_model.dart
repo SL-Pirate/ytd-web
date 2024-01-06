@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:ytd_web/util/api.dart';
 
-class SearchResultModel{
-  final String videoId;
+class SearchResultModel {
+  final String url;
   final String title;
   final String? _thumbnailUrl;
   final String? description;
@@ -10,54 +10,55 @@ class SearchResultModel{
   final String? _channelThumbnailUrl;
 
   const SearchResultModel({
-    required this.videoId,
+    required this.url,
     required this.title,
     this.description,
     required String? thumbnailUrl,
     required this.channelName,
     required String? channelThumbnailUrl,
-  }) : _thumbnailUrl = thumbnailUrl,
+  })  : _thumbnailUrl = thumbnailUrl,
         _channelThumbnailUrl = channelThumbnailUrl;
 
+  @override
+  String toString() {
+    return 'SearchResultModel(url: $url, title: $title, description: $description, channelName: $channelName)';
+  }
+
   Future<Image?> get thumbnail async {
-    try{
+    try {
       final bytes = await Api.instance.getImage(_thumbnailUrl!);
       return Image.memory(
         bytes,
         fit: BoxFit.fitWidth,
       );
-    }
-    catch(e){
+    } catch (e) {
       return null;
     }
   }
 
   Future<MemoryImage?> get thumbnailProvider async {
-    try{
+    try {
       final bytes = await Api.instance.getImage(_thumbnailUrl!);
       return MemoryImage(bytes);
-    }
-    catch(e){
+    } catch (e) {
       return null;
     }
   }
 
   Future<Image?> get channelThumbnail async {
-    try{
+    try {
       final bytes = await Api.instance.getImage(_channelThumbnailUrl!);
       return Image.memory(bytes);
-    }
-    catch(e){
+    } catch (e) {
       return null;
     }
   }
 
   Future<MemoryImage?> get channelThumbnailProvider async {
-    try{
+    try {
       final bytes = await Api.instance.getImage(_channelThumbnailUrl!);
       return MemoryImage(bytes);
-    }
-    catch(e){
+    } catch (e) {
       return null;
     }
   }
