@@ -1,22 +1,24 @@
-from ytd_web_core.download_video import download_video as dlvid
-from ytd_web_core.download_audio import download_audio as dlaud
+from ytd_web_core.download_video import download_video_dl as dlvid
+from ytd_web_core.download_audio import download_audio_dl as dlaud
 from pytube.exceptions import RegexMatchError, VideoUnavailable
 from ytd_web_core.exceptions import AgeRestrictedVideoException, UnavailableVideoQualityException
 from ytd_web_core.models import Downloadable
 from ytd_web_core.util import get_url_from_video_id
 from rest_framework.views import APIView, Response
-from ..serializers import *
+from ytd_web_api.serializers import *
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.http import HttpRequest
 
 class DownloadVideoAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'video_id',
+                'url',
                 openapi.IN_QUERY,
-                description='ID of the video',
-                type=openapi.TYPE_STRING
+                description='URL of the video',
+                type=openapi.TYPE_STRING,
+                required=True
             ),
             openapi.Parameter(
                 'resolution',
@@ -47,12 +49,12 @@ class DownloadVideoAPIView(APIView):
             404: 'Video not found',
         }
     )
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest, *args, **kwargs):
         try:
             downloadable: Downloadable = dlvid(
-                get_url_from_video_id(request.GET.get('video_id', '')),
-                request.GET.get('resolution', ''),
-                request.GET.get('video_format', '')
+                request.GET.get('url', ''),
+                request.GET.get('resolution'),
+                request.GET.get('video_format')
             )
 
             serializer = DownloadableSerializer(downloadable, context={'request': request})
@@ -99,10 +101,11 @@ class DownloadAudioAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'video_id',
+                'url',
                 openapi.IN_QUERY,
-                description='ID of the video',
-                type=openapi.TYPE_STRING
+                description='URL of the video',
+                type=openapi.TYPE_STRING,
+                required=True
             ),
             openapi.Parameter(
                 'bitrate',
@@ -129,8 +132,8 @@ class DownloadAudioAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             downloadable: Downloadable = dlaud(
-                get_url_from_video_id(request.GET.get('video_id', '')),
-                request.GET.get('bitrate', '')
+                request.GET.get('url', ''),
+                request.GET.get('bitrate')
             )
 
             serializer = DownloadableSerializer(downloadable, context={'request': request})
@@ -167,7 +170,8 @@ class DownloadAudioAPIView(APIView):
         except Exception as e:
             return Response(
                 {
-                    "message": "Bad request"
+                    "message": "Bad request",
+                    "error": str(e)
                 },
                 status = 400
             )

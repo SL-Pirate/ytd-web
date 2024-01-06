@@ -1,5 +1,7 @@
 from shutil import rmtree
 from ytd_web_core import max_vids
+import base64
+import warnings
 
 num_vids = 0
 
@@ -20,3 +22,24 @@ def clean_immediate(item) -> None:
 
 def get_url_from_video_id (video_id) -> str:
     return f"https://www.youtube.com/watch?v={video_id}"
+
+def str_to_base64(string: str) -> str:
+    if string is None:
+        return None
+    return base64.b64encode(bytes(string, 'utf-8')).decode('utf-8')
+
+def base64_to_str(string: str) -> str:
+    if string is None:
+        return None
+    return base64.b64decode(string).decode('utf-8')
+
+def depricated(message: str = None):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            if message is None:
+                message - f"Function {func.__name__} is depricated and will be removed in the future."
+            warnings.warn(message, DeprecationWarning)
+            return func(*args, **kwargs)
+        return wrapper
+    
+    return decorator

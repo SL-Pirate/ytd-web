@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:ytd_web/util/api.dart';
 import 'package:ytd_web/main.dart';
-import 'package:ytd_web/modals/search_result_model.dart';
+import 'package:ytd_web/models/search_result_model.dart';
 import 'package:ytd_web/screens/base_frame.dart';
 import 'package:ytd_web/screens/video_screen.dart';
 import 'package:ytd_web/util/styles.dart';
@@ -23,14 +24,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     if (searchText == null) {
-      searchText = Text(
-          "Search",
-          style: TextStyle(
-              color: Styles.white,
-              fontFamily: Styles.fontFamily,
-              fontWeight: Styles.of(context).isMobile ? null : FontWeight.bold,
-              fontSize: Styles.of(context).bodyFontSize
-          )
+      searchText = Icon(
+        Icons.search,
+        size: Styles.of(context).bodyFontSize,
       );
 
       searchSuffix = searchText!;
@@ -42,167 +38,149 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 100),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "YouTube Video",
-                  style: TextStyle(
-                      fontSize: Styles.of(context).titleFontSize,
-                      color: Styles.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: Styles.fontFamily
-                  ),
-                ),
-                const SizedBox(width: 10,),
-                Text(
-                  "Downloader",
-                  style: TextStyle(
-                      fontSize: Styles.of(context).titleFontSize,
-                      color: Styles.red,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: Styles.fontFamily
-                  ),
-                )
-              ],
+            SvgPicture.asset(
+              "img/home_page_icon.svg",
+              width: 200,
+              height: 175,
+            ),
+            const SizedBox(height: 50),
+            Text(
+              "Online Video Downloader",
+              style: TextStyle(
+                  fontSize: Styles.of(context).titleFontSize,
+                  color: Styles.textColor,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: Styles.fontFamily),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 "Use this convenient YouTube video Downloader site to easily save"
-                    " your favorite videos for offline viewing.",
+                " your favorite videos for offline viewing.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Styles.white,
+                    color: Styles.textColor,
                     fontSize: Styles.of(context).bodyFontSize,
-                    fontFamily: Styles.fontFamily
-                ),
+                    fontFamily: Styles.fontFamily),
               ),
             ),
-            Container(
-              constraints: const BoxConstraints(
-                maxWidth: 1000,
-              ),
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 50
-              ),
-              margin: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(
-                    color: Styles.red
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+              child: Material(
+                color: Styles.backgroundColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                borderRadius: const BorderRadius.all(Radius.circular(25)),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "YouTube Video URL"
-                        " or Search Term",
-                    style: TextStyle(
-                        color: Styles.white,
-                        fontFamily: Styles.fontFamily,
-                        fontSize: Styles.of(context).subtitleFontSize
-                    ),
+                shadowColor: Styles.shadowColor,
+                elevation: 5,
+                child: Container(
+                  constraints: const BoxConstraints(
+                    maxWidth: 1000,
                   ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 20),
-                    height: Styles.of(context).isMobile ? 40 : 50,
-                    child: TextField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                          fillColor: Styles.white,
-                          filled: true,
-                          hintText: "YouTube Video URL"
-                              " or Search Term",
-                          hintStyle: TextStyle(
-                              color: Styles.grey,
-                              fontFamily: Styles.fontFamily,
-                              fontSize: Styles.of(context).bodyFontSize
-                          ),
-                          suffixIcon: InkWell(
-                            onTap: () {
-                              FocusScope.of(context).requestFocus(FocusNode());
-                              onSubmit();
-                            },
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Styles.red,
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(8),
-                                  bottomRight: Radius.circular(8),
-                                ),
-                              ),
-                              width: Styles.of(context).isMobile ? 80 : 100,
-                              child: Center(
-                                  child: searchSuffix
+                  width: double.infinity,
+                  margin: const EdgeInsets.all(20),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Styles.of(context).isMobile ? 10 : 20,
+                    vertical: Styles.of(context).isMobile ? 10 : 20,
+                  ),
+                  color: Styles.backgroundColor,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "YouTube Video URL"
+                        " or Search Term",
+                        style: TextStyle(
+                          color: Styles.textColor,
+                          fontFamily: Styles.fontFamily,
+                          fontSize: Styles.of(context).bodyFontSize,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: Styles.of(context).isMobile ? 40 : 50,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: controller,
+                                decoration: InputDecoration(
+                                    fillColor: Styles.backgroundColor,
+                                    filled: true,
+                                    hintText: "YouTube Video URL"
+                                        " or Search Term",
+                                    hintStyle: TextStyle(
+                                        color: Styles.color4,
+                                        fontFamily: Styles.fontFamily,
+                                        fontSize:
+                                            Styles.of(context).fontSizeSmall),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    border: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8)))),
+                                style: TextStyle(
+                                    fontFamily: Styles.fontFamily,
+                                    fontSize: Styles.of(context).bodyFontSize),
+                                onSubmitted: onSubmit,
                               ),
                             ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                          border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(8))
-                          )
+                            const SizedBox(width: 20),
+                            IconButton(
+                              style: Styles.buttonStyle,
+                              onPressed: onSubmit,
+                              icon: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: searchSuffix,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                      style: TextStyle(
-                          fontFamily: Styles.fontFamily,
-                          fontSize: Styles.of(context).bodyFontSize
-                      ),
-                      onSubmitted: onSubmit,
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-            if (result != null) Container(
-              constraints: const BoxConstraints(
-                maxWidth: 1000,
-              ),
-              child: Column(
-                  children:
-                      () {
-                    List<Widget> children = [];
+            if (result != null)
+              Container(
+                constraints: const BoxConstraints(
+                  maxWidth: 1000,
+                ),
+                child: Column(children: () {
+                  List<Widget> children = [];
 
-                    children.add(const SizedBox(height: 50));
+                  children.add(const SizedBox(height: 50));
 
-                    for (dynamic item in result) {
-                      SearchResultModel data = SearchResultModel(
-                          videoId: item["video_id"],
-                          title: item["title"],
-                          description: item["description"],
-                          thumbnailUrl: item["thumbnail_url"],
-                          channelName: item["channel_name"],
-                          channelThumbnailUrl: item["channel_thumbnail_url"]
-                      );
+                  for (dynamic item in result) {
+                    SearchResultModel data = SearchResultModel(
+                      url: item["url"],
+                      title: item["title"],
+                      description: item["description"],
+                      thumbnailUrl: item["thumbnail_url"],
+                      channelName: item["channel_name"],
+                      channelThumbnailUrl: item["channel_thumbnail_url"],
+                    );
 
-                      children.add(Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 10,
-                            top: 10,
-                            left: 16
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => BaseFrame(
-                                        product: product,
-                                        child: VideoScreen(searchResult: data)
-                                    )
-                                )
-                            );
-                          },
-                          child: SearchResultComponent(data),
-                        ),
-                      ));
-                    }
+                    children.add(Padding(
+                      padding:
+                          const EdgeInsets.only(bottom: 10, top: 10, left: 16),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => BaseFrame(
+                                  product: product,
+                                  child: VideoScreen(searchResult: data))));
+                        },
+                        child: SearchResultComponent(data),
+                      ),
+                    ));
+                  }
 
-                    return children;
-                  } ()
-              ),
-            )
+                  return children;
+                }()),
+              )
           ],
         ),
       ),
@@ -213,11 +191,11 @@ class _HomePageState extends State<HomePage> {
     if (controller.text.isEmpty) return;
     if (value != null) controller.text = value;
     setState(() {
-      searchSuffix = const SizedBox(
-        width: 20,
-        height: 20,
-        child: CircularProgressIndicator(
-          color: Styles.white,
+      searchSuffix = SizedBox(
+        width: Styles.of(context).bodyFontSize,
+        height: Styles.of(context).bodyFontSize,
+        child: const CircularProgressIndicator(
+          color: Styles.buttonTextColor,
           strokeWidth: 2,
         ),
       );
@@ -228,40 +206,36 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           searchSuffix = searchText!;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("No results found!"),
-              backgroundColor: Styles.red,
-            )
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("No results found!"),
+          backgroundColor: Styles.secondary,
+        ));
         return;
       }
 
+      setState(() {
+        result = value;
+        searchSuffix = searchText!;
+      });
+
       if ((value).length == 1) {
         Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => BaseFrame(
-                    product: product,
-                    child: VideoScreen(
-                      searchResult: SearchResultModel(
-                          videoId: value.first["video_id"],
-                          title: value.first["title"],
-                          description: value.first["description"],
-                          thumbnailUrl: value.first["thumbnail_url"],
-                          channelName: value.first["channel_name"],
-                          channelThumbnailUrl: value.first["channel_thumbnail_url"]
-                      ),
-                    )
-                )
-            )
+          MaterialPageRoute(
+            builder: (context) => BaseFrame(
+              product: product,
+              child: VideoScreen(
+                searchResult: SearchResultModel(
+                    url: value.first["url"],
+                    title: value.first["title"],
+                    description: value.first["description"],
+                    thumbnailUrl: value.first["thumbnail_url"],
+                    channelName: value.first["channel_name"],
+                    channelThumbnailUrl: value.first["channel_thumbnail_url"]),
+              ),
+            ),
+          ),
         );
-      }
-
-      else {
-        setState(() {
-          result = value;
-          searchSuffix = searchText!;
-        });
+      } else {
         return;
       }
     });

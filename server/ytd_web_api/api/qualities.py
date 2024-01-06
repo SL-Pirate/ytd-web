@@ -10,15 +10,18 @@ class GetQualitiesAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'video_id',
+                'url',
                 openapi.IN_QUERY,
-                description='ID of the video',
-                type=openapi.TYPE_STRING
+                description='URL of the video. Either this or the video_id parameter is required.',
+                type=openapi.TYPE_STRING,
+                required=True
             )
         ],
         responses={
             200: openapi.Response(
-                description='Successful response',
+                description="""Returns a list of available qualities. 
+                Audio qualities will be in kbps and video qualities will be in
+                either progressive or adaptive resolutions.""",
                 schema=QualitiesSerializer,
             ),
             403: 'Invalid API key',
@@ -28,19 +31,8 @@ class GetQualitiesAPIView(APIView):
     )
     def get(self, request, *args, **kwargs):
         try:
-            data = get_qualities(
-                    get_url_from_video_id(
-                        request.GET.get(
-                            'video_id', 
-                            ''
-                        )
-                    )
-                )
             return Response(
-                QualitiesSerializer({
-                    "audio_qualities": data["audio_qualities"],
-                    "video_qualities": data["video_qualities"]
-                }).data
+                QualitiesSerializer(get_qualities(request.GET.get('url'))).data
             )
         except AgeRestrictedVideoException:
             return Response(
@@ -49,6 +41,13 @@ class GetQualitiesAPIView(APIView):
                 },
                 status = 403
             )
+        except AssertionError:
+                return Response(
+                    {
+                        "message": "video_id or url parameter is required"
+                    },
+                    status = 400
+                )
         except Exception as e:
             return Response(
                 {

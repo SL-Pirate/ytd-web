@@ -8,3 +8,5 @@ celery[redis]
 drf-yasg
 gunicorn
 dj-static
+youtube-dl
+yt-dlp
