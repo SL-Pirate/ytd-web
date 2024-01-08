@@ -105,7 +105,10 @@ class _VideoScreenState extends State<VideoScreen> {
                                   Downloadable? match =
                                       Downloadable.getDownloadableFromList(
                                     downloadables: downloadables,
-                                    type: type.value,
+                                    types: [
+                                      DownloadType.preview,
+                                      DownloadType.video
+                                    ],
                                   );
 
                                   if (match == null) {
@@ -119,7 +122,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                           .data["downloadable_link"];
                                       downloadables.add(Downloadable(
                                         url: url,
-                                        type: DownloadType.video,
+                                        type: DownloadType.preview,
                                         quality: videoResolution.value,
                                         name: fileResponse.data["file_name"],
                                       ));
@@ -151,66 +154,63 @@ class _VideoScreenState extends State<VideoScreen> {
                       ],
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     width: playerMaxWidth,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 50),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: Colors.red, width: 1)),
                     child: Column(
                       children: [
                         DownloadSection(
+                          width: playerMaxWidth,
                           url: widget.searchResult.url,
                           videoResolution: videoResolution,
                           audioBitRate: audioBitRate,
                           type: type,
-                          onDownload: (type, quality) {},
+                          downloadButton: DownloadButton(
+                            loadingBarSize: 30,
+                            getDownloadable: () async {
+                              Downloadable? downloadable =
+                                  Downloadable.getDownloadableFromList(
+                                      downloadables: downloadables,
+                                      types: [type.value],
+                                      quality: type.value == DownloadType.video
+                                          ? videoResolution.value
+                                          : audioBitRate.value);
+                              if (downloadable != null) {
+                                return downloadable;
+                              }
+                              if (type.value == DownloadType.video) {
+                                dynamic video = (await Api.instance.getVideo(
+                                        widget.searchResult.url,
+                                        videoResolution.value,
+                                        format: "mp4"))
+                                    .data;
+
+                                video["type"] = type.value.name;
+                                video["quality"] = videoResolution.value;
+                                Downloadable downloadable =
+                                    Downloadable.fromJson(video);
+                                downloadables.add(downloadable);
+
+                                return downloadable;
+                              } else {
+                                dynamic audio = (await Api.instance.getAudio(
+                                        widget.searchResult.url,
+                                        audioBitRate.value))
+                                    .data;
+
+                                audio["type"] = type.value.name;
+                                audio["quality"] = audioBitRate.value;
+                                Downloadable downloadable =
+                                    Downloadable.fromJson(audio);
+                                downloadables.add(downloadable);
+
+                                return downloadable;
+                              }
+                            },
+                          ),
                         ),
                         const SizedBox(
                           height: 30,
                         ),
-                        DownloadButton(
-                          getDownloadable: () async {
-                            Downloadable? downloadable =
-                                Downloadable.getDownloadableFromList(
-                                    downloadables: downloadables,
-                                    type: type.value,
-                                    quality: type.value == DownloadType.video
-                                        ? videoResolution.value
-                                        : audioBitRate.value);
-                            if (downloadable != null) {
-                              return downloadable;
-                            }
-                            if (type.value == DownloadType.video) {
-                              dynamic video = (await Api.instance.getVideo(
-                                      widget.searchResult.url,
-                                      videoResolution.value))
-                                  .data;
-
-                              video["type"] = type.value.name;
-                              video["quality"] = videoResolution.value;
-                              Downloadable downloadable =
-                                  Downloadable.fromJson(video);
-                              downloadables.add(downloadable);
-
-                              return downloadable;
-                            } else {
-                              dynamic audio = (await Api.instance.getAudio(
-                                      widget.searchResult.url,
-                                      audioBitRate.value))
-                                  .data;
-
-                              audio["type"] = type.value.name;
-                              audio["quality"] = audioBitRate.value;
-                              Downloadable downloadable =
-                                  Downloadable.fromJson(audio);
-                              downloadables.add(downloadable);
-
-                              return downloadable;
-                            }
-                          },
-                        )
                       ],
                     ),
                   )

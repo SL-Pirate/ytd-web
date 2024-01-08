@@ -23,18 +23,23 @@ class Api {
     };
   }
 
-  Future<Response> getVideo(
-    String? rul,
-    String? resolution,
-  ) async {
+  Future<Response> getVideo(String? rul, String? resolution,
+      {String? format}) async {
+    Map<String, dynamic> body = {
+      "url": rul,
+      "resolution": resolution,
+    };
+
+    if (format != null) {
+      body["format"] = format;
+    }
+
     try {
-      return await _dio.get("$_baseUrl/download/video",
-          options: Options(headers: header),
-          queryParameters: {
-            "url": rul,
-            "resolution": resolution,
-            "video_format": "mp4"
-          });
+      return await _dio.post(
+        "$_baseUrl/download/video",
+        options: Options(headers: header),
+        data: body,
+      );
     } on DioException {
       return Future(
           () => Response(requestOptions: RequestOptions(), statusCode: 404));
@@ -46,9 +51,9 @@ class Api {
     String? bitrate,
   ) async {
     try {
-      return await _dio.get("$_baseUrl/download/audio",
+      return await _dio.post("$_baseUrl/download/audio",
           options: Options(headers: header),
-          queryParameters: {
+          data: {
             "url": url,
             "resolution": bitrate,
           });
@@ -60,9 +65,11 @@ class Api {
 
   Future<dynamic> search(String searchParam) async {
     try {
-      Response response = await _dio.get("$_baseUrl/search",
-          options: Options(headers: header),
-          queryParameters: {"keyword": searchParam});
+      Response response = await _dio.post(
+        "$_baseUrl/search",
+        options: Options(headers: header),
+        data: {"keyword": searchParam},
+      );
 
       if (response.statusCode == 200) {
         return response.data["results"];
@@ -75,9 +82,9 @@ class Api {
   }
 
   Future<dynamic> getQualities(String? url) async {
-    var response = await _dio.get("$_baseUrl/search/qualities",
+    var response = await _dio.post("$_baseUrl/search/qualities",
         options: Options(headers: header),
-        queryParameters: {
+        data: {
           "url": url,
         });
 

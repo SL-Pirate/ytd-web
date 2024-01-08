@@ -8,15 +8,16 @@ from drf_yasg import openapi
 
 class GetQualitiesAPIView(APIView):
     @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'url',
-                openapi.IN_QUERY,
-                description='URL of the video. Either this or the video_id parameter is required.',
-                type=openapi.TYPE_STRING,
-                required=True
-            )
-        ],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'url': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='URL of the video.',
+                ),
+            },
+            required=['url']
+        ),
         responses={
             200: openapi.Response(
                 description="""Returns a list of available qualities. 
@@ -29,10 +30,10 @@ class GetQualitiesAPIView(APIView):
             500: 'Internal error'
         }
     )
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
             return Response(
-                QualitiesSerializer(get_qualities(request.GET.get('url'))).data
+                QualitiesSerializer(get_qualities(request.data.get('url'))).data
             )
         except AgeRestrictedVideoException:
             return Response(

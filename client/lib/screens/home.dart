@@ -24,9 +24,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     if (searchText == null) {
-      searchText = Icon(
-        Icons.search,
-        size: Styles.of(context).bodyFontSize,
+      searchText = Padding(
+        padding: EdgeInsets.zero,
+        child: Icon(
+          Icons.search,
+          size: Styles.of(context).subtitleFontSize,
+        ),
       );
 
       searchSuffix = searchText!;
@@ -58,7 +61,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Use this convenient YouTube video Downloader site to easily save"
+                "Use this convenient video Downloader site to easily save"
                 " your favorite videos for offline viewing.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -71,28 +74,29 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
               child: Material(
                 color: Styles.backgroundColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                shadowColor: Styles.shadowColor,
+                // shadowColor: Styles.shadowColor,
+                borderRadius: BorderRadius.circular(20),
                 elevation: 5,
                 child: Container(
                   constraints: const BoxConstraints(
                     maxWidth: 1000,
                   ),
                   width: double.infinity,
-                  margin: const EdgeInsets.all(20),
+                  // margin: const EdgeInsets.all(20),
                   padding: EdgeInsets.symmetric(
-                    horizontal: Styles.of(context).isMobile ? 10 : 20,
-                    vertical: Styles.of(context).isMobile ? 10 : 20,
+                    horizontal: Styles.of(context).isMobile ? 20 : 40,
+                    vertical: 40,
                   ),
-                  color: Styles.backgroundColor,
+                  decoration: BoxDecoration(
+                    color: Styles.backgroundColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "YouTube Video URL"
-                        " or Search Term",
+                        "Video URL"
+                        " or YouTube Search Term",
                         style: TextStyle(
                           color: Styles.textColor,
                           fontFamily: Styles.fontFamily,
@@ -109,20 +113,32 @@ class _HomePageState extends State<HomePage> {
                               child: TextField(
                                 controller: controller,
                                 decoration: InputDecoration(
-                                    fillColor: Styles.backgroundColor,
-                                    filled: true,
-                                    hintText: "YouTube Video URL"
-                                        " or Search Term",
-                                    hintStyle: TextStyle(
-                                        color: Styles.color4,
-                                        fontFamily: Styles.fontFamily,
-                                        fontSize:
-                                            Styles.of(context).fontSizeSmall),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8)))),
+                                  fillColor: Styles.backgroundColor,
+                                  filled: true,
+                                  hintText: "Video URL"
+                                      " or YouTube Search Term",
+                                  hintStyle: TextStyle(
+                                      color: Styles.hintTextColor,
+                                      fontFamily: Styles.fontFamily,
+                                      fontSize:
+                                          Styles.of(context).fontSizeSmall),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  focusedBorder: const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Styles.borderColor,
+                                          width: 0.25),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(8),
+                                      )),
+                                  enabledBorder: const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Styles.borderColor,
+                                          width: 0.25),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(8),
+                                      )),
+                                ),
                                 style: TextStyle(
                                     fontFamily: Styles.fontFamily,
                                     fontSize: Styles.of(context).bodyFontSize),
@@ -148,6 +164,7 @@ class _HomePageState extends State<HomePage> {
             ),
             if (result != null)
               Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 constraints: const BoxConstraints(
                   maxWidth: 1000,
                 ),
@@ -167,8 +184,7 @@ class _HomePageState extends State<HomePage> {
                     );
 
                     children.add(Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: 10, top: 10, left: 16),
+                      padding: const EdgeInsets.only(bottom: 10, top: 10),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
@@ -192,14 +208,17 @@ class _HomePageState extends State<HomePage> {
 
   void onSubmit([String? value]) {
     if (controller.text.isEmpty) return;
+    FocusScope.of(context).unfocus();
     if (value != null) controller.text = value;
     setState(() {
       searchSuffix = SizedBox(
-        width: Styles.of(context).bodyFontSize,
-        height: Styles.of(context).bodyFontSize,
-        child: const CircularProgressIndicator(
-          color: Styles.buttonTextColor,
-          strokeWidth: 2,
+        width: Styles.of(context).bodyFontSize / 2,
+        height: Styles.of(context).bodyFontSize / 2,
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: Styles.buttonTextColor,
+            strokeWidth: 2,
+          ),
         ),
       );
     });

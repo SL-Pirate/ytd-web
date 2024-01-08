@@ -42,7 +42,10 @@ class BaseFrame extends StatelessWidget {
                     child: Image.asset("assets/img/logo.png", height: 55),
                   ),
                   Padding(
-                      padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(20.0),
+                    child: SizedBox(
+                      height: 60,
+                      width: 150,
                       child: ElevatedButton(
                         style: Styles.buttonStyle,
                         onPressed: () {},
@@ -50,7 +53,9 @@ class BaseFrame extends StatelessWidget {
                           "Log In",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                      ))
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -66,13 +71,13 @@ class BaseFrame extends StatelessWidget {
               Container(
                 width: double.infinity,
                 height: 30,
-                color: Styles.buttonTextColor.withOpacity(0.25),
+                color: Styles.color4,
                 child: Center(
                   child: Text(
                     "Copyright © ${DateTime.now().year} $product. "
                     "All Rights Reserved.",
                     style: TextStyle(
-                        color: Styles.color4.withOpacity(0.5),
+                        color: Styles.buttonTextColor,
                         fontSize: Styles.of(context).fontSizeSmall,
                         fontFamily: Styles.fontFamily),
                   ),

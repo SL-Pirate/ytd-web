@@ -7,14 +7,16 @@ from drf_yasg import openapi
 
 class SearchVideoAPIView(APIView):
     @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'keyword',
-                openapi.IN_QUERY,
-                description='search keywod',
-                type=openapi.TYPE_STRING
-            )
-        ],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'keyword': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='search keywod',
+                ),
+            },
+            required=['keyword']
+        ),
         responses={
             200: openapi.Response(
                 description='Successful response',
@@ -24,7 +26,7 @@ class SearchVideoAPIView(APIView):
             500: 'Internal error'
         }
     )
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         results = _search_youtube(request)
         if (len(results) == 0):
             return Response(

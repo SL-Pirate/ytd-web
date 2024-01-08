@@ -29,7 +29,8 @@ DEBUG = True
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_HEADERS = [
     'Timestamp',
-    'Token'
+    'Token',
+    'Content-Type',
 ]
 
 ALLOWED_HOSTS = [
