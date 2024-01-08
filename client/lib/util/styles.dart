@@ -19,10 +19,11 @@ class Styles {
   static const Color backgroundColor = Color(0xFFFFFFFF);
   static const Color buttonTextColor = Color(0xFFFFFFFF);
   static const Color buttonColor = Color(0xFF012F58);
-  static const Color shadowColor = Color(0xFFEBF6FF);
+  static const Color shadowColor = Color(0x00000029);
   static const Color borderColor = Color(0xFF707070);
-  static const Color color4 = Color(0xFF8D8D8D);
+  static const Color color4 = Color(0xFF012F58);
   static const Color successColor = Color(0xFF03FF44);
+  static const Color hintTextColor = Color(0xFF7E7E7E);
 
   // font family
   static const String fontFamily = "Poppins";

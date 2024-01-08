@@ -1,1 +1,1 @@
-enum DownloadType { video, audio }
+enum DownloadType { video, audio, preview }

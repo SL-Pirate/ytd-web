@@ -41,7 +41,7 @@ class SearchResultComponent extends StatelessWidget {
                       color: Styles.textColor,
                       fontFamily: Styles.fontFamily)),
               SizedBox(
-                height: Styles.of(context).isMobile ? 15 : 20,
+                height: Styles.of(context).isMobile ? 10 : 15,
               ),
               ChannelLabel(searchResultModel: searchResultModel)
             ],

@@ -65,7 +65,9 @@ def search_video_from_url(url: str) -> list[SearchResult]:
 
 def search(request) -> list[SearchResult]:
     try:
-        search_term = request.GET.get('keyword', '')
+        search_term = request.data.get('keyword', '')
+        print(request)
+        print(search_term)
         return search_video_from_url(search_term)
     
     except InvalidLinkError:

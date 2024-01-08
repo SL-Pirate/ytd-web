@@ -12,28 +12,24 @@ from django.http import HttpRequest
 
 class DownloadVideoAPIView(APIView):
     @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'url',
-                openapi.IN_QUERY,
-                description='URL of the video',
-                type=openapi.TYPE_STRING,
-                required=True
-            ),
-            openapi.Parameter(
-                'resolution',
-                openapi.IN_QUERY,
-                description='Video quality. Use the /search/qualities api to determine available qualities',
-                type=openapi.TYPE_STRING,
-            ),
-            openapi.Parameter(
-                'video_format',
-                openapi.IN_QUERY,
-                required=False,
-                description='Video output format. If not provided, the format available from youtube will be used. \nAvailable formats: mp4, webm, mkv',
-                type=openapi.TYPE_STRING,
-            )
-        ],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'url': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='URL of the video.',
+                ),
+                'resolution': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='Video quality. Use the /search/qualities api to determine available qualities',
+                ),
+                'video_format': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='Video output format. If not provided, the format available from youtube will be used. \nAvailable formats: mp4, webm, mkv',
+                ),
+            },
+            required=['url']
+        ),
         responses={
             200: openapi.Response(
                 description='Successful response',
@@ -49,12 +45,12 @@ class DownloadVideoAPIView(APIView):
             404: 'Video not found',
         }
     )
-    def get(self, request: HttpRequest, *args, **kwargs):
+    def post(self, request: HttpRequest, *args, **kwargs):
         try:
             downloadable: Downloadable = dlvid(
-                request.GET.get('url', ''),
-                request.GET.get('resolution'),
-                request.GET.get('video_format')
+                request.data.get('url', ''),
+                request.data.get('resolution'),
+                request.data.get('video_format')
             )
 
             serializer = DownloadableSerializer(downloadable, context={'request': request})
@@ -99,21 +95,20 @@ class DownloadVideoAPIView(APIView):
 
 class DownloadAudioAPIView(APIView):
     @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'url',
-                openapi.IN_QUERY,
-                description='URL of the video',
-                type=openapi.TYPE_STRING,
-                required=True
-            ),
-            openapi.Parameter(
-                'bitrate',
-                openapi.IN_QUERY,
-                description='Audio quality. Use the /search/qualities api to determine available qualities',
-                type=openapi.TYPE_STRING,
-            )
-        ],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'url': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='URL of the video.',
+                ),
+                'bitrate': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='Audio quality. Use the /search/qualities api to determine available qualities',
+                ),
+            },
+            required=['url']
+        ),
         responses={
             200: openapi.Response(
                 description='Successful response',
@@ -129,11 +124,11 @@ class DownloadAudioAPIView(APIView):
             404: 'Video not found',
         }
     )
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
             downloadable: Downloadable = dlaud(
-                request.GET.get('url', ''),
-                request.GET.get('bitrate')
+                request.data.get('url', ''),
+                request.data.get('bitrate')
             )
 
             serializer = DownloadableSerializer(downloadable, context={'request': request})

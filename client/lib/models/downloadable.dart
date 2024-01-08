@@ -28,11 +28,11 @@ class Downloadable {
 
   static Downloadable? getDownloadableFromList({
     required List<Downloadable> downloadables,
-    required DownloadType type,
+    required List<DownloadType> types,
     String? quality,
   }) {
     for (Downloadable downloadable in downloadables) {
-      if (downloadable.type == type &&
+      if (types.contains(downloadable.type) &&
           (quality == null || downloadable.quality == quality)) {
         if (kDebugMode) {
           print("Quality: ${downloadable.quality}");
