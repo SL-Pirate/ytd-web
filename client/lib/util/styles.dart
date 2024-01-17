@@ -47,6 +47,8 @@ class Styles {
   static ButtonStyle buildButtonStyle({
     Color? backgroundColor,
     Color? foregroundColor,
+    EdgeInsets? padding,
+    double? borderRadius,
   }) {
     return ButtonStyle(
       backgroundColor:
@@ -55,9 +57,12 @@ class Styles {
           MaterialStateProperty.all<Color>(foregroundColor ?? buttonTextColor),
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(borderRadius ?? 5),
         ),
       ),
+      padding: (padding != null)
+          ? MaterialStateProperty.all<EdgeInsets>(padding)
+          : null,
     );
   }
 

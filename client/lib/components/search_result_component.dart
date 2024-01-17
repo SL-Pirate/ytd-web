@@ -34,14 +34,17 @@ class SearchResultComponent extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(HtmlUnescape().convert(searchResultModel.title),
-                  style: TextStyle(
-                      fontSize: Styles.of(context).subtitleFontSize,
-                      fontWeight: FontWeight.bold,
-                      color: Styles.textColor,
-                      fontFamily: Styles.fontFamily)),
+              Text(
+                HtmlUnescape().convert(searchResultModel.title),
+                style: TextStyle(
+                  fontSize: Styles.of(context).subtitleFontSize,
+                  fontWeight: FontWeight.bold,
+                  color: Styles.textColor,
+                  fontFamily: Styles.fontFamily,
+                ),
+              ),
               SizedBox(
-                height: Styles.of(context).isMobile ? 10 : 15,
+                height: Styles.of(context).isMobile ? 5 : 10,
               ),
               ChannelLabel(searchResultModel: searchResultModel)
             ],
