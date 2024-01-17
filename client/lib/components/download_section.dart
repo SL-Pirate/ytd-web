@@ -33,12 +33,14 @@ class _DownloadSectionState extends State<DownloadSection> {
   Widget build(BuildContext context) {
     return Material(
       elevation: 5,
-      // shadowColor: Styles.shadowColor,
       borderRadius: BorderRadius.circular(20),
       child: Container(
         width: widget.width,
         height: widget.height,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 40,
+          vertical: 56,
+        ),
         decoration: BoxDecoration(
           color: Styles.backgroundColor,
           borderRadius: BorderRadius.circular(20),
@@ -152,61 +154,57 @@ class _DownloadSectionState extends State<DownloadSection> {
                 const SizedBox(
                   height: 21,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: Styles.of(context).isMobile ? 10 : 40),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 40,
-                          margin: const EdgeInsets.only(right: 30),
-                          padding: const EdgeInsets.only(left: 15),
-                          decoration: BoxDecoration(
-                              color: Styles.backgroundColor,
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                  color: Styles.borderColor, width: 0.25)),
-                          child: DropdownButton<String>(
-                            value: widget.type.value == DownloadType.video
-                                ? widget.videoResolution.value
-                                : widget.audioBitRate.value,
-                            isExpanded: true,
-                            style: TextStyle(
-                                color: Styles.textColor,
-                                fontSize: Styles.of(context).bodyFontSize,
-                                fontFamily: Styles.fontFamily),
-                            icon: const Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: Icon(Icons.arrow_drop_down),
-                            ),
-                            underline: const SizedBox(),
-                            items: [
-                              for (var quality in snapshot.data[
-                                  widget.type.value == DownloadType.video
-                                      ? "video_qualities"
-                                      : "audio_qualities"])
-                                DropdownMenuItem(
-                                  value: quality,
-                                  child: Text(quality),
-                                )
-                            ],
-                            onChanged: (selection) {
-                              setState(() {
-                                if (widget.type.value == DownloadType.video) {
-                                  widget.videoResolution.value = selection;
-                                } else {
-                                  widget.audioBitRate.value = selection;
-                                }
-                              });
-                            },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 40,
+                        margin: const EdgeInsets.only(right: 30),
+                        padding: const EdgeInsets.only(left: 15),
+                        decoration: BoxDecoration(
+                            color: Styles.backgroundColor,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                                color: Styles.borderColor, width: 0.25)),
+                        child: DropdownButton<String>(
+                          value: widget.type.value == DownloadType.video
+                              ? widget.videoResolution.value
+                              : widget.audioBitRate.value,
+                          isExpanded: true,
+                          style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: Styles.of(context).bodyFontSize,
+                              fontFamily: Styles.fontFamily),
+                          icon: const Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Icon(Icons.arrow_drop_down),
                           ),
+                          underline: const SizedBox(),
+                          items: [
+                            for (var quality in snapshot.data[
+                                widget.type.value == DownloadType.video
+                                    ? "video_qualities"
+                                    : "audio_qualities"])
+                              DropdownMenuItem(
+                                value: quality,
+                                child: Text(quality),
+                              )
+                          ],
+                          onChanged: (selection) {
+                            setState(() {
+                              if (widget.type.value == DownloadType.video) {
+                                widget.videoResolution.value = selection;
+                              } else {
+                                widget.audioBitRate.value = selection;
+                              }
+                            });
+                          },
                         ),
                       ),
-                      widget.downloadButton,
-                    ],
-                  ),
+                    ),
+                    widget.downloadButton,
+                  ],
                 )
               ],
             );

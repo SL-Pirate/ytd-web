@@ -24,11 +24,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     if (searchText == null) {
-      searchText = Padding(
+      searchText = const Padding(
         padding: EdgeInsets.zero,
         child: Icon(
           Icons.search,
-          size: Styles.of(context).subtitleFontSize,
         ),
       );
 
@@ -146,12 +145,18 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             const SizedBox(width: 20),
-                            IconButton(
-                              style: Styles.buttonStyle,
-                              onPressed: onSubmit,
-                              icon: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: searchSuffix,
+                            SizedBox(
+                              height: Styles.of(context).isMobile ? 40 : 50,
+                              width: Styles.of(context).isMobile ? 40 : 50,
+                              child: IconButton(
+                                style: Styles.buildButtonStyle(
+                                  padding: EdgeInsets.zero,
+                                ),
+                                onPressed: onSubmit,
+                                icon: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: searchSuffix,
+                                ),
                               ),
                             )
                           ],
@@ -212,8 +217,8 @@ class _HomePageState extends State<HomePage> {
     if (value != null) controller.text = value;
     setState(() {
       searchSuffix = SizedBox(
-        width: Styles.of(context).bodyFontSize / 2,
-        height: Styles.of(context).bodyFontSize / 2,
+        height: Styles.of(context).isMobile ? 20 : 25,
+        width: Styles.of(context).isMobile ? 20 : 25,
         child: const Center(
           child: CircularProgressIndicator(
             color: Styles.buttonTextColor,

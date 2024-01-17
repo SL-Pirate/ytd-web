@@ -146,7 +146,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                 color: Styles.textColor),
                           ),
                         ),
-                        SizedBox(height: Styles.of(context).isMobile ? 15 : 20),
+                        SizedBox(height: Styles.of(context).isMobile ? 5 : 10),
                         ChannelLabel(searchResultModel: widget.searchResult),
                         const SizedBox(
                           height: 50,
