@@ -58,8 +58,8 @@ class _VideoScreenState extends State<VideoScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(
-                height: 100,
+              SizedBox(
+                height: Styles.of(context).isMobile ? 85 : 100,
               ),
               Wrap(
                 alignment: WrapAlignment.spaceEvenly,
@@ -71,32 +71,33 @@ class _VideoScreenState extends State<VideoScreen> {
                         preview ??
                             GestureDetector(
                                 child: Container(
-                                    color: Colors.black,
-                                    child: FutureBuilder(
-                                      future: widget.searchResult.getThumbnail(
-                                        width: playerMaxWidth,
-                                        height: playerMaxHeight,
-                                      ),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return SizedBox(
-                                              width: double.infinity,
-                                              child: Stack(
-                                                alignment: Alignment.center,
-                                                children: [
-                                                  snapshot.data!,
-                                                  Center(
-                                                    child: startPlayerIndicator,
-                                                  )
-                                                ],
-                                              ));
-                                        } else {
-                                          return const Center(
-                                            child: CircularProgressIndicator(),
-                                          );
-                                        }
-                                      },
-                                    )),
+                                  color: Colors.black,
+                                  child: FutureBuilder(
+                                    future: widget.searchResult.getThumbnail(
+                                      width: playerMaxWidth,
+                                      height: playerMaxHeight,
+                                    ),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        return SizedBox(
+                                            width: double.infinity,
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                snapshot.data!,
+                                                Center(
+                                                  child: startPlayerIndicator,
+                                                )
+                                              ],
+                                            ));
+                                      } else {
+                                        return const Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
                                 onTap: () async {
                                   setState(() {
                                     startPlayerIndicator =
@@ -140,10 +141,11 @@ class _VideoScreenState extends State<VideoScreen> {
                           child: Text(
                             widget.searchResult.title,
                             style: TextStyle(
-                                fontSize: Styles.of(context).subtitleFontSize,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: Styles.fontFamily,
-                                color: Styles.textColor),
+                              fontSize: Styles.of(context).subtitleFontSize,
+                              fontWeight: Styles.fontWeightSemiBold,
+                              fontFamily: Styles.fontFamily,
+                              color: Styles.textColor,
+                            ),
                           ),
                         ),
                         SizedBox(height: Styles.of(context).isMobile ? 5 : 10),

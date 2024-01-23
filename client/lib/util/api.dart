@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart';
 
 class Api {
   static final Api instance = Api._();
@@ -9,11 +8,7 @@ class Api {
   final String _baseUrl = const String.fromEnvironment("baseUrl");
   final String _token = const String.fromEnvironment("token");
 
-  Api._() {
-    if (kDebugMode) {
-      print(_baseUrl);
-    }
-  }
+  Api._();
 
   Map<String, String> get header {
     String time = DateTime.now().millisecondsSinceEpoch.toString();

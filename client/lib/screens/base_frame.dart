@@ -16,7 +16,10 @@ class BaseFrame extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: const Size(double.infinity, 100),
+          preferredSize: Size(
+            double.infinity,
+            Styles.of(context).isMobile ? 85 : 100,
+          ),
           child: Material(
             color: Styles.primary,
             child: Material(
@@ -71,9 +74,11 @@ class BaseFrame extends StatelessWidget {
                     "Copyright © ${DateTime.now().year} $product. "
                     "All Rights Reserved.",
                     style: TextStyle(
-                        color: Styles.buttonTextColor,
-                        fontSize: Styles.of(context).fontSizeSmall,
-                        fontFamily: Styles.fontFamily),
+                      color: Styles.buttonTextColor,
+                      fontSize: Styles.of(context).fontSizeSmall,
+                      fontFamily: Styles.fontFamily,
+                      fontWeight: Styles.fontWeightLight,
+                    ),
                   ),
                 ),
               )

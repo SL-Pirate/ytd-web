@@ -9,32 +9,34 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Styles.primary,
-      body: Column(
-        children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.close),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Styles.primary,
+        body: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.close),
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 140,
-          ),
-          const Logo(),
-          const SizedBox(
-            height: 60,
-          ),
-          const ContactInfo(),
-          const SizedBox(
-            height: 35,
-          ),
-          const LogInButton()
-        ],
+            const SizedBox(
+              height: 140,
+            ),
+            const Logo(),
+            const SizedBox(
+              height: 60,
+            ),
+            const ContactInfo(),
+            const SizedBox(
+              height: 35,
+            ),
+            const LogInButton()
+          ],
+        ),
       ),
     );
   }
