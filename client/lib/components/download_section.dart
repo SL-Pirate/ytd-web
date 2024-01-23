@@ -37,9 +37,9 @@ class _DownloadSectionState extends State<DownloadSection> {
       child: Container(
         width: widget.width,
         height: widget.height,
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: 40,
-          vertical: 56,
+          vertical: Styles.of(context).isMobile ? 40 : 56,
         ),
         decoration: BoxDecoration(
           color: Styles.backgroundColor,
@@ -72,7 +72,7 @@ class _DownloadSectionState extends State<DownloadSection> {
                   ),
                 ),
                 const SizedBox(
-                  height: 21,
+                  height: 10,
                 ),
                 Row(
                   children: [
@@ -155,7 +155,7 @@ class _DownloadSectionState extends State<DownloadSection> {
                   ),
                 ),
                 const SizedBox(
-                  height: 21,
+                  height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -163,13 +163,16 @@ class _DownloadSectionState extends State<DownloadSection> {
                     Expanded(
                       child: Container(
                         height: 40,
-                        margin: const EdgeInsets.only(right: 30),
+                        margin: EdgeInsets.only(
+                          right: Styles.of(context).isMobile ? 15 : 30,
+                        ),
                         padding: const EdgeInsets.only(left: 15),
                         decoration: BoxDecoration(
-                            color: Styles.backgroundColor,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                                color: Styles.borderColor, width: 0.25)),
+                          color: Styles.backgroundColor,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                              color: Styles.borderColor, width: 0.25),
+                        ),
                         child: DropdownButton<String>(
                           value: widget.type.value == DownloadType.video
                               ? widget.videoResolution.value

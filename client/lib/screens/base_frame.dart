@@ -16,7 +16,10 @@ class BaseFrame extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: const Size(double.infinity, 100),
+          preferredSize: Size(
+            double.infinity,
+            Styles.of(context).isMobile ? 85 : 100,
+          ),
           child: Material(
             color: Styles.primary,
             child: Material(

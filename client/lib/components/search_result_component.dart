@@ -43,6 +43,7 @@ class SearchResultComponent extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: Styles.textColor2,
                   fontFamily: Styles.fontFamily,
+                  wordSpacing: Styles.of(context).isMobile ? -2 : 0,
                 ),
               ),
               SizedBox(
