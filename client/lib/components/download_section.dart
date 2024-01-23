@@ -49,7 +49,9 @@ class _DownloadSectionState extends State<DownloadSection> {
           future: futureData,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             }
             widget.videoResolution.value ??=
                 snapshot.data["video_qualities"][0];
@@ -64,7 +66,7 @@ class _DownloadSectionState extends State<DownloadSection> {
                     style: TextStyle(
                       fontSize: Styles.of(context).subtitleFontSize,
                       fontFamily: Styles.fontFamily,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: Styles.fontWeightMedium,
                       color: Styles.textColor,
                     ),
                   ),
@@ -111,10 +113,11 @@ class _DownloadSectionState extends State<DownloadSection> {
                       width: 45,
                       height: 45,
                       decoration: BoxDecoration(
-                          border: (widget.type.value != DownloadType.audio)
-                              ? Border.all(color: Styles.borderColor)
-                              : null,
-                          borderRadius: BorderRadius.circular(5)),
+                        border: (widget.type.value != DownloadType.audio)
+                            ? Border.all(color: Styles.borderColor)
+                            : null,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                       child: IconButton(
                         style: Styles.buildButtonStyle(
                           backgroundColor:
@@ -146,7 +149,7 @@ class _DownloadSectionState extends State<DownloadSection> {
                     style: TextStyle(
                       fontSize: Styles.of(context).subtitleFontSize,
                       fontFamily: Styles.fontFamily,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: Styles.fontWeightMedium,
                       color: Styles.textColor,
                     ),
                   ),

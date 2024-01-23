@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ytd_web/util/api.dart';
 import 'package:ytd_web/main.dart';
 import 'package:ytd_web/models/search_result_model.dart';
@@ -51,11 +52,13 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 50),
             Text(
               "Online Video Downloader",
-              style: TextStyle(
+              style: GoogleFonts.libreFranklin(
+                textStyle: TextStyle(
                   fontSize: Styles.of(context).titleFontSize,
                   color: Styles.textColor,
                   fontWeight: FontWeight.bold,
-                  fontFamily: Styles.fontFamily),
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -64,9 +67,10 @@ class _HomePageState extends State<HomePage> {
                 " your favorite videos for offline viewing.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Styles.textColor,
-                    fontSize: Styles.of(context).bodyFontSize,
-                    fontFamily: Styles.fontFamily),
+                  color: Styles.textColor,
+                  fontSize: Styles.of(context).bodyFontSize,
+                  fontFamily: Styles.fontFamily,
+                ),
               ),
             ),
             Padding(
@@ -100,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                           color: Styles.textColor,
                           fontFamily: Styles.fontFamily,
                           fontSize: Styles.of(context).bodyFontSize,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: Styles.fontWeightMedium,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -117,10 +121,11 @@ class _HomePageState extends State<HomePage> {
                                   hintText: "Video URL"
                                       " or YouTube Search Term",
                                   hintStyle: TextStyle(
-                                      color: Styles.hintTextColor,
-                                      fontFamily: Styles.fontFamily,
-                                      fontSize:
-                                          Styles.of(context).fontSizeSmall),
+                                    color: Styles.hintTextColor,
+                                    fontFamily: Styles.fontFamily,
+                                    fontSize: Styles.of(context).fontSizeSmall,
+                                    fontWeight: Styles.fontWeightExtraLight,
+                                  ),
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 10),
                                   focusedBorder: const OutlineInputBorder(
@@ -173,37 +178,43 @@ class _HomePageState extends State<HomePage> {
                 constraints: const BoxConstraints(
                   maxWidth: 1000,
                 ),
-                child: Column(children: () {
-                  List<Widget> children = [];
+                child: Column(
+                  children: () {
+                    List<Widget> children = [];
 
-                  children.add(const SizedBox(height: 50));
+                    children.add(const SizedBox(height: 50));
 
-                  for (dynamic item in result) {
-                    SearchResultModel data = SearchResultModel(
-                      url: item["url"],
-                      title: item["title"],
-                      description: item["description"],
-                      thumbnailUrl: item["thumbnail_url"],
-                      channelName: item["channel_name"],
-                      channelThumbnailUrl: item["channel_thumbnail_url"],
-                    );
+                    for (dynamic item in result) {
+                      SearchResultModel data = SearchResultModel(
+                        url: item["url"],
+                        title: item["title"],
+                        description: item["description"],
+                        thumbnailUrl: item["thumbnail_url"],
+                        channelName: item["channel_name"],
+                        channelThumbnailUrl: item["channel_thumbnail_url"],
+                      );
 
-                    children.add(Padding(
-                      padding: const EdgeInsets.only(bottom: 10, top: 10),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => BaseFrame(
+                      children.add(Padding(
+                        padding: const EdgeInsets.only(bottom: 10, top: 10),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => BaseFrame(
                                   product: product,
-                                  child: VideoScreen(searchResult: data))));
-                        },
-                        child: SearchResultComponent(data),
-                      ),
-                    ));
-                  }
+                                  child: VideoScreen(searchResult: data),
+                                ),
+                              ),
+                            );
+                          },
+                          child: SearchResultComponent(data),
+                        ),
+                      ));
+                    }
 
-                  return children;
-                }()),
+                    return children;
+                  }(),
+                ),
               )
           ],
         ),

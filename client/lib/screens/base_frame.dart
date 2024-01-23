@@ -71,9 +71,11 @@ class BaseFrame extends StatelessWidget {
                     "Copyright © ${DateTime.now().year} $product. "
                     "All Rights Reserved.",
                     style: TextStyle(
-                        color: Styles.buttonTextColor,
-                        fontSize: Styles.of(context).fontSizeSmall,
-                        fontFamily: Styles.fontFamily),
+                      color: Styles.buttonTextColor,
+                      fontSize: Styles.of(context).fontSizeSmall,
+                      fontFamily: Styles.fontFamily,
+                      fontWeight: Styles.fontWeightLight,
+                    ),
                   ),
                 ),
               )

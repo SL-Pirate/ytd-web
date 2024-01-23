@@ -14,8 +14,15 @@ class Styles {
   static const Color primary = Color(0xFFEBF6FF);
   static const Color secondary = Color(0xFFE9242B);
 
+  // font weights
+  static const FontWeight fontWeightExtraLight = FontWeight.w100;
+  static const FontWeight fontWeightLight = FontWeight.w300;
+  static const FontWeight fontWeightMedium = FontWeight.w500;
+  static const FontWeight fontWeightSemiBold = FontWeight.w700;
+
   // secondary colors
   static const Color textColor = Color(0xFF000000);
+  static const Color textColor2 = Color(0xFF012F58);
   static const Color backgroundColor = Color(0xFFFFFFFF);
   static const Color buttonTextColor = Color(0xFFFFFFFF);
   static const Color buttonColor = Color(0xFF012F58);
@@ -51,10 +58,12 @@ class Styles {
     double? borderRadius,
   }) {
     return ButtonStyle(
-      backgroundColor:
-          MaterialStateProperty.all<Color>(backgroundColor ?? buttonColor),
-      foregroundColor:
-          MaterialStateProperty.all<Color>(foregroundColor ?? buttonTextColor),
+      backgroundColor: MaterialStateProperty.all<Color>(
+        backgroundColor ?? buttonColor,
+      ),
+      foregroundColor: MaterialStateProperty.all<Color>(
+        foregroundColor ?? buttonTextColor,
+      ),
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius ?? 5),

@@ -140,10 +140,11 @@ class _VideoScreenState extends State<VideoScreen> {
                           child: Text(
                             widget.searchResult.title,
                             style: TextStyle(
-                                fontSize: Styles.of(context).subtitleFontSize,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: Styles.fontFamily,
-                                color: Styles.textColor),
+                              fontSize: Styles.of(context).subtitleFontSize,
+                              fontWeight: Styles.fontWeightSemiBold,
+                              fontFamily: Styles.fontFamily,
+                              color: Styles.textColor,
+                            ),
                           ),
                         ),
                         SizedBox(height: Styles.of(context).isMobile ? 5 : 10),
