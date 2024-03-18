@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ytd_web/util/styles.dart';
+import 'package:ytd_web/widgets/logo.dart';
 import 'package:ytd_web/widgets/contact_info.dart';
 import 'package:ytd_web/widgets/log_in_button.dart';
-import 'package:ytd_web/widgets/logo.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});

@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:ytd_web/util/api.dart';
 import 'package:ytd_web/main.dart';
-import 'package:ytd_web/models/search_result_model.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:flutter/material.dart';
+import 'package:ytd_web/util/api.dart';
+import 'package:ytd_web/util/styles.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ytd_web/screens/base_frame.dart';
 import 'package:ytd_web/screens/video_screen.dart';
-import 'package:ytd_web/util/styles.dart';
+import 'package:ytd_web/models/search_result_model.dart';
 import 'package:ytd_web/components/search_result_component.dart';
 
 class HomePage extends StatefulWidget {

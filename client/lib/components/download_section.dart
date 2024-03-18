@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ytd_web/models/resolution.dart';
 import 'package:ytd_web/util/api.dart';
-import 'package:ytd_web/util/constants.dart';
 import 'package:ytd_web/util/styles.dart';
+import 'package:ytd_web/util/constants.dart';
 import 'package:ytd_web/widgets/download_button/download_button.dart';
 
 class DownloadSection extends StatefulWidget {
@@ -53,9 +54,14 @@ class _DownloadSectionState extends State<DownloadSection> {
                 child: CircularProgressIndicator(),
               );
             }
+
+            // loading into models
+            final Resolution resolution = Resolution.fromJson(snapshot.data);
+
             widget.videoResolution.value ??=
-                snapshot.data["video_qualities"][0];
-            widget.audioBitRate.value ??= snapshot.data["audio_qualities"][0];
+                resolution.videoResolutions.firstOrNull;
+            widget.audioBitRate.value ??=
+                resolution.audioResolutions.firstOrNull;
 
             return Column(
               children: [
@@ -187,16 +193,9 @@ class _DownloadSectionState extends State<DownloadSection> {
                             child: Icon(Icons.arrow_drop_down),
                           ),
                           underline: const SizedBox(),
-                          items: [
-                            for (var quality in snapshot.data[
-                                widget.type.value == DownloadType.video
-                                    ? "video_qualities"
-                                    : "audio_qualities"])
-                              DropdownMenuItem(
-                                value: quality,
-                                child: Text(quality),
-                              )
-                          ],
+                          items: widget.type.value == DownloadType.video
+                              ? resolution.videoDropdownItems
+                              : resolution.audioDropdownItems,
                           onChanged: (selection) {
                             setState(() {
                               if (widget.type.value == DownloadType.video) {

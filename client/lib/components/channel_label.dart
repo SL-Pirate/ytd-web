@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ytd_web/models/search_result_model.dart';
 import 'package:ytd_web/util/styles.dart';
+import 'package:ytd_web/models/search_result_model.dart';
 
 class ChannelLabel extends StatelessWidget {
   final SearchResultModel searchResultModel;
