@@ -1,15 +1,15 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
-import 'package:ytd_web/components/download_section.dart';
-import 'package:ytd_web/models/downloadable.dart';
-import 'package:ytd_web/util/api.dart';
-import 'package:ytd_web/models/search_result_model.dart';
 import 'package:dio/dio.dart';
-import 'package:ytd_web/util/constants.dart';
+import 'package:flutter/material.dart';
+import 'package:ytd_web/util/api.dart';
+import 'package:flutter/foundation.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:ytd_web/util/styles.dart';
+import 'package:ytd_web/util/constants.dart';
+import 'package:ytd_web/models/downloadable.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 import 'package:ytd_web/components/channel_label.dart';
+import 'package:ytd_web/models/search_result_model.dart';
+import 'package:ytd_web/components/download_section.dart';
 import 'package:ytd_web/widgets/download_button/download_button.dart';
 
 class VideoScreen extends StatefulWidget {

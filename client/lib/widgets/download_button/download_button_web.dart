@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
+import 'package:flutter/foundation.dart';
+import 'package:ytd_web/util/styles.dart';
 import 'package:ytd_web/models/downloadable.dart';
+import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
+
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-import 'package:ytd_web/util/styles.dart';
 
 class DownloadingButtonPlatform extends StatefulWidget {
   final Future<Downloadable?> Function() getDownloadable;
@@ -101,7 +102,7 @@ class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
             ..click();
 
           html.Url.revokeObjectUrl(anchor.href!);
-          if (!context.mounted) return;
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Row(
             children: [
@@ -129,7 +130,7 @@ class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
           });
         }
       } else {
-        if (!context.mounted) return;
+        if (!mounted) return;
         showFailureSnackBar(context);
         setState(() {
           downloadButtonIcon = downloadLabel;

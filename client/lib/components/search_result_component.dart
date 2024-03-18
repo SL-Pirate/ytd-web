@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:html_unescape/html_unescape.dart';
-import 'package:ytd_web/models/search_result_model.dart';
 import 'package:ytd_web/util/styles.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:ytd_web/components/channel_label.dart';
+import 'package:ytd_web/models/search_result_model.dart';
 
 class SearchResultComponent extends StatelessWidget {
   final SearchResultModel searchResultModel;

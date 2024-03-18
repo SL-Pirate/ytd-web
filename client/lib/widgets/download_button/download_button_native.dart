@@ -1,8 +1,8 @@
-import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
-import 'package:ytd_web/models/downloadable.dart';
 import 'package:ytd_web/util/styles.dart';
+import 'package:ytd_web/models/downloadable.dart';
+import 'package:background_downloader/background_downloader.dart';
+import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class DownloadingButtonPlatform extends StatefulWidget {
   final Future<Downloadable>? Function() getDownloadable;
@@ -136,7 +136,7 @@ class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
             })();
 
           case TaskStatus.canceled:
-            if (!context.mounted) return;
+            if (!mounted) return;
             showFailureSnackBar(context);
             setState(() {
               downloadButtonIcon = downloadLabel;
@@ -150,7 +150,7 @@ class _DownloadingButtonState extends State<DownloadingButtonPlatform> {
             });
         }
       } else {
-        if (!context.mounted) return;
+        if (!mounted) return;
         showFailureSnackBar(context);
         setState(() {
           downloadButtonIcon = const Icon(
